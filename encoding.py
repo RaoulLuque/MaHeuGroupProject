@@ -2,12 +2,12 @@ import datetime
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class Location:
     name: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class TruckIdentifier:
     start_location: Location
     end_location: Location
@@ -32,6 +32,17 @@ class Truck:
     # List of vehicle IDs
     load: list[int]
 
+    def __init__(self, start_location: Location, end_location: Location, departure_date: datetime.datetime,
+                 arrival_date: datetime.datetime, truck_number: int, capacity: int, price: int, load: list[int] = None):
+        self.start_location = start_location
+        self.end_location = end_location
+        self.departure_date = departure_date
+        self.arrival_date = arrival_date
+        self.truck_number = truck_number
+        self.capacity = capacity
+        self.price = price
+        self.load = load if load is not None else []
+
 
 @dataclass
 class Vehicle:
@@ -46,3 +57,15 @@ class Vehicle:
     # Delayment information
     planned_delayed: bool
     delayed_by: datetime.timedelta
+
+    def __init__(self, origin: Location, destination: Location, available_date: datetime.datetime,
+                 due_date: datetime.datetime, id: int = None, paths_taken: list[TruckIdentifier] = None,
+                 planned_delayed: bool = False, delayed_by: datetime.timedelta = datetime.timedelta(0)):
+        self.id = id
+        self.origin = origin
+        self.destination = destination
+        self.available_date = available_date
+        self.due_date = due_date
+        self.paths_taken = paths_taken if paths_taken is not None else []
+        self.planned_delayed = planned_delayed
+        self.delayed_by = delayed_by
