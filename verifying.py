@@ -1,4 +1,4 @@
-from encoding import Location, TruckIdentifier, Vehicle, Truck
+import datetime
 
 
 def verifyVehiclePath(vehicle, truck_assignment):
@@ -30,10 +30,10 @@ def verifyVehiclePath(vehicle, truck_assignment):
         print(
             f"The truck with ID {vehicle.paths_taken[-1]} needs to end at destination of vehicle {vehicle.id}, but it doesn't.")
         return False
-    if not (vehicle.delayed_by >= 0):  # The delay should be non-negative
+    if not (vehicle.delayed_by >= datetime.timedelta(0)):  # The delay should be non-negative
         print(f"The vehicle {vehicle.id} has a negative delay.")
         return False
-    if not (truck.arrival_date <= vehicle.due_date and vehicle.delayed_by == 0):
+    if not (truck.arrival_date <= vehicle.due_date and vehicle.delayed_by == datetime.timedelta(0)):
         # The last truck should arrive before the vehicle's due date if there is no delay
         if not (truck.arrival_date == vehicle.due_date + vehicle.delayed_by):
             # If there is a delay, the truck's arrival date should match the due date plus the delay
@@ -73,7 +73,7 @@ def verifyTruckLoad(truck, truck_id, vehicle_assignment):
         return False
     for vehicle in vehicle_assignment:
         # Check if every vehicle whose ID is in the truck's load actually uses the truck
-        if (vehicle.id in truck.load):
+        if vehicle.id in truck.load:
             if not (truck_id in vehicle_assignment[vehicle].paths_taken):
                 print(
                     f"The vehicle {vehicle.id} does not use the truck with ID {truck_id}, but it is part of the truck's load.")
@@ -81,13 +81,12 @@ def verifyTruckLoad(truck, truck_id, vehicle_assignment):
     return True
 
 
-def verifySolution(vehicle_assignment, truck_assignment, locations):
-    # datatypes of input: list[Vehicle], dict[TruckIdentifier, Truck], list[Location]
+def verifySolution(vehicle_assignment, truck_assignment):
+    # datatypes of input: list[Vehicle], dict[TruckIdentifier, Truck]
     """
     Verifies if a given solution is valid.
     :param vehicle_assignment: The list of vehicles assigned to the solution.
     :param truck_assignment: The dictionary of trucks assigned to the solution.
-    :param locations: The list of locations.
     :return: True if the solution is valid, False otherwise.
     """
     for vehicle in vehicle_assignment:  # checks if every vehicle uses a valid path with correct delay
