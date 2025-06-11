@@ -1,10 +1,9 @@
 import datetime
-import enum
+from enum import Enum
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
-class LocationType(enum):
+class LocationType(Enum):
     PLANT = 1
     TERMINAL = 2
     DEALER = 3
