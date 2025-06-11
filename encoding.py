@@ -1,10 +1,19 @@
 import datetime
+import enum
 from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class LocationType(enum):
+    PLANT = 1
+    TERMINAL = 2
+    DEALER = 3
 
 
 @dataclass(frozen=True)
 class Location:
     name: str
+    type: LocationType
 
 
 @dataclass(frozen=True)
