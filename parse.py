@@ -27,7 +27,6 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
     # import the trucks from the planned_capacity_data.csv file
     with open(os.path.join("data", "planned_capacity_data.csv"), newline="") as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
-        truck_counters = {}
         for row in reader:
             if row and row[0] == "PLT":
                 path_segment = row[3]
@@ -47,7 +46,7 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 start_location = Location(start_code)
                 end_location = Location(end_code)
 
-                # from all appeeared start / end locations make the list locations (without duplicates)
+                # from all appeared start / end locations make the list locations (without duplicates)
                 if start_location not in locations:
                     locations.append(start_location)
                 if end_location not in locations:
