@@ -71,6 +71,22 @@ class Location:
     type: LocationType
 
 
+def location_from_string(location_str: str) -> Location:
+    """
+    Converts a string representation of a location into a Location object.
+    The string should be in the format 'NameNumberType', where 'Name' is the three-letter name of the location
+    e.g. GER or FRA, 'Number' is a two-digit number, and 'Type' is one of 'PLANT', 'TERM', or 'DEAL'.
+
+    Args:
+        location_str (str): The string representation of the location.
+
+    Returns:
+        Location: The corresponding Location object.
+    """
+    name, type_str = location_str[:5], location_str[5:]
+    return Location(name=name, type=location_type_from_string(type_str))
+
+
 @dataclass(frozen=True)
 class TruckIdentifier:
     """
