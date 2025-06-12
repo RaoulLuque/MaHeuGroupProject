@@ -7,6 +7,15 @@ from encoding import Location, TruckIdentifier, Vehicle, Truck, location_type_fr
 
 
 def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
+    """
+    Reads the vehicle, truck and locations data from CSV files and returns lists of locations, vehicles, and trucks.
+
+    Returns:
+        tuple: A tuple containing:
+            - list[Location]: List of unique locations.
+            - list[Vehicle]: List of vehicles with their details.
+            - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects.
+    """
     locations: list[Location] = []
     vehicles: list[Vehicle] = []
     trucks: dict[TruckIdentifier, Truck] = {}
