@@ -142,6 +142,20 @@ class Truck:
         self.price = price
         self.load = load if load is not None else []
 
+    def get_identifier(self):
+        """
+        Converts the Truck instance to a TruckIdentifier.
+
+        Returns:
+            TruckIdentifier: The identifier for the truck.
+        """
+        return TruckIdentifier(
+            start_location=self.start_location,
+            end_location=self.end_location,
+            truck_number=self.truck_number,
+            departure_date=self.departure_date
+        )
+
 
 @dataclass
 class Vehicle:
