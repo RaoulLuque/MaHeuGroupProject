@@ -1,14 +1,13 @@
 from encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY, \
-    COST_PER_UNPLANNED_DELAY_DAY
+    COST_PER_UNPLANNED_DELAY_DAY, Vehicle, TruckIdentifier, Truck
 
 
-def evaluateSolution(vehicle_assignment, truck_assignment):
+def evaluateSolution(vehicle_assignment: list[Vehicle], truck_assignment: dict[TruckIdentifier, Truck]):
     """ Evaluates a given solution
     :param vehicle_assignment: list[Vehicle]
     :param truck_assignment: dict[TruckIdentifier, Truck]"""
     objective = 0  # Initialize the objective value to 0
-    for truck_id in truck_assignment:
-        truck = truck_assignment[truck_id]
+    for truck in truck_assignment.values():
         if not len(truck.load) == 0:
             # For each truck with non-empty load, add the price to the objective
             objective += truck.price
