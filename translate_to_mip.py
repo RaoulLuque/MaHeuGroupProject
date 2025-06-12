@@ -3,7 +3,8 @@ from enum import Enum
 
 import matplotlib.pyplot as plt
 import networkx as nx
-from networkx import DiGraph
+from matplotlib.patches import FancyArrowPatch
+from networkx import MultiDiGraph
 
 from encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, TruckAssignment, VehicleAssignment, \
     FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY
@@ -73,7 +74,7 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
 
     # Create a Network to model the flow
-    flow_network: DiGraph[NodeIdentifier] = DiGraph()
+    flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
 
     # Create the vertices of the flow network behind the MIP
     # Create a node for each day and each location
@@ -168,7 +169,7 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
     return [], {}
 
 
-def visualize_flow_graph(flow_network: DiGraph, first_day: date, locations: list[Location]):
+def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location]):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -178,29 +179,66 @@ def visualize_flow_graph(flow_network: DiGraph, first_day: date, locations: list
         locations: (list[Location]):
     """
     # Type magic
-    flow_network: DiGraph[NodeIdentifier] = flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    pos: dict[NodeIdentifier] = {}
-
-    # Position the nodes for ascending days and the same location in one column
+    pos = {}
     scale = 100
     for node in flow_network.nodes:
         day = node.day
         location = node.location
         if node.type == NodeType.NORMAL:
             pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal()) * scale)
-        # Position the helper nodes slightly to the right of the normal node
         else:
             pos[node] = ((locations.index(location) + node.type.value * 0.5) * scale,
                          -(day.toordinal() - first_day.toordinal()) * scale)
 
-    # Customize the labels
-    labels = {node: f"{node.location.name[:5]}_Day{node.day}_{node.type.to_string()}" for node in flow_network.nodes}
+    plt.figure(figsize=(16, 64), dpi=150)
+    ax = plt.gca()
 
-    # Draw the flow network
-    plt.figure(figsize=(12, 24), dpi=150)
-    nx.draw(flow_network, pos, with_labels=False, node_size=20, node_color='lightblue', font_size=5,
-            font_color='black')
-    # nx.draw_networkx_labels(flow_network, pos, labels=labels, font_size=5, font_color='black')
+    # Draw nodes as white circles with only the contour
+    nx.draw_networkx_nodes(
+        flow_network, pos,
+        node_size=150,
+        node_color='white',
+        edgecolors='black',
+        linewidths=1.0,
+        ax=ax
+    )
 
+    # Draw node capacities (demands) at the center of each node
+    for node, (x, y) in pos.items():
+        demand = flow_network.nodes[node].get('demand', 0)
+        ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')
+
+    # Draw edges with weights/costs, using curved lines for parallel/inverse edges
+    seen = {}
+    for u, v, data in flow_network.edges(data=True):
+        key = (u, v)
+        rev_key = (v, u)
+        # Check for parallel/inverse edges
+        if key in seen:
+            rad = seen[key]
+        elif rev_key in seen:
+            rad = -seen[rev_key]
+        else:
+            rad = 0.2 * (len([e for e in flow_network.edges(u) if e[1] == v]) - 1)
+        seen[key] = rad if rad != 0 else 0.2
+
+        # Draw curved edge
+        arrow = FancyArrowPatch(posA=pos[u], posB=pos[v], connectionstyle=f"arc3,rad={rad}",
+                                arrowstyle='-|>', color='gray', mutation_scale=10, lw=1)
+        ax.add_patch(arrow)
+
+        # Edge label: capacity/weight
+        label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
+        # Position label at midpoint of curve
+        mx, my = (pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2
+        ax.text(mx, my, label, fontsize=7, color='blue', ha='center', va='center', backgroundcolor='white')
+
+    # Draw node labels (optional, can be commented out)
+    # labels = {node: f"{node.location.name[:5]}_Day{node.day}_{node.type.to_string()}" for node in flow_network.nodes}
+    # nx.draw_networkx_labels(flow_network, pos, labels=labels, font_size=5, font_color='black', ax=ax)
+
+    plt.axis('off')
+    plt.tight_layout()
     plt.show()
