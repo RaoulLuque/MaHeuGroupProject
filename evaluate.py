@@ -1,8 +1,5 @@
-# Global variables for delaycosts:
-fixed_cost_planned_delay = 200  # Fixed cost for planned delay of a vehicle
-fixed_cost_unplanned_delay = 500  # Fixed cost for unplanned delay of a vehicle
-cost_per_planned_delay_day = 50  # Cost per day of planned delay
-cost_per_unplanned_delay_day = 100  # Cost per day of unplanned delay
+from encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY, \
+    COST_PER_UNPLANNED_DELAY_DAY
 
 
 def evaluateSolution(vehicle_assignment, truck_assignment):
@@ -20,9 +17,9 @@ def evaluateSolution(vehicle_assignment, truck_assignment):
         delay_in_days_float = vehicle.delayed_by.days + vehicle.delayed_by.seconds / (60 * 60 * 24)
         if vehicle.planned_delayed:
             # If the vehicle is planned to be delayed, add the fixed cost and the cost per day of delay
-            objective += (fixed_cost_planned_delay + delay_in_days_float * cost_per_planned_delay_day)
+            objective += (FIXED_PLANNED_DELAY_COST + delay_in_days_float * COST_PER_PLANNED_DELAY_DAY)
         else:
             if delay_in_days_float > 0:
                 # If the vehicle is delayed unplanned, add the fixed cost and the cost per day of delay
-                objective += (fixed_cost_unplanned_delay + delay_in_days_float * cost_per_unplanned_delay_day)
+                objective += (FIXED_UNPLANNED_DELAY_COST + delay_in_days_float * COST_PER_UNPLANNED_DELAY_DAY)
     return objective

@@ -2,6 +2,12 @@ import datetime
 from enum import Enum
 from dataclasses import dataclass
 
+# Constants for costs of delays
+FIXED_PLANNED_DELAY_COST = 200
+FIXED_UNPLANNED_DELAY_COST = 500
+COST_PER_PLANNED_DELAY_DAY = 50
+COST_PER_UNPLANNED_DELAY_DAY = 100
+
 
 class LocationType(Enum):
     """
