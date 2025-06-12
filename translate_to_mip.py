@@ -20,6 +20,20 @@ class NodeType(Enum):
     HELPER_NODE_ONE = 1
     HELPER_NODE_TWO = 2
 
+    def to_string(self) -> str:
+        """
+        Returns a string representation of the node type.
+        """
+        match self:
+            case NodeType.NORMAL:
+                return "NORMAL"
+            case NodeType.HELPER_NODE_ONE:
+                return "HELPER_ONE"
+            case NodeType.HELPER_NODE_TWO:
+                return "HELPER_TWO"
+        # Should be unreachable, just here to make the linter happy
+        raise ValueError(f"Invalid NodeType: {self}")
+
 
 @dataclass(frozen=True)
 class NodeIdentifier:
@@ -149,8 +163,8 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
-    # visualize_flow_graph(flow_network, first_day, locations)
-    print(nx.min_cost_flow_cost(flow_network))
+    visualize_flow_graph(flow_network, first_day, locations)
+    # print(nx.min_cost_flow_cost(flow_network))
     return [], {}
 
 
@@ -166,22 +180,27 @@ def visualize_flow_graph(flow_network: DiGraph, first_day: date, locations: list
     # Type magic
     flow_network: DiGraph[NodeIdentifier] = flow_network
 
-    pos = {}
+    pos: dict[NodeIdentifier] = {}
 
     # Position the nodes for ascending days and the same location in one column
     scale = 100
     for node in flow_network.nodes:
         day = node.day
         location = node.location
-        pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal() * scale))
+        if node.type == NodeType.NORMAL:
+            pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal()) * scale)
+        # Position the helper nodes slightly to the right of the normal node
+        else:
+            pos[node] = ((locations.index(location) + node.type.value * 0.5) * scale,
+                         -(day.toordinal() - first_day.toordinal()) * scale)
 
     # Customize the labels
-    labels = {node: f"{node.location.name[:5]}_Day{node.day}" for node in flow_network.nodes}
+    labels = {node: f"{node.location.name[:5]}_Day{node.day}_{node.type.to_string()}" for node in flow_network.nodes}
 
     # Draw the flow network
-    plt.figure(figsize=(12, 24), dpi=300)
+    plt.figure(figsize=(12, 24), dpi=150)
     nx.draw(flow_network, pos, with_labels=False, node_size=20, node_color='lightblue', font_size=5,
             font_color='black')
-    nx.draw_networkx_labels(flow_network, pos, labels=labels, font_size=5, font_color='black')
+    # nx.draw_networkx_labels(flow_network, pos, labels=labels, font_size=5, font_color='black')
 
     plt.show()
