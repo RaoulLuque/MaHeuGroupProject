@@ -74,7 +74,7 @@ def verifyTruckLoad(truck, truck_id, vehicle_assignment):
     for vehicle in vehicle_assignment:
         # Check if every vehicle whose ID is in the truck's load actually uses the truck
         if vehicle.id in truck.load:
-            if not (truck_id in vehicle_assignment[vehicle].paths_taken):
+            if not (truck_id in vehicle.paths_taken):
                 print(
                     f"The vehicle {vehicle.id} does not use the truck with ID {truck_id}, but it is part of the truck's load.")
                 return False
