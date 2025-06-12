@@ -19,8 +19,8 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 vehicle_id = int(row[1])
                 origin = Location(name=row[4][:5], type=location_type_from_string(row[4][5:]))
                 destination = Location(name=row[5][:5], type=location_type_from_string(row[5][5:]))
-                available_date = datetime.datetime.strptime(row[6], "%d/%m/%Y-%H:%M:%S")
-                due_date = datetime.datetime.strptime(row[8], "%d/%m/%Y-%H:%M:%S")
+                available_date = datetime.datetime.strptime(row[6], "%d/%m/%Y-%H:%M:%S").date()
+                due_date = datetime.datetime.strptime(row[8], "%d/%m/%Y-%H:%M:%S").date()
                 vehicle = Vehicle(
                     id=vehicle_id,
                     origin=origin,
@@ -58,8 +58,8 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 if end_location not in locations:
                     locations.append(end_location)
 
-                departure_date = datetime.datetime.strptime(row[4], "%d/%m/%Y-%H:%M:%S")
-                arrival_date = datetime.datetime.strptime(row[5], "%d/%m/%Y-%H:%M:%S")
+                departure_date = datetime.datetime.strptime(row[4], "%d/%m/%Y-%H:%M:%S").date()
+                arrival_date = datetime.datetime.strptime(row[5], "%d/%m/%Y-%H:%M:%S").date()
 
                 capacity = int(float(row[6]))
                 price = int(float(row[7]))
