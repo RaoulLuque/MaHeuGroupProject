@@ -11,7 +11,7 @@ COST_PER_UNPLANNED_DELAY_DAY = 100
 
 class LocationType(Enum):
     """
-    Enum to represent the type of a location.
+    Enum to represent the type of location.
 
     PLANT: A production site where vehicles are manufactured. \n
     TERMINAL: A terminal where vehicles are stored or transferred. \n
