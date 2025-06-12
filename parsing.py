@@ -3,7 +3,7 @@ import datetime
 import re
 import os
 
-from encoding import Location, TruckIdentifier, Vehicle, Truck, location_type_from_string
+from encoding import Location, TruckIdentifier, Vehicle, Truck, location_type_from_string, location_from_string
 
 
 def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
@@ -17,8 +17,8 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
         for row in reader:
             if row and row[0] == "TRO":
                 vehicle_id = int(row[1])
-                origin = Location(name=row[4][:5], type=location_type_from_string(row[4][5:]))
-                destination = Location(name=row[5][:5], type=location_type_from_string(row[5][5:]))
+                origin = location_from_string(row[4])
+                destination = location_from_string(row[5])
                 available_date = datetime.datetime.strptime(row[6], "%d/%m/%Y-%H:%M:%S").date()
                 due_date = datetime.datetime.strptime(row[8], "%d/%m/%Y-%H:%M:%S").date()
                 vehicle = Vehicle(
@@ -49,8 +49,8 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 else:
                     print("No match found for path segment:", path_segment)
 
-                start_location = Location(name=start_code[:5], type=location_type_from_string(start_code[5:]))
-                end_location = Location(name=end_code[:5], type=location_type_from_string(end_code[5:]))
+                start_location = location_from_string(start_code)
+                end_location = location_from_string(end_code)
 
                 # from all appeared start / end locations make the list locations (without duplicates)
                 if start_location not in locations:

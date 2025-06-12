@@ -64,7 +64,7 @@ class Location:
     Represents a physical location.
 
     Attributes:
-        name (str): The name of the location.
+        name (str): The name of the location (e.g., 'GER01', 'FRA01').
         type (LocationType): The type of the location (e.g., PLANT, TERMINAL, DEALER).
     """
     name: str
