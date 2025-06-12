@@ -4,6 +4,13 @@ from dataclasses import dataclass
 
 
 class LocationType(Enum):
+    """
+    Enum to represent the type of a location.
+
+    PLANT: A production site where vehicles are manufactured. \n
+    TERMINAL: A terminal where vehicles are stored or transferred. \n
+    DEALER: A dealer location where vehicles are sold or distributed. \n
+    """
     PLANT = 1
     TERMINAL = 2
     DEALER = 3
@@ -11,15 +18,30 @@ class LocationType(Enum):
 
 @dataclass(frozen=True)
 class Location:
+    """
+    Represents a physical location.
+
+    Attributes:
+        name (str): The name of the location.
+        type (LocationType): The type of the location (e.g., PLANT, TERMINAL, DEALER).
+    """
     name: str
     type: LocationType
 
 
 @dataclass(frozen=True)
 class TruckIdentifier:
+    """
+    Uniquely identifies a truck (or a general transport vehicle).
+
+    Attributes:
+        start_location (Location): The starting location of the truck.
+        end_location (Location): The ending location of the truck.
+        truck_number (int): Number distinguishing different trucks on the same segment.
+        departure_date (datetime.datetime): The departure date and time of the truck.
+    """
     start_location: Location
     end_location: Location
-    # This number distinguishes between different trucks on the same segment
     truck_number: int
     departure_date: datetime.datetime
 
@@ -27,7 +49,18 @@ class TruckIdentifier:
 @dataclass
 class Truck:
     """
-    Note that a truck is just a transportation vehicle, which can also be a train or a ship.
+    Represents a truck (or a general transport vehicle) transporting vehicles between locations.
+
+    Attributes:
+        start_location (Location): The starting location of the truck.
+        end_location (Location): The ending location of the truck.
+        departure_date (datetime.datetime): The departure date and time.
+        arrival_date (datetime.datetime): The arrival date and time.
+        truck_number (int): Number distinguishing different trucks on the same segment.
+        capacity (int): Maximum number of vehicles the truck can carry.
+        price (int): Cost associated with the truck's trip. This cost is only incurred once
+                     if the truck is actually booked for a trip.
+        load (list[int]): List of vehicle IDs currently loaded on the truck.
     """
     start_location: Location
     end_location: Location
@@ -54,6 +87,19 @@ class Truck:
 
 @dataclass
 class Vehicle:
+    """
+    Represents a vehicle to be transported.
+
+    Attributes:
+        id (int): Unique identifier for the vehicle.
+        origin (Location): The starting location of the vehicle.
+        destination (Location): The destination location of the vehicle.
+        available_date (datetime.datetime): The date and time when the vehicle is available for transport.
+        due_date (datetime.datetime): The latest date and time by which the vehicle should arrive at its destination.
+        paths_taken (list[TruckIdentifier]): List of truck segments the vehicle has taken.
+        planned_delayed (bool): Indicates if the vehicle is planned to be delayed.
+        delayed_by (datetime.timedelta): Duration by which the vehicle is delayed.
+    """
     id: int
     origin: Location
     destination: Location
