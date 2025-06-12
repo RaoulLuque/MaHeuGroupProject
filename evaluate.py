@@ -1,25 +1,28 @@
 from encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY, \
-    COST_PER_UNPLANNED_DELAY_DAY, Vehicle, TruckIdentifier, Truck
+    COST_PER_UNPLANNED_DELAY_DAY, TruckIdentifier, Truck, TruckAssignment, VehicleAssignment
 
 
-def evaluate_solution(vehicle_assignment: list[Vehicle], truck_assignment: dict[TruckIdentifier, Truck]) -> float:
+def objective_function(vehicle_assignments: list[VehicleAssignment],
+                       truck_assignments: dict[TruckIdentifier, TruckAssignment],
+                       trucks: dict[TruckIdentifier, Truck]) -> float:
     """
-    Evaluates a given solution and provides the objective value based on the assigned vehicles and trucks.
+    Calculates the objective value based on the assigned vehicles and trucks.
 
     Args:
-        vehicle_assignment (list[Vehicle]): List of vehicles with their assigned delays and planned statuses.
-        truck_assignment (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to Truck objects,
+        vehicle_assignments (list[Vehicle]): List of vehicles with their assigned delays and planned statuses.
+        truck_assignments (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to Truck objects,
             which contain their loads and prices.
+        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
 
     Returns:
         float: The objective value of the solution, calculated based on the prices of trucks and costs of delays.
     """
     objective_value = 0  # Initialize the objective value to 0
-    for truck in truck_assignment.values():
+    for truck_identifier, truck in truck_assignments:
         if not len(truck.load) == 0:
             # For each truck with non-empty load, add the price to the objective
-            objective_value += truck.price
-    for vehicle in vehicle_assignment:
+            objective_value += trucks[truck_identifier].price
+    for vehicle in vehicle_assignments:
         # convert the delay to a float value in days
         delay_in_days = vehicle.delayed_by.days
         if vehicle.planned_delayed:

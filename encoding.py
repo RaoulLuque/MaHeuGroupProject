@@ -118,7 +118,6 @@ class Truck:
         capacity (int): Maximum number of vehicles the truck can carry.
         price (int): Cost associated with the truck's trip. This cost is only incurred once
                      if the truck is actually booked for a trip.
-        load (list[int]): List of vehicle IDs currently loaded on the truck.
     """
     start_location: Location
     end_location: Location
@@ -128,11 +127,9 @@ class Truck:
     truck_number: int
     capacity: int
     price: int
-    # List of vehicle IDs
-    load: list[int]
 
     def __init__(self, start_location: Location, end_location: Location, departure_date: date,
-                 arrival_date: date, truck_number: int, capacity: int, price: int, load: list[int] = None):
+                 arrival_date: date, truck_number: int, capacity: int, price: int):
         self.start_location = start_location
         self.end_location = end_location
         self.departure_date = departure_date
@@ -140,7 +137,6 @@ class Truck:
         self.truck_number = truck_number
         self.capacity = capacity
         self.price = price
-        self.load = load if load is not None else []
 
     def get_identifier(self):
         """
@@ -158,6 +154,26 @@ class Truck:
 
 
 @dataclass
+class TruckAssignment:
+    """
+    Represents the assignment a solution has made for a truck.
+
+    Attributes:
+        load (list[int]): List of vehicle IDs assigned to be loaded on the truck.
+    """
+    load: list[int]
+
+    def __init__(self, load: list[int] = None):
+        """
+        Initializes a TruckAssignment instance.
+        Args:
+            load (list[int], optional): List of vehicle IDs assigned to be loaded on the truck.
+                If omitted, it defaults to an empty list.
+        """
+        self.load = load if load is not None else []
+
+
+@dataclass
 class Vehicle:
     """
     Represents a vehicle to be transported.
@@ -168,30 +184,52 @@ class Vehicle:
         destination (Location): The destination location of the vehicle.
         available_date (datetime.datetime): The date and time when the vehicle is available for transport.
         due_date (datetime.datetime): The latest date and time by which the vehicle should arrive at its destination.
-        paths_taken (list[TruckIdentifier]): List of truck segments the vehicle has taken.
-        planned_delayed (bool): Indicates if the vehicle is planned to be delayed.
-        delayed_by (datetime.timedelta): Duration by which the vehicle is delayed.
     """
     id: int
     origin: Location
     destination: Location
     available_date: date
     due_date: date
-    # Possibly add another field for the possible routes (if it is not clear)
-    paths_taken: list[TruckIdentifier]
 
-    # Delayment information
-    planned_delayed: bool
-    delayed_by: timedelta
-
-    def __init__(self, origin: Location, destination: Location, available_date: date,
-                 due_date: date, id: int = None, paths_taken: list[TruckIdentifier] = None,
-                 planned_delayed: bool = False, delayed_by: timedelta = timedelta(0)):
+    def __init__(self, id: int, origin: Location, destination: Location, available_date: date,
+                 due_date: date):
         self.id = id
         self.origin = origin
         self.destination = destination
         self.available_date = available_date
         self.due_date = due_date
+
+
+@dataclass
+class VehicleAssignment:
+    """
+    Represents the assignment a solution has made for a single vehicle.
+
+    Attributes:
+        id (int): Unique identifier for the vehicle whose assignment is being represented.
+        paths_taken (list[TruckIdentifier]): List of truck segments the vehicle is assigned to.
+        planned_delayed (bool): Indicates if the vehicle is planned to be delayed.
+        delayed_by (datetime.timedelta): Duration by which the vehicle is planned to be delayed.
+    """
+    id: int
+    paths_taken: list[TruckIdentifier]
+    planned_delayed: bool
+    delayed_by: timedelta
+
+    def __init__(self, id: int, paths_taken: list[TruckIdentifier] = None, planned_delayed: bool = False,
+                 delayed_by: timedelta = timedelta(0)):
+        """
+        Initializes a VehicleAssignment instance.
+
+        Args:
+            paths_taken (list[TruckIdentifier], optional): List of truck segments the vehicle is assigned to.
+                If omitted, it defaults to an empty list.
+            planned_delayed (bool, optional): Indicates if the vehicle is planned to be delayed.
+                If omitted, it defaults to False.
+            delayed_by (timedelta, optional): Duration by which the vehicle is planned to be delayed.
+                If omitted, it defaults to a zero timedelta (no delay).
+        """
+        self.id = id
         self.paths_taken = paths_taken if paths_taken is not None else []
         self.planned_delayed = planned_delayed
         self.delayed_by = delayed_by

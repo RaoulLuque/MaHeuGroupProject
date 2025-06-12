@@ -88,7 +88,6 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                     truck_number=truck_number,
                     capacity=capacity,
                     price=price,
-                    load=[],
                 )
 
                 trucks[truck_id] = truck

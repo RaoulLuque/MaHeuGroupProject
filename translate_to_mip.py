@@ -1,20 +1,33 @@
+from dataclasses import dataclass
+from enum import Enum
+
+import matplotlib.pyplot as plt
 import networkx as nx
 from networkx import DiGraph
 
-from encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType
+from encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, TruckAssignment, VehicleAssignment
 from datetime import timedelta, date
 
 
+class NodeType(Enum):
+    """
+    Enum to represent the type of node in the flow network.
+    Nodes may be of type NORMAL, which represent a regular node with a day and location,
+    or HELPER_NODE which only appear next to DEALER locations to allow for delays.
+    """
+    NORMAL = 0
+    HELPER_NODE_ONE = 1
+    HELPER_NODE_TWO = 2
+
+
+@dataclass(frozen=True)
 class NodeIdentifier:
     day: date
     location: Location
 
-    def __init__(self, day: date, location: Location):
-        self.day = day
-        self.location = location
 
-
-def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]
+def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
+        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Translates the given vehicles and trucks into a MIP (Mixed Integer Programming) format string.
 
@@ -29,8 +42,10 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
     """
     # Create a list of all days we are considering. The first day is day 0 and the day where the first vehicle is available
     # to be transported from a production site.
-    first_day: date = min(min(vehicles, key=lambda vehicle: vehicle.available_date).available_date, min(trucks.values(), key=lambda truck: truck.departure_date).departure_date)
-    last_day: date = max(max(vehicles, key=lambda vehicle: vehicle.available_date).available_date, max(trucks.values(), key=lambda truck: truck.arrival_date).arrival_date)
+    first_day: date = min(min(vehicles, key=lambda vehicle: vehicle.available_date).available_date,
+                          min(trucks.values(), key=lambda truck: truck.departure_date).departure_date)
+    last_day: date = max(max(vehicles, key=lambda vehicle: vehicle.available_date).available_date,
+                         max(trucks.values(), key=lambda truck: truck.arrival_date).arrival_date)
 
     number_of_days = (last_day - first_day).days + 1
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
@@ -73,6 +88,34 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
                 next_day_node = NodeIdentifier(day + timedelta(days=1), location)
                 flow_network.add_edge(current_node, next_day_node, capacity=float('inf'), price=0)
 
-    nx.draw(flow_network, with_labels=True, node_size=500, node_color='lightblue', font_size=10, font_color='black')
+    visualize_flow_graph(flow_network, first_day, locations)
 
-    return locations, vehicles, trucks
+    return [], {}
+
+
+def visualize_flow_graph(flow_network: DiGraph, first_day: date, locations: list[Location]):
+    """
+    Visualizes the flow network using matplotlib and networkx.
+
+    Args:
+        flow_network (DiGraph): The flow network to visualize.
+    """
+    pos = {}
+
+    # Position the nodes for ascending days and the same location in one column
+    scale = 100
+    for node in flow_network.nodes:
+        day = node.day
+        location = node.location
+        pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal() * scale))
+
+    # Customize the labels
+    labels = {node: f"{node.location.name[:5]}_Day{(node.day - first_day).days}" for node in flow_network.nodes}
+
+    # Draw the flow network
+    plt.figure(figsize=(12, 24), dpi=300)
+    nx.draw(flow_network, pos, with_labels=False, node_size=20, node_color='lightblue', font_size=5,
+            font_color='black')
+    nx.draw_networkx_labels(flow_network, pos, labels=labels, font_size=5, font_color='black')
+
+    plt.show()
