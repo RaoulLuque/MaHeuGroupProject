@@ -21,6 +21,42 @@ class LocationType(Enum):
     TERMINAL = 2
     DEALER = 3
 
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the location type.
+        """
+        match self:
+            case LocationType.PLANT:
+                return "PLANT"
+            case LocationType.TERMINAL:
+                return "TERM"
+            case LocationType.DEALER:
+                return "DEAL"
+        # Should be unreachable, just here to make the linter happy
+        raise ValueError(f"Invalid LocationType: {self}")
+
+
+def location_type_from_string(location_type_str: str) -> LocationType:
+    """
+    Tries to convert a string to a LocationType enum. Valid strings are 'PLANT', 'TERM', and 'DEAL'.
+    Raises ValueError if the string does not match any valid location type.
+
+    Args:
+        location_type_str (str): The string representation of the location type.
+
+    Returns:
+        LocationType: The corresponding LocationType enum.
+    """
+    match location_type_str.upper():
+        case "PLANT":
+            return LocationType.PLANT
+        case "TERM":
+            return LocationType.TERMINAL
+        case "DEAL":
+            return LocationType.DEALER
+        case _:
+            raise ValueError(f"Invalid location type: {location_type_str}")
+
 
 @dataclass(frozen=True)
 class Location:
