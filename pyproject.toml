@@ -5,6 +5,7 @@ description = "Group project in the course on Mathematical Heuristics in Discret
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "matplotlib>=3.10.3",
     "mip>=1.15.0",
     "networkx>=3.5",
 ]
