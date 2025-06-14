@@ -217,8 +217,25 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
             continue
         n = len(edge_dict)
         for idx, (k, data) in enumerate(edge_dict.items()):
-            # Distribute curvature symmetrically
+            # Default curvature
             rad = 0.0 if n == 1 else 0.2 * ((idx - (n - 1) / 2))
+
+            # Special handling for DEALER to HELPER_NODE edges to avoid overlap
+            if (
+                    u.location.type == LocationType.DEALER
+                    and (
+                    (u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_ONE)
+                    or (u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_TWO)
+                    or (u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.HELPER_NODE_TWO))
+            ):
+                # Assign distinct, larger curvatures for these edges
+                if u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_ONE:
+                    rad = 0.25
+                elif u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_TWO:
+                    rad = -0.25
+                elif u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.HELPER_NODE_TWO:
+                    rad = 0.0
+
             arrow = FancyArrowPatch(
                 posA=pos[u], posB=pos[v],
                 connectionstyle=f"arc3,rad={rad}",
@@ -228,12 +245,9 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
             label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
             # Compute midpoint
             mx, my = (pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2
-            # Compute direction vector
             dx, dy = pos[v][0] - pos[u][0], pos[v][1] - pos[u][1]
             length = (dx ** 2 + dy ** 2) ** 0.5 or 1
-            # Perpendicular vector (normalized)
             perp_x, perp_y = -dy / length, dx / length
-            # Offset label along perpendicular, scaled by rad and edge length
             offset = rad * 0.5 * length
             label_x = mx + perp_x * offset
             label_y = my + perp_y * offset
