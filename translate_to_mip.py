@@ -210,30 +210,35 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
         demand = flow_network.nodes[node].get('demand', 0)
         ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')
 
-    # Draw edges with weights/costs, using curved lines for parallel/inverse edges
-    seen = {}
-    for u, v, data in flow_network.edges(data=True):
-        key = (u, v)
-        rev_key = (v, u)
-        # Check for parallel/inverse edges
-        if key in seen:
-            rad = seen[key]
-        elif rev_key in seen:
-            rad = -seen[rev_key]
-        else:
-            rad = 0.2 * (len([e for e in flow_network.edges(u) if e[1] == v]) - 1)
-        seen[key] = rad if rad != 0 else 0.2
-
-        # Draw curved edge
-        arrow = FancyArrowPatch(posA=pos[u], posB=pos[v], connectionstyle=f"arc3,rad={rad}",
-                                arrowstyle='-|>', color='gray', mutation_scale=10, lw=1)
-        ax.add_patch(arrow)
-
-        # Edge label: capacity/weight
-        label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
-        # Position label at midpoint of curve
-        mx, my = (pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2
-        ax.text(mx, my, label, fontsize=7, color='blue', ha='center', va='center', backgroundcolor='white')
+    # Draw edges with unique curvature for each parallel edge
+    for u, v in flow_network.edges():
+        edge_dict = flow_network.get_edge_data(u, v)
+        if edge_dict is None:
+            continue
+        n = len(edge_dict)
+        for idx, (k, data) in enumerate(edge_dict.items()):
+            # Distribute curvature symmetrically
+            rad = 0.0 if n == 1 else 0.2 * ((idx - (n - 1) / 2))
+            arrow = FancyArrowPatch(
+                posA=pos[u], posB=pos[v],
+                connectionstyle=f"arc3,rad={rad}",
+                arrowstyle='-|>', color='gray', mutation_scale=10, lw=1
+            )
+            ax.add_patch(arrow)
+            label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
+            # Compute midpoint
+            mx, my = (pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2
+            # Compute direction vector
+            dx, dy = pos[v][0] - pos[u][0], pos[v][1] - pos[u][1]
+            length = (dx ** 2 + dy ** 2) ** 0.5 or 1
+            # Perpendicular vector (normalized)
+            perp_x, perp_y = -dy / length, dx / length
+            # Offset label along perpendicular, scaled by rad and edge length
+            offset = rad * 0.5 * length
+            label_x = mx + perp_x * offset
+            label_y = my + perp_y * offset
+            ax.text(label_x, label_y, label, fontsize=7, color='blue', ha='center', va='center',
+                    backgroundcolor='white')
 
     # Draw node labels (optional, can be commented out)
     # labels = {node: f"{node.location.name[:5]}_Day{node.day}_{node.type.to_string()}" for node in flow_network.nodes}
