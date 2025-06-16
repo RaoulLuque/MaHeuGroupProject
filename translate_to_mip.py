@@ -110,7 +110,7 @@ def solve_as_mip(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], 
             if location.type == LocationType.DEALER:
                 # Create an edge to the next day node with a delay of 1 day
                 next_day_node = NodeIdentifier(day + timedelta(days=1), location, NodeType.NORMAL)
-                flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED, weight=0)
+                flow_network.add_edge(next_day_node, current_node, capacity=UNBOUNDED, weight=0)
 
     # Create the helper nodes for each DEALER location
     for day in days:
