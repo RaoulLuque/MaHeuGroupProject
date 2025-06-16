@@ -244,7 +244,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
             arrow = FancyArrowPatch(
                 posA=pos[u], posB=pos[v],
                 connectionstyle=f"arc3,rad={rad}",
-                arrowstyle='-|>', color='gray', mutation_scale=10, lw=1
+                arrowstyle='-|>', color='gray', mutation_scale=14, lw=1  # Increased mutation_scale
             )
             ax.add_patch(arrow)
 
