@@ -5,7 +5,7 @@ from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdenti
 from datetime import date, timedelta
 
 
-def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
+def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
                  realised_trucks: dict[TruckIdentifier, Truck],
                  shortest_paths: dict[tuple[Location, Location], list[Location]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
@@ -19,19 +19,19 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
     are full or the realised capacity of a truck turns out to be smaller. As of now, in that case, it is not able
     to reassign those vehicles to another truck, so they will remain at their location until the next day.
 
-    :param ordered_vehicles: List of vehicles ordered by their available date.
+    :param requested_vehicles: List of Vehicle objects representing the vehicles to be assigned.
     :param expected_trucks: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
     :param realised_trucks: Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
     :param shortest_paths: Dictionary mapping pairs of PLANT and DEALER to the shortest path between them.
     :return: A tuple containing the updated vehicle and truck assignments.
     """
     vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
-                                                    in ordered_vehicles]
+                                                    in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                  expected_trucks.keys()}
-    first_day: date = min(min(ordered_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
+    first_day: date = min(min(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
                           min(expected_trucks.values(), key=lambda truck: truck.departure_date).departure_date)
-    last_day: date = max(max(ordered_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
+    last_day: date = max(max(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
                          max(expected_trucks.values(), key=lambda truck: truck.arrival_date).arrival_date)
     min_truck_number: int = min(truck_id.truck_number for truck_id in expected_trucks.keys())
     max_truck_number: int = max(truck_id.truck_number for truck_id in expected_trucks.keys())
@@ -47,12 +47,12 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
         for loc in LocationList:
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
             if loc.type == "PLANT":
-                vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in ordered_vehicles if
+                vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
             nextloc_partitions = {}  # Partition of vehicles at loc by their next location
             for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
                 # sort vehicles by next loc, then assign a truck, book extra and decide which vehicle stays, minimize delays,
-                vehicle = ordered_vehicles[vehicle_id]
+                vehicle = requested_vehicles[vehicle_id]
                 vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
                 next_loc = vehicle_path[vehicle_path.index(loc) + 1]
                 if next_loc not in nextloc_partitions:
