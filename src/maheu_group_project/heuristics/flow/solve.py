@@ -6,7 +6,8 @@ from maheu_group_project.heuristics.flow.visualize import visualize_flow_graph
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
-    FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY
+    FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY, \
+    convert_vehicle_assignments_to_truck_assignments
 from datetime import timedelta, date
 
 
@@ -125,10 +126,11 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
     flow = nx.min_cost_flow(flow_network)
-    visualize_flow_graph(flow_network, first_day, locations, flow)
+    # visualize_flow_graph(flow_network, first_day, locations, flow)
     # print(nx.min_cost_flow(flow_network))
-    # print(nx.min_cost_flow_cost(flow_network))
-    # return extract_solution_from_flow(flow, vehicles), {}
+    print(nx.min_cost_flow_cost(flow_network))
+    vehicle_assigments = extract_solution_from_flow(flow, vehicles)
+    return vehicle_assigments, convert_vehicle_assignments_to_truck_assignments(vehicle_assigments, trucks)
 
 
 def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
@@ -144,11 +146,29 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
         to contain their respective plans.
     """
+    # Sort the vehicles by their available date and due date to ensure we process them in the correct order
+    vehicles = sorted(vehicles, key=lambda vehicle: (vehicle.available_date, vehicle.due_date.toordinal()))
+
+    # This could be passed in as a parameter in the future.
+    CURRENT_DAY = min(vehicle.available_date for vehicle in vehicles)
+
     vehicle_assignments: list[VehicleAssignment] = []
 
+    # Filter out edges which have no positive flow
+    filtered_flow = {}
+    for src, targets in flow.items():
+        filtered_targets = {}
+        for dst, keys in targets.items():
+            filtered_keys = {k: v for k, v in keys.items() if v > 0}
+            if filtered_keys:
+                filtered_targets[dst] = filtered_keys
+        if filtered_targets:
+            filtered_flow[src] = filtered_targets
+    flow = filtered_flow
+
     # Loop over the vehicles and extract the assignments
+    # For each vehicle, heuristically find the fastest path from its origin to its destination
     for vehicle in vehicles:
-        # For each vehicle, heuristically find the fastest path from its origin to its destination
         current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
         destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
 
@@ -157,19 +177,19 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
         paths_taken = []
         planned_delayed = False
         delayed_by: timedelta = timedelta(0)
+        arrived = False
 
-        while current_node != destination:
+        while current_node != destination and not arrived:
             # Greedily find the next edge from the current node in the flow that has a positive flow value
             next_node = None
-            # Filter out the possible next nodes which don't have any positive flow
-            possible_next_nodes = [(neighbor, flows) for (neighbor, flows) in flow[current_node].items() if
-                                   (sum(flows.values()) > 0)]
-            # Sort the possible next nodes by the day of the node to ensure we always take the earliest possible next node
-            possible_next_nodes.sort(key=lambda x: x[0].day)
 
             # In the following loop we skip letting the vehicle stay at the same location. Thus, if the vehicle is already
             # at its destination, we will skip this loop.
             if current_node.location != vehicle.destination:
+                # Filter out the possible next nodes which don't have any positive flow
+                possible_next_nodes = list(flow[current_node].items())
+                # Sort the possible next nodes by the day of the node to ensure we always take the earliest possible next node
+                possible_next_nodes.sort(key=lambda x: x[0].day)
                 for identifier, flows in possible_next_nodes:
                     if identifier.location == current_node.location:
                         # We want to skip letting the vehicle stay at the same location for now and only allow consider moving
@@ -185,6 +205,12 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
                         # We subtract one from the flow of this edge to make it unavailable for the next vehicles
                         flow[current_node][next_node][edge_index] -= 1
 
+                        # If the flow of this edge is now 0, we remove it from the flow dict
+                        if flow[current_node][next_node][edge_index] == 0:
+                            del flow[current_node][next_node][edge_index]
+                            if not flow[current_node][next_node]:
+                                del flow[current_node][next_node]
+
                         # Update the paths taken, if the edge_number is not 0
                         # Explanation: edge_index starts at 0 by default and increments for parallel edges or are set with
                         # `key` when adding an edge. For trucks, this is set as the truck id which starts at 1, and other
@@ -194,34 +220,41 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
                                 TruckIdentifier(start_location=current_node.location, end_location=next_node.location,
                                                 truck_number=edge_index, departure_date=current_node.day))
 
-                        # Check if the next node is a HELPER_NODE, if so, we need to set a planned delay
-                        if next_node.type != NodeType.NORMAL:
-                            # Check if the vehicle is already planned to be delayed in which case we already took care of
-                            # setting the delay variables
-                            if delayed_by == timedelta(0):
-                                delayed_by = current_node.day - vehicle.due_date
+                        # Set the current node to the next node
+                        current_node = next_node
 
                         break
-            if next_node is None:
-                # If next_node is none, the only option seems to be letting the vehicle stay at the current node
-                next_day_node = NodeIdentifier(day=current_node.day + timedelta(days=1), location=current_node.location,
-                                               type=current_node.type)
-                if flow[current_node][next_day_node][0] > 0:
-                    next_node = next_day_node
+                if next_node is None:
+                    # If we have not found a next node, that means we should wait at the current location
+                    current_node = NodeIdentifier(day=current_node.day + timedelta(days=1), location=current_node.location,
+                                                    type=current_node.type)
 
-                    # The edge index for this edge is supposed to be 0, since no parallel edges should exist here
-                    edge_index = 0
+            else:
+                # We have reached the destination location. Either we have arrived early or we have delay to take care of.
+                arrived = True
 
-                    # We subtract one from the flow of this edge to make it unavailable for the next vehicles
-                    flow[current_node][next_node][edge_index] -= 1
-
+                # Check if we have a delay
+                if current_node.day <= vehicle.due_date:
+                    # We have no delay
+                    continue
                 else:
-                    raise ValueError(
-                        f"No valid segment with positive flow found for vehicle {vehicle.id} from {current_node} to {vehicle.destination}. \n Entire flow is: {flow}")
+                    # Check if we have a planned delay
+                    delay_notification_period = vehicle.due_date - CURRENT_DAY
+                    delay_length = current_node.day - vehicle.due_date
+                    if delay_notification_period <= timedelta(days=7):
+                        # We have an unplanned delay
+                        planned_delayed = False
+                        delayed_by = delay_length
+                    else:
+                        # We have a planned delay
+                        planned_delayed = True
+                        delayed_by = delay_length
 
         # Insert the vehicle assignment into the list
         vehicle_assignments.append(
             VehicleAssignment(id=id, paths_taken=paths_taken, planned_delayed=planned_delayed, delayed_by=delayed_by))
-    a = 0
 
-    return [], {}
+    # Return the list of vehicle assignments indexed by their id
+    vehicle_assignments.sort(key=lambda va: va.id)
+
+    return vehicle_assignments
