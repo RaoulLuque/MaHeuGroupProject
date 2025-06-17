@@ -234,3 +234,23 @@ class VehicleAssignment:
         self.paths_taken = paths_taken if paths_taken is not None else []
         self.planned_delayed = planned_delayed
         self.delayed_by = delayed_by
+
+
+def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[VehicleAssignment]) -> dict[
+    TruckIdentifier, TruckAssignment]:
+    """
+    Converts a list of VehicleAssignments into a dictionary of TruckAssignments.
+
+    Args:
+        vehicle_assignments (list[VehicleAssignment]): List of vehicle assignments to convert.
+
+    Returns:
+        dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their respective assignments.
+    """
+    truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
+    for vehicle in vehicle_assignments:
+        for truck_identifier in vehicle.paths_taken:
+            if truck_identifier not in truck_assignments:
+                truck_assignments[truck_identifier] = TruckAssignment()
+            truck_assignments[truck_identifier].load.append(vehicle.id)
+    return truck_assignments
