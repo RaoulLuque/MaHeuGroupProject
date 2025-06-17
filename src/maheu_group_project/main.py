@@ -1,5 +1,5 @@
 from maheu_group_project.parsing import read_data
-from maheu_group_project.heuristics.flow.solve_as_flow import solve_as_flow
+from maheu_group_project.heuristics.flow.solve import solve_as_flow
 
 
 def main():

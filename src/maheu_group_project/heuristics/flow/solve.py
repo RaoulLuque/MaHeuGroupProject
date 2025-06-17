@@ -124,11 +124,11 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
-    # visualize_flow_graph(flow_network, first_day, locations)
+    visualize_flow_graph(flow_network, first_day, locations)
     flow = nx.min_cost_flow(flow_network)
     # print(nx.min_cost_flow(flow_network))
     # print(nx.min_cost_flow_cost(flow_network))
-    return extract_solution_from_flow(flow, vehicles), {}
+    # return extract_solution_from_flow(flow, vehicles), {}
 
 
 def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
