@@ -4,7 +4,8 @@ import re
 import os
 from pathlib import Path
 
-from maheu_group_project.solution.encoding import Location, TruckIdentifier, Vehicle, Truck, location_from_string
+from maheu_group_project.solution.encoding import Location, TruckIdentifier, Vehicle, Truck, location_from_string, \
+    LocationType, location_type_from_string
 
 # Get the project root (2 levels up from this file)
 PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
@@ -98,3 +99,64 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 trucks[truck_id] = truck
 
     return locations, vehicles, trucks
+
+
+def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Location], list[Location]]:
+    """
+    Gets all Plants and Dealers from locations list.
+    Reads the paths from the base_data.csv file and finds the shortest path for each pair of Plant and Dealer.
+
+    Returns:
+        dict[tuple[Location, Location], list[Location]]: A dictionary where keys are tuples Plant and Dealer locations,
+            and values are lists of locations representing the shortest path.
+    """
+    shortest_paths: dict[tuple[Location, Location], list[Location]] = {}
+
+    # Read the base_data.csv file to get the paths
+    with open(os.path.join(PATH_TO_DATA_FOLDER, "base_data.csv")) as csvfile:
+        reader = list(csv.reader(csvfile, delimiter=';'))  # materialize reader into list
+
+    plants = [loc for loc in locations if loc.type == LocationType.PLANT]
+    dealers = [loc for loc in locations if loc.type == LocationType.DEALER]
+
+    for plant in plants:
+        for dealer in dealers:
+            for i, row in enumerate(reader):
+                if row and row[0] == "PTH" and row[3] == plant.name + "PLANT" and row[4] == dealer.name + "DEAL":
+                    print("found Path ", row[2])
+                    path = [plant]
+                    offset = 1  # Start from the next row after the PTH row
+                    while i + offset < len(reader):
+                        next_row = reader[i + offset]
+                        if len(next_row) <= 6:
+                            print("malformed row, breaking")
+                            break  # malformed row, stop
+
+                        location_as_string = next_row[6]
+                        match = re.match(r"([A-Z]{3}\d{2})(PLANT|TERM|DEAL)", location_as_string)
+                        if match:
+                            name = match.group(1)
+                            loc_type = location_type_from_string(match.group(2))
+                            location = Location(name=name, type=loc_type)
+                            if location in locations:
+                                path.append(location)
+                            else:
+                                path = []  # reset path on unknown location
+                                break
+                        else:
+                            print("no match for ", location_as_string)
+                            break
+
+                        offset += 1
+                        if i + offset >= len(reader) or reader[i + offset][0] != "PTHSG":
+                            break
+                    if path != [plant] and path != []:
+                        print("resulted in path: ")
+                        print([location.name for location in path])
+                        if (plant, dealer) not in shortest_paths or shortest_paths[(plant, dealer)] == [plant] or len(
+                                path) < len(shortest_paths[(plant, dealer)]):
+                            shortest_paths[(plant, dealer)] = path
+                            print("shortest path updated to: ")
+                            print([location.name for location in path])
+
+    return shortest_paths
