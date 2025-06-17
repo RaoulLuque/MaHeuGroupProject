@@ -1,6 +1,7 @@
 from datetime import date
 
 import networkx as nx
+import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
@@ -59,25 +60,9 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
         edge_dict = flow_network.get_edge_data(u, v)
         if edge_dict is None:
             continue
-        n = len(edge_dict)  # Number of parallel edges between u and v
         for idx, (k, data) in enumerate(edge_dict.items()):
             # Default curvature for parallel edges
-            rad = 0.0 if n == 1 else 0.2 * ((idx - (n - 1) / 2))
-
-            # Special curvatures for DEALER to HELPER_NODE edges to avoid overlap
-            if (
-                    u.location.type == LocationType.DEALER
-                    and (
-                    (u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_ONE)
-                    or (u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_TWO)
-                    or (u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.HELPER_NODE_TWO))
-            ):
-                if u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_ONE:
-                    rad = 0.25
-                elif u.type == NodeType.NORMAL and v.type == NodeType.HELPER_NODE_TWO:
-                    rad = -0.25
-                elif u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.HELPER_NODE_TWO:
-                    rad = 0.0
+            rad = 0.1 * (idx + 1)
 
             # Draw the edge as a curved arrow
             arrow = FancyArrowPatch(
@@ -89,15 +74,16 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
 
             # Label each edge with its capacity and weight (cost)
             label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
-            # Compute midpoint for label placement
-            mx, my = (pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2
-            dx, dy = pos[v][0] - pos[u][0], pos[v][1] - pos[u][1]
-            length = (dx ** 2 + dy ** 2) ** 0.5 or 1
-            # Offset label perpendicular to the edge, scaled by curvature
-            perp_x, perp_y = -dy / length, dx / length
-            offset = rad * 0.5 * length
-            label_x = mx + perp_x * offset
-            label_y = my + perp_y * offset
+
+            label_x = (pos[u][0] + pos[v][0]) / 2
+            label_y = (pos[u][1] + pos[v][1]) / 2
+
+            # Adjust label position slightly based on curvature and direction of edge
+            if u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.NORMAL:
+                label_y += abs(pos[u][0] - pos[v][0]) * rad * 2.5
+            else:
+                label_y -= abs(pos[u][0] - pos[v][0]) * rad * 2.5
+
             ax.text(label_x, label_y, label, fontsize=7, color='blue', ha='center', va='center',
                     backgroundcolor='white')
 
