@@ -7,8 +7,8 @@ from datetime import date, timedelta
 
 def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
                  realised_trucks: dict[TruckIdentifier, Truck],
-                 shortest_paths: dict[tuple[Location, Location], list[Location]]) -> tuple[
-    list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+                 shortest_paths: dict[tuple[Location, Location], list[Location]]) \
+        -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     A greedy solver that attempts to assign vehicles to trucks in a way that minimizes the total cost.
     On every day, at every location, it sends all vehicles to their respective next location using the cheapest
@@ -16,7 +16,8 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
     of vehicles, doesn't report any delays itself and, when having to choose a truck with nonzero cost, doesn't
     try to find the most cost-efficient truck for the amount of vehicles it needs to send. It also always tries
     to send all vehicles, never letting them stay at a location unless all available trucks to their next location
-    are full.
+    are full or the realised capacity of a truck turns out to be smaller. As of now, in that case, it is not able
+    to reassign those vehicles to another truck, so they will remain at their location until the next day.
 
     :param ordered_vehicles: List of vehicles ordered by their available date.
     :param expected_trucks: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
@@ -44,12 +45,13 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
     unplanned_delayed_vehicles: list[Vehicle] = []
     for day in days:  # days from start_date to end_date
         for loc in LocationList:
+            # for every day and every location, if that location is a PLANT, add vehicles that become available there
             if loc.type == "PLANT":
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in ordered_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
             nextloc_partitions = {}  # Partition of vehicles at loc by their next location
-            for vehicle_id in vehicles_at_loc_at_time[(loc,
-                                                       day)]:  # sort vehicles by next loc, then assign a truck, book extra and decide which vehicle stays, minimize delays,
+            for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
+                # sort vehicles by next loc, then assign a truck, book extra and decide which vehicle stays, minimize delays,
                 vehicle = ordered_vehicles[vehicle_id]
                 vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
                 next_loc = vehicle_path[vehicle_path.index(loc) + 1]
@@ -72,11 +74,18 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
                     truck_assignment = truck_assignments[truck_id]
                     current_truck_load = len(truck_assignment.load)
                     capacity = truck.capacity
+                    real_capacity = realised_trucks[truck_id].capacity if truck_id in realised_trucks else 0
                     while current_truck_load < capacity:
+                        # If the truck is expected to not be full, try to assign vehicles to it
                         vehicle_id = sorted_partition[vehicle_index].id
-                        truck_assignments[truck_id].load.append(vehicle_id)
-                        vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
-                        vehicles_at_loc_at_time[(next_loc, truck.arrival_date)].append(vehicle_id)
+                        if current_truck_load < real_capacity:
+                            # If the truck is really not full, actually assign the vehicle
+                            truck_assignments[truck_id].load.append(vehicle_id)
+                            vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
+                            vehicles_at_loc_at_time[(next_loc, truck.arrival_date)].append(vehicle_id)
+                        else:
+                            # otherwise the vehicle stays at the location for another day
+                            vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
                         vehicle_index += 1
                         current_truck_load += 1
                         if vehicle_index >= stop_index:
