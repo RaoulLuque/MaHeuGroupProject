@@ -1,5 +1,5 @@
 from maheu_group_project.parsing import read_data
-from maheu_group_project.heuristics.translate_to_mip import solve_as_mip
+from maheu_group_project.heuristics.mip import solve_as_mip
 
 
 def main():
