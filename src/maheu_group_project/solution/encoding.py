@@ -235,7 +235,7 @@ class VehicleAssignment:
         self.delayed_by = delayed_by
 
 
-def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[VehicleAssignment]) -> dict[
+def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[VehicleAssignment], trucks: dict[TruckIdentifier, Truck]) -> dict[
     TruckIdentifier, TruckAssignment]:
     """
     Converts a list of VehicleAssignments into a dictionary of TruckAssignments.
@@ -252,4 +252,10 @@ def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[V
             if truck_identifier not in truck_assignments:
                 truck_assignments[truck_identifier] = TruckAssignment()
             truck_assignments[truck_identifier].load.append(vehicle.id)
+
+    # Ensure that all trucks are contained in the truck_assignments dictionary
+    for truck_id in trucks.keys():
+        if truck_id not in truck_assignments:
+            truck_assignments[truck_id] = TruckAssignment()
+
     return truck_assignments
