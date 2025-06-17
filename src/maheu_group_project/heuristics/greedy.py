@@ -49,30 +49,33 @@ def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckI
             if loc.type == "PLANT":
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
-            nextloc_partitions = {}  # Partition of vehicles at loc by their next location
+            nextloc_partitions = {}  # Partition of the list of vehicles at the current location by their next location
             for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
-                # sort vehicles by next loc, then assign a truck, book extra and decide which vehicle stays, minimize delays,
+                # sort vehicles by next loc
                 vehicle = requested_vehicles[vehicle_id]
                 vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
                 next_loc = vehicle_path[vehicle_path.index(loc) + 1]
                 if next_loc not in nextloc_partitions:
+                    # If the next location for a vehicle is not yet a key in the partition, add it
                     nextloc_partitions[next_loc] = []
-                nextloc_partitions[next_loc].append(vehicle)
+                nextloc_partitions[next_loc].append(vehicle)  # Add the vehicle to the partition for its next location
             for next_loc, partition in nextloc_partitions.items():
-                truck_id_list = []  # For every next location create a list of trucks that goes there
+                # For every next location create a list of trucks that is expected to depart today from the current location to the next location
+                truck_id_list = []
                 for truck_number in range(min_truck_number, max_truck_number):
                     truck_id = TruckIdentifier(loc, next_loc, truck_number, day)
                     if truck_id in expected_trucks:
                         truck_id_list.append(truck_id)
-                sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[truck_id].price)
-                sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)
-                # assign all vehicles in partition to the trucks
+                sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[
+                    truck_id].price)  # sort trucks by price
+                sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)  # sort vehicles by due date
+                # assign all vehicles in the current partition to trucks
                 vehicle_index = 0
                 stop_index = len(sorted_partition)
                 for truck_id in sorted_truck_id_list:
                     truck = expected_trucks[truck_id]
-                    truck_assignment = truck_assignments[truck_id]
-                    current_truck_load = len(truck_assignment.load)
+                    current_truck_load = len(
+                        truck_assignments[truck_id].load)  # This should always be 0, so maybe unnecessary
                     capacity = truck.capacity
                     real_capacity = realised_trucks[truck_id].capacity if truck_id in realised_trucks else 0
                     while current_truck_load < capacity:
