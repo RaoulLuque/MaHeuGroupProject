@@ -147,10 +147,10 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
         to contain their respective plans.
     """
     # Sort the vehicles by their available date and due date to ensure we process them in the correct order
-    vehicles = sorted(vehicles, key=lambda vehicle: (vehicle.available_date, vehicle.due_date.toordinal()))
+    vehicles_sorted = sorted(vehicles, key=lambda vehicle: (vehicle.due_date, vehicle.available_date))
 
     # This could be passed in as a parameter in the future.
-    CURRENT_DAY = min(vehicle.available_date for vehicle in vehicles)
+    CURRENT_DAY = min(vehicle.available_date for vehicle in vehicles_sorted)
 
     vehicle_assignments: list[VehicleAssignment] = []
 
@@ -168,7 +168,7 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
 
     # Loop over the vehicles and extract the assignments
     # For each vehicle, heuristically find the fastest path from its origin to its destination
-    for vehicle in vehicles:
+    for vehicle in vehicles_sorted:
         current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
         destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
 
