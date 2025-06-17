@@ -10,7 +10,8 @@ from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
-def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location]):
+def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location],
+                         flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -18,9 +19,13 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
         flow_network (DiGraph[NodeIdentifier]): The flow network to visualize.
         first_day (date): The first day in the planning horizon.
         locations (list[Location]): List of all locations in the network.
+        flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    # Check if flow data is provided
+    flow_data_provided = flow is not None
 
     pos = {}
     scale = 100  # Controls spacing between nodes in the plot
@@ -73,7 +78,12 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
             ax.add_patch(arrow)
 
             # Label each edge with its capacity and weight (cost)
-            label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
+            if not flow_data_provided:
+                label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
+            else:
+                # If flow data is provided, use it to label the edge
+                flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
+                label = f"{flow_value}/{data.get('capacity', '')}/{data.get('weight', '')}"
 
             label_x = (pos[u][0] + pos[v][0]) / 2
             label_y = (pos[u][1] + pos[v][1]) / 2
