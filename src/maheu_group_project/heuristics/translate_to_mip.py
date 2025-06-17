@@ -6,7 +6,9 @@ import networkx as nx
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
-from encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, TruckAssignment, VehicleAssignment, \
+from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
+    TruckAssignment, \
+    VehicleAssignment, \
     FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY
 from datetime import timedelta, date
 
