@@ -162,6 +162,7 @@ class TruckAssignment:
         load (list[int]): List of vehicle IDs assigned to be loaded on the truck.
     """
     load: list[int]
+    is_booked: bool = False
 
     def __init__(self, load: list[int] = None):
         """
