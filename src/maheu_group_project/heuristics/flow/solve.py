@@ -129,8 +129,8 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
     # visualize_flow_graph(flow_network, first_day, locations, flow)
     # print(nx.min_cost_flow(flow_network))
     print(nx.min_cost_flow_cost(flow_network))
-    vehicle_assigments = extract_solution_from_flow(flow, vehicles)
-    return vehicle_assigments, convert_vehicle_assignments_to_truck_assignments(vehicle_assigments, trucks)
+    vehicle_assignments = extract_solution_from_flow(flow, vehicles)
+    return vehicle_assignments, convert_vehicle_assignments_to_truck_assignments(vehicle_assignments, trucks)
 
 
 def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
