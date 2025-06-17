@@ -10,3 +10,13 @@ dependencies = [
     "mip>=1.15.0",
     "networkx>=3.5",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "src/tests",
+]
