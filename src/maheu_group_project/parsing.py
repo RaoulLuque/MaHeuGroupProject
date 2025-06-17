@@ -12,9 +12,13 @@ PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 PATH_TO_DATA_FOLDER = os.path.join(PROJECT_ROOT_PATH, "data")
 
 
-def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
+def read_data(capacity_data: str = "planned_capacity_data.csv") -> tuple[
+    list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
     """
-    Reads the vehicle, truck and locations data from CSV files and returns lists of locations, vehicles, and trucks.
+    Reads the vehicle, truck, and locations data from CSV files and returns lists of locations, vehicles, and trucks.
+
+    Args:
+        capacity_data (str): The name of the CSV file containing truck capacity data. Defaults to "planned_capacity_data.csv".
 
     Returns:
         tuple: A tuple containing:
@@ -46,7 +50,7 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 vehicles.append(vehicle)
 
     # import the trucks from the planned_capacity_data.csv file
-    with open(os.path.join(PATH_TO_DATA_FOLDER, "planned_capacity_data.csv")) as csvfile:
+    with open(os.path.join(PATH_TO_DATA_FOLDER, capacity_data)) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if row and row[0] == "PLT":
