@@ -1,6 +1,7 @@
 from platform import mac_ver
 
-from encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, VehicleAssignment
+from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, \
+    VehicleAssignment
 from datetime import date, timedelta
 
 
@@ -17,8 +18,10 @@ def greedySolver(ordered_vehicles: list[Vehicle], expected_trucks: dict[TruckIde
     to send all vehicles, never letting them stay at a location unless all available trucks to their next location
     are full.
 
-    :param vehicle_assignment: List of vehicles to be assigned.
-    :param expected_truck_assignment: Dictionary of trucks expected to be available for assignment.
+    :param ordered_vehicles: List of vehicles ordered by their available date.
+    :param expected_trucks: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
+    :param realised_trucks: Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
+    :param shortest_paths: Dictionary mapping pairs of PLANT and DEALER to the shortest path between them.
     :return: A tuple containing the updated vehicle and truck assignments.
     """
     vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
