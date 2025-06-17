@@ -1,6 +1,6 @@
 import datetime
 
-from encoding import VehicleAssignment, TruckIdentifier, Truck, TruckAssignment, Vehicle
+from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, Truck, TruckAssignment, Vehicle
 
 
 def verifyVehiclePath(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],

@@ -2,8 +2,13 @@ import csv
 import datetime
 import re
 import os
+from pathlib import Path
 
-from encoding import Location, TruckIdentifier, Vehicle, Truck, location_type_from_string, location_from_string
+from maheu_group_project.solution.encoding import Location, TruckIdentifier, Vehicle, Truck, location_from_string
+
+# Get the project root (2 levels up from this file)
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
+PATH_TO_DATA_FOLDER = os.path.join(PROJECT_ROOT_PATH, "data")
 
 
 def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
@@ -21,7 +26,7 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
     trucks: dict[TruckIdentifier, Truck] = {}
 
     # import the vehicles from the vehicle_data.csv file
-    with open(os.path.join("data", "vehicle_data.csv"), newline="") as csvfile:
+    with open(os.path.join(PATH_TO_DATA_FOLDER, "vehicle_data.csv")) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if row and row[0] == "TRO":
@@ -40,7 +45,7 @@ def read_data() -> tuple[list[Location], list[Vehicle], dict[TruckIdentifier, Tr
                 vehicles.append(vehicle)
 
     # import the trucks from the planned_capacity_data.csv file
-    with open(os.path.join("data", "planned_capacity_data.csv"), newline="") as csvfile:
+    with open(os.path.join(PATH_TO_DATA_FOLDER, "planned_capacity_data.csv")) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if row and row[0] == "PLT":
