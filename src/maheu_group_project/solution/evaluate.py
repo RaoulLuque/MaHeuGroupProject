@@ -19,12 +19,12 @@ def objective_function(vehicle_assignments: list[VehicleAssignment],
         float: The objective value of the solution, calculated based on the prices of trucks and costs of delays.
     """
     objective_value = 0  # Initialize the objective value to 0
-    for truck_identifier, truck in truck_assignments:
-        if not len(truck.load) == 0:
-            # For each truck with non-empty load, add the price to the objective
-            objective_value += trucks[truck_identifier].price
+    for truck_identifier, truck_assignment in truck_assignments.items():
+        if not len(truck_assignment.load) == 0:
+            # For each truck with a non-empty load, add the corresponding price to the objective value
+            objective_value += trucks[truck_identifier].price / len(truck_assignment.load)
     for vehicle in vehicle_assignments:
-        # convert the delay to a float value in days
+        # Convert the delay to a float value in number of days
         delay_in_days = vehicle.delayed_by.days
         if vehicle.planned_delayed:
             # If the vehicle is planned to be delayed, add the fixed cost and the cost per day of delay
