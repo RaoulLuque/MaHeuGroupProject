@@ -30,7 +30,7 @@ or using pip:
 pip install .
 ```
 
-### Run the script using the command line
+### Run the script from the command line
 
 To run the script using the command line, run:
 
