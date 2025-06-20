@@ -12,12 +12,11 @@ def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckI
     """
     A greedy solver that attempts to assign vehicles to trucks in a way that minimizes the total cost.
     On every day, at every location, it sends all vehicles to their respective next location using the cheapest
-    available truck, while prioritizing vehicles with the soonest due-date. It completely ignores delay status
-    of vehicles, doesn't report any delays itself and, when having to choose a truck with nonzero cost, doesn't
-    try to find the most cost-efficient truck for the amount of vehicles it needs to send. It also always tries
-    to send all vehicles, never letting them stay at a location unless all available trucks to their next location
-    are full or the realised capacity of a truck turns out to be smaller. As of now, in that case, it is not able
-    to reassign those vehicles to another truck, so they will remain at their location until the next day.
+    available truck, while prioritizing vehicles with the soonest due-date. It decides how many trucks it needs to book
+    based on their expected capacity and then only uses these booked trucks, but makes use of additional capacity on a
+    truck, if available. It completely ignores delay status of vehicles and doesn't report any delays itself. It also
+    always tries to send all vehicles, never letting them stay at a location unless all booked trucks to their next
+    location are full.
 
     :param requested_vehicles: List of Vehicle objects representing the vehicles to be assigned.
     :param expected_trucks: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
@@ -49,7 +48,7 @@ def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckI
             if loc.type == "PLANT":
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
-            nextloc_partitions = {}  # Partition of the list of vehicles at the current location by their next location
+            nextloc_partitions = {}  # Partition the list of vehicles at the current location by what their next location is
             for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
                 # sort vehicles by next loc
                 vehicle = requested_vehicles[vehicle_id]
@@ -69,33 +68,38 @@ def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckI
                 sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[
                     truck_id].price)  # sort trucks by price
                 sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)  # sort vehicles by due date
+                vehicle_amount = len(sorted_partition)
+                # decide how many trucks to book based on expected truck list
+                total_capacity = 0
+                final_truck_id = None
+                for truck_id in sorted_truck_id_list:
+                    total_capacity += expected_trucks[truck_id].capacity
+                    if total_capacity >= vehicle_amount:
+                        final_truck_id = truck_id
+                        break
                 # assign all vehicles in the current partition to trucks
                 vehicle_index = 0
-                stop_index = len(sorted_partition)
                 for truck_id in sorted_truck_id_list:
-                    truck = expected_trucks[truck_id]
-                    current_truck_load = len(
-                        truck_assignments[truck_id].load)  # This should always be 0, so maybe unnecessary
-                    capacity = truck.capacity
-                    real_capacity = realised_trucks[truck_id].capacity if truck_id in realised_trucks else 0
-                    while current_truck_load < capacity:
-                        # If the truck is expected to not be full, try to assign vehicles to it
-                        vehicle_id = sorted_partition[vehicle_index].id
-                        if current_truck_load < real_capacity:
-                            # If the truck is really not full, actually assign the vehicle
+                    if truck_id in realised_trucks:  # If the truck actually exists
+                        truck = realised_trucks[truck_id]
+                        current_truck_load = len(
+                            truck_assignments[truck_id].load)  # This should always be 0, so maybe unnecessary
+                        capacity = truck.capacity
+                        while current_truck_load < capacity:
+                            # While the truck is not full, assign vehicles to it
+                            vehicle_id = sorted_partition[vehicle_index].id
                             truck_assignments[truck_id].load.append(vehicle_id)
                             vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
                             vehicles_at_loc_at_time[(next_loc, truck.arrival_date)].append(vehicle_id)
-                        else:
-                            # otherwise the vehicle stays at the location for another day
-                            vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
-                        vehicle_index += 1
-                        current_truck_load += 1
-                        if vehicle_index >= stop_index:
-                            break
-                    if vehicle_index >= stop_index:
+                            current_truck_load += 1
+                            vehicle_index += 1
+                            if vehicle_index >= vehicle_amount:  # If all vehicles in the partition are assigned, break
+                                break
+                    if vehicle_index >= vehicle_amount:  # If all vehicles in the partition are assigned, break
                         break
-                while vehicle_index < stop_index:
+                    if final_truck_id == truck_id:  # If we have loaded the final truck that was booked, break
+                        break
+                while vehicle_index < vehicle_amount:  # All remaining vehicles remain at the current location for another day
                     vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(sorted_partition[vehicle_index].id)
                     vehicle_index += 1
     return vehicle_assignments, truck_assignments
