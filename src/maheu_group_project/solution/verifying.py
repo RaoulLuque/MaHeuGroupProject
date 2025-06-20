@@ -3,8 +3,8 @@ import datetime
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, Truck, TruckAssignment, Vehicle
 
 
-def verifyVehiclePath(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
-                      truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
+def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
+                        truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
     """
     Tests if a vehicle departs from a location after it arrives there, the segments form a path from origin to destination,
     delay information is consistent with the vehicle's arrival date at the destination, and the vehicle is part of the truck's load.
@@ -79,8 +79,8 @@ def verifyVehiclePath(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, t
     return True
 
 
-def verifyTruckLoad(truck: Truck, truck_assignment: TruckAssignment,
-                    vehicle_assignments: list[VehicleAssignment]) -> bool:
+def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
+                      vehicle_assignments: list[VehicleAssignment]) -> bool:
     """
     Verifies that the load on the truck does not exceed its capacity and is consistent with the vehicles assigned to it.
 
@@ -109,9 +109,9 @@ def verifyTruckLoad(truck: Truck, truck_assignment: TruckAssignment,
     return True
 
 
-def verifySolution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAssignment],
-                   trucks: dict[TruckIdentifier, Truck],
-                   truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
+def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAssignment],
+                    trucks: dict[TruckIdentifier, Truck],
+                    truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
     # datatypes of input: list[Vehicle], dict[TruckIdentifier, Truck]
     """
     Verifies if a given assignment of trucks and vehicles is valid.
@@ -124,7 +124,7 @@ def verifySolution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAss
     """
     # Check if every vehicle uses a valid path with correct delay
     for i in range(len(vehicle_assignments)):
-        if not verifyVehiclePath(vehicles[i], vehicle_assignments[i], trucks, truck_assignments):
+        if not verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments):
             print(f"Vehicle {vehicles[i].id} has an invalid path.")
             return False
     # Check if every truck has a valid load
@@ -132,7 +132,7 @@ def verifySolution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAss
         if truck_id not in truck_assignments:
             print(f"Truck {truck_id} has no assignment.")
         else:
-            if not verifyTruckLoad(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
+            if not verify_truck_load(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
                 print(f"Truck {truck_id} has an invalid load.")
                 return False
     return True
