@@ -133,10 +133,16 @@ def read_trucks_from_file(file_name: str, locations: list[Location]) -> tuple[
     return trucks, locations
 
 
-def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Location], list[Location]]:
+def get_shortest_paths(dataset_dir_name: str, locations: list[Location]) -> dict[
+    tuple[Location, Location], list[Location]]:
     """
     Gets all Plants and Dealers from locations list.
     Reads the paths from the base_data.csv file and finds the shortest path for each pair of Plant and Dealer.
+
+    Args:
+        dataset_dir_name (str): The name of the directory containing the dataset files. The function will retrieve
+                                the base_data.csv file from this directory.
+        locations (list[Location]): A list of Location objects representing all locations.
 
     Returns:
         dict[tuple[Location, Location], list[Location]]: A dictionary where keys are tuples Plant and Dealer locations,
@@ -145,8 +151,8 @@ def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Locati
     shortest_paths: dict[tuple[Location, Location], list[Location]] = {}
 
     # Read the base_data.csv file to get the paths
-    with open(os.path.join(PATH_TO_DATA_FOLDER, "base_data.csv")) as csvfile:
-        reader = list(csv.reader(csvfile, delimiter=';'))  # materialize reader into list
+    with open(os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, "base_data.csv")) as csvfile:
+        reader = list(csv.reader(csvfile, delimiter=';'))
 
     plants = [loc for loc in locations if loc.type == LocationType.PLANT]
     dealers = [loc for loc in locations if loc.type == LocationType.DEALER]
@@ -157,12 +163,12 @@ def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Locati
                 if row and row[0] == "PTH" and row[3] == plant.name + "PLANT" and row[4] == dealer.name + "DEAL":
                     print("found Path ", row[2])
                     path = [plant]
-                    offset = 1  # Start from the next row after the PTH row
+                    offset = 1
                     while i + offset < len(reader):
                         next_row = reader[i + offset]
                         if len(next_row) <= 6:
                             print("malformed row, breaking")
-                            break  # malformed row, stop
+                            break
 
                         location_as_string = next_row[6]
                         match = re.match(r"([A-Z]{3}\d{2})(PLANT|TERM|DEAL)", location_as_string)
@@ -173,7 +179,7 @@ def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Locati
                             if location in locations:
                                 path.append(location)
                             else:
-                                path = []  # reset path on unknown location
+                                path = []
                                 break
                         else:
                             print("no match for ", location_as_string)
