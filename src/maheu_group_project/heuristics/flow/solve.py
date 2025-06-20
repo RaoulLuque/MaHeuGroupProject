@@ -126,9 +126,6 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
     flow = nx.min_cost_flow(flow_network)
-    # visualize_flow_graph(flow_network, first_day, locations, flow)
-    # print(nx.min_cost_flow(flow_network))
-    print(nx.min_cost_flow_cost(flow_network))
     vehicle_assignments = extract_solution_from_flow(flow, vehicles)
     return vehicle_assignments, convert_vehicle_assignments_to_truck_assignments(vehicle_assignments, trucks)
 
@@ -226,8 +223,9 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
                         break
                 if next_node is None:
                     # If we have not found a next node, that means we should wait at the current location
-                    current_node = NodeIdentifier(day=current_node.day + timedelta(days=1), location=current_node.location,
-                                                    type=current_node.type)
+                    current_node = NodeIdentifier(day=current_node.day + timedelta(days=1),
+                                                  location=current_node.location,
+                                                  type=current_node.type)
 
             else:
                 # We have reached the destination location. Either we have arrived early or we have delay to take care of.
