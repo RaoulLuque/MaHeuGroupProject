@@ -12,26 +12,30 @@ PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 PATH_TO_DATA_FOLDER = os.path.join(PROJECT_ROOT_PATH, "data")
 
 
-def read_data(capacity_data: str = "planned_capacity_data.csv") -> tuple[
-    list[Location], list[Vehicle], dict[TruckIdentifier, Truck]]:
+def read_data(dataset_dir_name: str = "CaseMaHeu25_01",
+              realised_capacity_file_name: str = "realised_capacity_data_001.csv") -> tuple[
+    list[Location], list[Vehicle], dict[TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
     """
     Reads the vehicle, truck, and locations data from CSV files and returns lists of locations, vehicles, and trucks.
 
     Args:
-        capacity_data (str): The name of the CSV file containing truck capacity data. Defaults to "planned_capacity_data.csv".
+        dataset_dir_name (str): The name of the directory containing the dataset files. Defaults to "CaseMaHeu25_01".
+        realised_capacity_file_name (str): The name of the CSV file containing truck capacity data. Defaults to "realised_capacity_data_001.csv".
 
     Returns:
         tuple: A tuple containing:
             - list[Location]: List of unique locations.
             - list[Vehicle]: List of vehicles with their details.
-            - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects.
+            - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects. This contains the realised capacity data
+                                            for the provided realised_capacity_file_name.
+            - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects. This contains the planned capacity data
+                                            for the trucks.
     """
     locations: list[Location] = []
     vehicles: list[Vehicle] = []
-    trucks: dict[TruckIdentifier, Truck] = {}
 
     # import the vehicles from the vehicle_data.csv file
-    with open(os.path.join(PATH_TO_DATA_FOLDER, "vehicle_data.csv")) as csvfile:
+    with open(os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, "vehicle_data.csv")) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if row and row[0] == "TRO":
@@ -49,8 +53,32 @@ def read_data(capacity_data: str = "planned_capacity_data.csv") -> tuple[
                 )
                 vehicles.append(vehicle)
 
-    # import the trucks from the planned_capacity_data.csv file
-    with open(os.path.join(PATH_TO_DATA_FOLDER, capacity_data)) as csvfile:
+    trucks_realised, locations = read_trucks_from_file(
+        os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, realised_capacity_file_name), locations)
+    trucks_planned, locations = read_trucks_from_file(
+        os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, "planned_capacity_data.csv"), locations)
+
+    return locations, vehicles, trucks_realised, trucks_planned
+
+
+def read_trucks_from_file(file_name: str, locations: list[Location]) -> tuple[
+    dict[TruckIdentifier, Truck], list[Location]]:
+    """
+    Reads the truck data from a CSV file and returns a dictionary of trucks and a list of unique locations.
+    Can be used for both realised and planned capacity data.
+
+    Args:
+        file_name (str): The name of the CSV file containing truck data.
+        locations (list[Location]): A list to store unique locations found in the truck data.
+
+    Returns:
+        tuple: A tuple containing:
+            - dict[TruckIdentifier, Truck]: A dictionary mapping truck identifiers to Truck objects.
+            - list[Location]: A list of unique locations found in the truck data.
+    """
+    trucks: dict[TruckIdentifier, Truck] = {}
+    # import the trucks from the realised_capacity_data file
+    with open(file_name) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if row and row[0] == "PLT":
@@ -102,7 +130,7 @@ def read_data(capacity_data: str = "planned_capacity_data.csv") -> tuple[
 
                 trucks[truck_id] = truck
 
-    return locations, vehicles, trucks
+    return trucks, locations
 
 
 def get_shortest_paths(locations: list[Location]) -> dict[tuple[Location, Location], list[Location]]:
