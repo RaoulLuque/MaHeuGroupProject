@@ -5,10 +5,10 @@ from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdenti
 from datetime import date, timedelta
 
 
-def greedySolver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
-                 LocationList: list[Location],
-                 realised_trucks: dict[TruckIdentifier, Truck],
-                 candidate_paths: dict[tuple[Location, Location], list[list[Location]]]) \
+def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
+                                 LocationList: list[Location],
+                                 realised_trucks: dict[TruckIdentifier, Truck],
+                                 candidate_paths: dict[tuple[Location, Location], list[list[Location]]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     A greedy solver that attempts to assign vehicles to trucks in a way that minimizes the total cost.
