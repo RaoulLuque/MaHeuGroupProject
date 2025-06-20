@@ -74,9 +74,9 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                 # For every next location create a list of trucks that is expected to depart today from the current location to the next location
                 # print(f"Processing {len(partition)} vehicles from {loc} to {next_loc} on {day}")
                 truck_id_list = []
-                for truck_number in range(min_truck_number, max_truck_number):
-                    truck_id = TruckIdentifier(loc, next_loc, truck_number, day)
-                    if truck_id in expected_trucks:
+                for truck_id in expected_trucks.keys():
+                    if truck_id.start_location == loc and truck_id.end_location == next_loc and \
+                            truck_id.departure_date == day:
                         truck_id_list.append(truck_id)
                 sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[
                     truck_id].price)  # sort trucks by price
