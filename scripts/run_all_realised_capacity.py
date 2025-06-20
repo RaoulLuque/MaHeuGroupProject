@@ -8,8 +8,9 @@ from maheu_group_project.heuristics.general_solver import solve, SolverType, sol
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from maheu_group_project.solution.evaluate import objective_function
-from maheu_group_project.parsing import read_data
-from maheu_group_project.heuristics.flow.solve import solve_as_flow
+
+# This is the solver to be used/tested
+SOLVER = SolverType.FLOW
 
 
 def run_on_all_data_from_first_dataset():
@@ -22,7 +23,7 @@ def run_on_all_data_from_first_dataset():
         pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
         files = sorted(glob.glob(pattern))
         for file in files:
-            vehicle_assignment, truck_assignment, _, _, trucks_realised, _ = solve_and_return_data(SolverType.FLOW,
+            vehicle_assignment, truck_assignment, _, _, trucks_realised, _ = solve_and_return_data(SOLVER,
                                                                                                    dataset_dir,
                                                                                                    os.path.basename(
                                                                                                        file))
