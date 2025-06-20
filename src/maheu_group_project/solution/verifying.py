@@ -21,27 +21,31 @@ def verifyVehiclePath(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, t
     """
     # Check if start and end locations and dates are correct
     # Take the first truck in the path and its assignment
-    truck = trucks[vehicle_assignment.paths_taken[0]]
-    truck_assignment = truck_assignments[vehicle_assignment.paths_taken[0]]
+    vehicle_path = vehicle_assignment.paths_taken
+    if vehicle_path == []:
+        print(f"The vehicle {vehicle_assignment.id} has no trucks assigned.")
+        return True  # No path taken, nothing to verify
+    truck = trucks[vehicle_path[0]]
+    truck_assignment = truck_assignments[vehicle_path[0]]
     if not (truck.start_location == vehicle.origin):
         # The first truck should start at the vehicle's origin
         print(
-            f"The truck with ID {vehicle_assignment.paths_taken[0]} needs to start at origin of vehicle {vehicle_assignment.id}, but it doesn't.")
+            f"The truck with ID {vehicle_path[0]} needs to start at origin of vehicle {vehicle_assignment.id}, but it doesn't.")
         return False
     if not (truck.departure_date >= vehicle.available_date):
         # The first truck should depart after the vehicle is available
         print(
-            f"The truck with ID {vehicle_assignment.paths_taken[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't.")
+            f"The truck with ID {vehicle_path[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't.")
         return False
     if not (vehicle_assignment.id in truck_assignment.load):
         print(
-            f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_assignment.paths_taken[0]}, but it isn't.")
+            f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't.")
         return False
-    truck = trucks[vehicle_assignment.paths_taken[-1]]  # The last truck in the path
+    truck = trucks[vehicle_path[-1]]  # The last truck in the path
     if not (truck.end_location == vehicle.destination):
         # The last truck should end at the vehicle's destination
         print(
-            f"The truck with ID {vehicle_assignment.paths_taken[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
+            f"The truck with ID {vehicle_path[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
         return False
     if not (vehicle_assignment.delayed_by >= datetime.timedelta(0)):  # The delay should be non-negative
         print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
@@ -54,11 +58,11 @@ def verifyVehiclePath(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, t
             print(
                 f"Delay information for vehicle {vehicle_assignment.id} is inconsistent with actual arrival time at destination.")
             return False
-    for truck_id in vehicle_assignment.paths_taken[1:]:
+    for truck_id in vehicle_path[1:]:
         # Check if trucks are in the correct order, dates are consistent and vehicle is part of the truck's load
         truck = trucks[truck_id]
         truck_assignment = truck_assignments[truck_id]
-        previous_truck = trucks[vehicle_assignment.paths_taken[vehicle_assignment.paths_taken.index(truck_id) - 1]]
+        previous_truck = trucks[vehicle_path[vehicle_path.index(truck_id) - 1]]
         if not (truck.departure_date >= previous_truck.arrival_date):
             print(
                 f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs before the previous truck arrives.")
@@ -125,7 +129,10 @@ def verifySolution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAss
             return False
     # Check if every truck has a valid load
     for truck_id in trucks.keys():
-        if not verifyTruckLoad(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
-            print(f"Truck {truck_id} has an invalid load.")
-            return False
+        if truck_id not in truck_assignments:
+            print(f"Truck {truck_id} has no assignment.")
+        else:
+            if not verifyTruckLoad(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
+                print(f"Truck {truck_id} has an invalid load.")
+                return False
     return True
