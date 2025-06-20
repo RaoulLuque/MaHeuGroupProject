@@ -161,7 +161,6 @@ def get_shortest_paths(dataset_dir_name: str, locations: list[Location]) -> dict
         for dealer in dealers:
             for i, row in enumerate(reader):
                 if row and row[0] == "PTH" and row[3] == plant.name + "PLANT" and row[4] == dealer.name + "DEAL":
-                    print("found Path ", row[2])
                     path = [plant]
                     offset = 1
                     while i + offset < len(reader):
@@ -189,12 +188,8 @@ def get_shortest_paths(dataset_dir_name: str, locations: list[Location]) -> dict
                         if i + offset >= len(reader) or reader[i + offset][0] != "PTHSG":
                             break
                     if path != [plant] and path != []:
-                        print("resulted in path: ")
-                        print([location.name for location in path])
                         if (plant, dealer) not in shortest_paths or shortest_paths[(plant, dealer)] == [plant] or len(
                                 path) < len(shortest_paths[(plant, dealer)]):
                             shortest_paths[(plant, dealer)] = path
-                            print("shortest path updated to: ")
-                            print([location.name for location in path])
 
     return shortest_paths
