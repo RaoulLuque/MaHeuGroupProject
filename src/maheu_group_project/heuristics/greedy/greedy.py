@@ -3,6 +3,7 @@ from platform import mac_ver
 from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, \
     VehicleAssignment
 from datetime import date, timedelta
+from maheu_group_project.solution.encoding import location_type_from_string
 
 
 def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[TruckIdentifier, Truck],
@@ -24,8 +25,9 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     :param shortest_paths: Dictionary mapping pairs of PLANT and DEALER to the shortest path between them.
     :return: A tuple containing the updated vehicle and truck assignments.
     """
-    vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
-                                                    in requested_vehicles]
+    vehicle_assignments: dict[int, VehicleAssignment] = {
+        vehicle.id: VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
+        in requested_vehicles}
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                  expected_trucks.keys()}
     first_day: date = min(min(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
@@ -39,27 +41,38 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
     LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
     Location_indices: dict[Location, int] = {loc: i for i, loc in enumerate(LocationList)}
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {}
+    Vehicle_from_id: dict[int, Vehicle] = {vehicle.id: vehicle for vehicle in requested_vehicles}
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+                                                                       days}
     planned_delayed_vehicles: list[Vehicle] = []
     unplanned_delayed_vehicles: list[Vehicle] = []
     for day in days:  # days from start_date to end_date
+        # print(f"Processing day {day}")
         for loc in LocationList:
+            # print(f"Processing location {loc} on {day}")
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
-            if loc.type == "PLANT":
+            if loc.type == location_type_from_string("PLANT"):
+                # print(f"Location {loc} is a PLANT, adding available vehicles")
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
             nextloc_partitions = {}  # Partition the list of vehicles at the current location by what their next location is
             for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
                 # sort vehicles by next loc
-                vehicle = requested_vehicles[vehicle_id]
-                vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
-                next_loc = vehicle_path[vehicle_path.index(loc) + 1]
-                if next_loc not in nextloc_partitions:
-                    # If the next location for a vehicle is not yet a key in the partition, add it
-                    nextloc_partitions[next_loc] = []
-                nextloc_partitions[next_loc].append(vehicle)  # Add the vehicle to the partition for its next location
+                vehicle = Vehicle_from_id[vehicle_id]
+                if vehicle.destination == loc:
+                    vehicle_assignments[vehicle_id].delayed_by = max(timedelta(0), day - vehicle.due_date)
+                else:
+                    # If the vehicle's destination is the current location, it doesn't need to be sent anywhere
+                    vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
+                    next_loc = vehicle_path[vehicle_path.index(loc) + 1]
+                    if next_loc not in nextloc_partitions:
+                        # If the next location for a vehicle is not yet a key in the partition, add it
+                        nextloc_partitions[next_loc] = []
+                    nextloc_partitions[next_loc].append(
+                        vehicle)  # Add the vehicle to the partition for its next location
             for next_loc, partition in nextloc_partitions.items():
                 # For every next location create a list of trucks that is expected to depart today from the current location to the next location
+                # print(f"Processing {len(partition)} vehicles from {loc} to {next_loc} on {day}")
                 truck_id_list = []
                 for truck_number in range(min_truck_number, max_truck_number):
                     truck_id = TruckIdentifier(loc, next_loc, truck_number, day)
@@ -102,4 +115,5 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                 while vehicle_index < vehicle_amount:  # All remaining vehicles remain at the current location for another day
                     vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(sorted_partition[vehicle_index].id)
                     vehicle_index += 1
-    return vehicle_assignments, truck_assignments
+    v_assignments_list = list(vehicle_assignments.values())
+    return v_assignments_list, truck_assignments
