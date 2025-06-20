@@ -3,6 +3,8 @@ import glob
 import os
 import sys
 
+from maheu_group_project.heuristics.general_solver import solve, SolverType, solve_and_return_data
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from maheu_group_project.solution.evaluate import objective_function
@@ -20,10 +22,11 @@ def run_on_all_data_from_first_dataset():
         pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
         files = sorted(glob.glob(pattern))
         for file in files:
-            file = os.path.join(dataset_dir, file)
-            locations, vehicles, trucks = read_data(realised_capacity_file_name=file)
-            vehicle_assignment, truck_assignment = solve_as_flow(vehicles, trucks, locations)
-            cost = objective_function(vehicle_assignment, truck_assignment, trucks)
+            vehicle_assignment, truck_assignment, _, _, trucks_realised, _ = solve_and_return_data(SolverType.FLOW,
+                                                                                                   dataset_dir,
+                                                                                                   os.path.basename(
+                                                                                                       file))
+            cost = objective_function(vehicle_assignment, truck_assignment, trucks_realised)
             output = f"Cost of solution for {os.path.basename(file)}: {cost:.2f} \n"
             result_file.write(output)
             print(output)

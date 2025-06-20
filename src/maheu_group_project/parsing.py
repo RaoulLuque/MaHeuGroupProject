@@ -12,8 +12,8 @@ PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 PATH_TO_DATA_FOLDER = os.path.join(PROJECT_ROOT_PATH, "data")
 
 
-def read_data(dataset_dir_name: str = "CaseMaHeu25_01",
-              realised_capacity_file_name: str = "realised_capacity_data_001.csv") -> tuple[
+def read_data(dataset_dir_name: str,
+              realised_capacity_file_name: str) -> tuple[
     list[Location], list[Vehicle], dict[TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
     """
     Reads the vehicle, truck, and locations data from CSV files and returns lists of locations, vehicles, and trucks.
