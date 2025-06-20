@@ -2,7 +2,6 @@ import networkx as nx
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType
-from maheu_group_project.heuristics.flow.visualize import visualize_flow_graph
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
@@ -59,10 +58,15 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
         start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
         end_node = NodeIdentifier(truck.arrival_date, truck.end_location, NodeType.NORMAL)
 
+        # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
+        # ignored when computing the actual objective value of the solution.
+        day_price = (truck.arrival_date - first_day).days
+        price = truck.price if truck.price != 0 else day_price
+
         # Add an edge from the start node to the end node with the truck's capacity as the flow.
         # The key of the edge is the truck_number to distinguish parallel edges. These will be the keys in the flow
         # dict.
-        flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=truck.price, key=truck.truck_number)
+        flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=price, key=truck.truck_number)
     # Create the helper edges for the flow network connecting the columns
     for day in days:
         for location in locations:
@@ -125,8 +129,10 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
+    # visualize_flow_graph(flow_network, first_day, locations)
     flow = nx.min_cost_flow(flow_network)
     vehicle_assignments = extract_solution_from_flow(flow, vehicles)
+    # visualize_flow_graph(flow_network, first_day, locations, flow)
     return vehicle_assignments, convert_vehicle_assignments_to_truck_assignments(vehicle_assignments, trucks)
 
 
