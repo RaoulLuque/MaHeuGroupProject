@@ -42,7 +42,7 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
     # Create a Network to model the flow
     flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
 
-    # Create the vertices of the flow network behind the MIP
+    # Create the vertices of the flow network
     # Create a node for each day and each location
     for day in days:
         for location in locations:
