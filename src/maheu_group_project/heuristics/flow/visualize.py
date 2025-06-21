@@ -1,5 +1,4 @@
 import hashlib
-from datetime import date
 
 import networkx as nx
 from matplotlib import pyplot as plt
