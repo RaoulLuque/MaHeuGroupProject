@@ -163,7 +163,7 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     start_node = NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)
-    end_node = NodeIdentifier(vehicle.available_date, vehicle.destination, NodeType.NORMAL)
+    end_node = NodeIdentifier(vehicle.due_date, vehicle.destination, NodeType.NORMAL)
     commodity_group = vehicle_to_commodity_group(vehicle)
     # We check if the respective nodes already have a demand for this commodity group and adjust it accordingly to avoid
     # key errors.

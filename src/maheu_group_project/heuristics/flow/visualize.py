@@ -59,6 +59,9 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
     # Annotate each node with its demand (capacity) in red
     for node, (x, y) in pos.items():
         if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
+            # Debug print the associated data of the node
+            print(f"Node {node}: {flow_network.nodes[node]}")
+
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
             ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')
