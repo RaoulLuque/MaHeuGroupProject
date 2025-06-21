@@ -7,7 +7,7 @@ from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.flow.types import dealership_to_commodity_group
-from maheu_group_project.heuristics.old_flow.types import NodeIdentifier, NodeType
+from maheu_group_project.heuristics.old_flow.old_types import NodeIdentifier, NodeType
 from maheu_group_project.solution.encoding import Location, LocationType
 
 

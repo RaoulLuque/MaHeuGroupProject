@@ -1,7 +1,6 @@
 from maheu_group_project.heuristics.flow.solve import create_flow_network
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_graph
 from maheu_group_project.parsing import read_data
-from maheu_group_project.heuristics.old_flow.solve import solve_as_flow
 
 
 def main():

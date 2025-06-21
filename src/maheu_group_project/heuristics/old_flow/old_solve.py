@@ -1,7 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.old_flow.types import NodeIdentifier, NodeType
+from maheu_group_project.heuristics.old_flow.old_types import NodeIdentifier, NodeType
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
