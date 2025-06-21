@@ -1,18 +1,16 @@
 from datetime import date
 
 import networkx as nx
-import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.flow.types import dealership_to_commodity_group
-from maheu_group_project.heuristics.old_flow.old_types import OldNodeIdentifier, OldNodeType
+from maheu_group_project.heuristics.flow.types import dealership_to_commodity_group, NodeType, NodeIdentifier
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
 def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
-                         flow: dict[OldNodeIdentifier, dict[OldNodeIdentifier, dict[int, int]]] = None):
+                         flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -22,7 +20,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
     """
     # Ensure correct type for flow_network
-    flow_network: MultiDiGraph[OldNodeIdentifier] = flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     # Get the first day in the flow network to align nodes vertically
     first_day = min(node.day for node in flow_network.nodes)
@@ -38,7 +36,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
         day = node.day
         location = node.location
         # NORMAL nodes are aligned in columns by location
-        if node.type == OldNodeType.NORMAL:
+        if node.type == NodeType.NORMAL:
             pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal()) * scale)
         else:
             # HELPER nodes are offset horizontally to avoid overlap
@@ -60,7 +58,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
 
     # Annotate each node with its demand (capacity) in red
     for node, (x, y) in pos.items():
-        if node.type == OldNodeType.NORMAL and node.location.type == LocationType.DEALER:
+        if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
             ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')
@@ -94,7 +92,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
             label_y = (pos[u][1] + pos[v][1]) / 2
 
             # Adjust label position slightly based on curvature and direction of edge
-            if u.type == OldNodeType.HELPER_NODE_ONE and v.type == OldNodeType.NORMAL:
+            if u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.NORMAL:
                 label_y += abs(pos[u][0] - pos[v][0]) * rad * 2.5
             else:
                 label_y -= abs(pos[u][0] - pos[v][0]) * rad * 2.5
