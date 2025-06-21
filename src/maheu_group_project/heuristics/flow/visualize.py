@@ -1,3 +1,4 @@
+import hashlib
 from datetime import date
 
 import networkx as nx
@@ -64,7 +65,8 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
 
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
-            ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')
+            color = string_to_color(commodity_group)
+            ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():
@@ -110,3 +112,20 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
     plt.axis('off')  # Hide axes for cleaner visualization
     plt.tight_layout()
     plt.show()
+
+def string_to_color(label: str) -> tuple[float, float, float]:
+    """
+    Converts a string label to a color tuple based on its hash.
+
+    Args:
+        label (str): The string label to convert to a color.
+
+    Returns:
+        tuple[float, float, float]: A tuple representing the RGB color normalized to [0, 1].
+    """
+
+    # Hash the string and get the first 3 bytes
+    hash_bytes = hashlib.md5(label.encode('utf-8')).digest()
+    r, g, b = hash_bytes[0], hash_bytes[1], hash_bytes[2]
+    # Normalize to [0, 1] for matplotlib
+    return r / 255, g / 255, b / 255
