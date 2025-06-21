@@ -3,7 +3,7 @@ import glob
 import os
 import sys
 
-from maheu_group_project.heuristics.general_solver import SolverType, solve_and_return_data
+from maheu_group_project.heuristics.solver import SolverType, solve_and_return_data
 from maheu_group_project.solution.verifying import verify_solution
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
-SOLVER = SolverType.FLOW
+SOLVER = SolverType.GREEDY
 
 
 def run_on_all_data_from_first_dataset():
