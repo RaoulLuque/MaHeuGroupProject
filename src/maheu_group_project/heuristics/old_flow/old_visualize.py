@@ -10,7 +10,7 @@ from maheu_group_project.heuristics.old_flow.old_types import OldNodeIdentifier,
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
-def old_visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location],
+def old_visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
                              flow: dict[OldNodeIdentifier, dict[OldNodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
@@ -23,6 +23,9 @@ def old_visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locati
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[OldNodeIdentifier] = flow_network
+
+    # Get the first day in the flow network to align nodes vertically
+    first_day = min(node.day for node in flow_network.nodes)
 
     # Check if flow data is provided
     flow_data_provided = flow is not None
