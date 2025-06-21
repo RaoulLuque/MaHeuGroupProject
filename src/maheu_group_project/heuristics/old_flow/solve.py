@@ -13,7 +13,8 @@ from datetime import timedelta, date
 def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
-    Translates the given vehicles and trucks into a MIP (Mixed Integer Programming) format string.
+    Solves the vehicle assignment problem using a flow-based approach. It creates a flow network to model the transportation
+    of vehicles using available trucks, considering their capacities and the locations involved.
 
     Args:
         vehicles (list[Vehicle]): List of vehicles to be transported.
