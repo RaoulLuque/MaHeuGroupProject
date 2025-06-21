@@ -1,7 +1,9 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group, NodeIdentifier, NodeType
+from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group, NodeIdentifier, NodeType, \
+    dealership_to_commodity_group
+from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
@@ -155,7 +157,7 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network to which the demand should be added.
         vehicle (Vehicle): The vehicle for which the demand should be added.
     """
-    # Ensure correct type for flow_network
+    # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     start_node = NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)
@@ -173,26 +175,46 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network.nodes[end_node][commodity_group] += 1
 
 
-def solve_deterministically(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
+def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
-    Translates the given vehicles and trucks into a .
+    Solves the multicommodity min-cost flow problem heuristically by solving multiple single commodity min-cost flow
+    problems for each DEALER location and day in the flow network.
+
+    This function iterates over each day (in ascending order) and each DEALER location, solving a min-cost flow problem
+    for the vehicles that are due on that day and at that location. The flow network is expected to have been created
+    with the `create_flow_network` function.
 
     Args:
-        vehicles (list[Vehicle]): List of vehicles to be transported.
-        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
+        flow_network (MultiDiGraph[NodeIdentifier]): The flow network to solve.
         locations (list[Location]): List of locations involved in the transportation.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
         to contain their respective plans.
     """
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    # visualize_flow_graph(flow_network, first_day, locations)
-    flow = nx.min_cost_flow(flow_network)
-    vehicle_assignments = extract_solution_from_flow(flow, vehicles)
-    # visualize_flow_graph(flow_network, first_day, locations, flow)
-    return vehicle_assignments, convert_vehicle_assignments_to_truck_assignments(vehicle_assignments, trucks)
+    first_day = min(node.day for node in flow_network.nodes)
+    last_day = max(node.day for node in flow_network.nodes)
+
+    number_of_days = (last_day - first_day).days + 1
+    days = [first_day + timedelta(days=i) for i in range(number_of_days)]
+
+    # We iterate over the days from first to last, then those locations which are DEALER locations
+    for day in days:
+        for location in locations:
+            if location.type == LocationType.DEALER:
+                # For each DEALER location, solve a min-cost flow problem with the commodity group corresponding to
+                # the current day and location.
+                commodity_group = dealership_to_commodity_group(NodeIdentifier(day, location, NodeType.NORMAL))
+
+                flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight',)
+
+                visualize_flow_network(flow_network, locations, flow)
+
+    return [], {}
 
 
 def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],

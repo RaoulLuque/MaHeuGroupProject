@@ -10,8 +10,8 @@ from maheu_group_project.heuristics.flow.types import dealership_to_commodity_gr
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
-def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
-                         flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
+def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
+                           flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -60,9 +60,6 @@ def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
     # Annotate each node with its demand (capacity) in red
     for node, (x, y) in pos.items():
         if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
-            # Debug print the associated data of the node
-            print(f"Node {node}: {flow_network.nodes[node]}")
-
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
             color = string_to_color(commodity_group)
