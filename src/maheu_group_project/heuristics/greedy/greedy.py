@@ -19,11 +19,16 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     always tries to send all vehicles, never letting them stay at a location unless all booked trucks to their next
     location are full.
 
-    :param requested_vehicles: List of Vehicle objects representing the vehicles to be assigned.
-    :param expected_trucks: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
-    :param realised_trucks: Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
-    :param shortest_paths: Dictionary mapping pairs of PLANT and DEALER to the shortest path between them.
-    :return: A tuple containing the updated vehicle and truck assignments.
+    Args:
+        requested_vehicles (list[Vehicle]): List of Vehicle objects representing the vehicles to be assigned.
+        expected_trucks (dict[TruckIdentifier, Truck]): Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
+        realised_trucks (dict[TruckIdentifier, Truck]): Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
+        shortest_paths (dict[tuple[Location, Location], list[Location]]): Dictionary mapping pairs of PLANT and DEALER to the shortest path between them.
+
+    Returns:
+        tuple: A tuple containing:
+            - list[VehicleAssignment]: List of VehicleAssignment objects representing the assignments of vehicles to trucks.
+            - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping TruckIdentifier to TruckAssignment objects representing the assignments of trucks.
     """
     vehicle_assignments: dict[int, VehicleAssignment] = {
         vehicle.id: VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
@@ -42,8 +47,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
     Location_indices: dict[Location, int] = {loc: i for i, loc in enumerate(LocationList)}
     Vehicle_from_id: dict[int, Vehicle] = {vehicle.id: vehicle for vehicle in requested_vehicles}
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
-                                                                       days}
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in days}
     planned_delayed_vehicles: list[Vehicle] = []
     unplanned_delayed_vehicles: list[Vehicle] = []
     for day in days:  # days from start_date to end_date
@@ -68,19 +72,19 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                     if next_loc not in nextloc_partitions:
                         # If the next location for a vehicle is not yet a key in the partition, add it
                         nextloc_partitions[next_loc] = []
-                    nextloc_partitions[next_loc].append(
-                        vehicle)  # Add the vehicle to the partition for its next location
+                    # Add the vehicle to the partition for its next location
+                    nextloc_partitions[next_loc].append(vehicle)
             for next_loc, partition in nextloc_partitions.items():
                 # For every next location create a list of trucks that is expected to depart today from the current location to the next location
                 # print(f"Processing {len(partition)} vehicles from {loc} to {next_loc} on {day}")
                 truck_id_list = []
                 for truck_id in expected_trucks.keys():
-                    if truck_id.start_location == loc and truck_id.end_location == next_loc and \
-                            truck_id.departure_date == day:
+                    if truck_id.start_location == loc and truck_id.end_location == next_loc and truck_id.departure_date == day:
                         truck_id_list.append(truck_id)
-                sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[
-                    truck_id].price)  # sort trucks by price
-                sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)  # sort vehicles by due date
+                # sort trucks by price
+                sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[truck_id].price)
+                # sort vehicles by due date
+                sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)
                 vehicle_amount = len(sorted_partition)
                 # decide how many trucks to book based on expected truck list
                 total_capacity = 0
@@ -93,10 +97,11 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                 # assign all vehicles in the current partition to trucks
                 vehicle_index = 0
                 for truck_id in sorted_truck_id_list:
-                    if truck_id in realised_trucks:  # If the truck actually exists
+                    # Check if the truck actually exists
+                    if truck_id in realised_trucks:
                         truck = realised_trucks[truck_id]
-                        current_truck_load = len(
-                            truck_assignments[truck_id].load)  # This should always be 0, so maybe unnecessary
+                        # This should always be 0, so maybe unnecessary
+                        current_truck_load = len(truck_assignments[truck_id].load)
                         capacity = truck.capacity
                         while current_truck_load < capacity:
                             # While the truck is not full, assign vehicles to it
@@ -106,13 +111,17 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                             vehicles_at_loc_at_time[(next_loc, truck.arrival_date)].append(vehicle_id)
                             current_truck_load += 1
                             vehicle_index += 1
-                            if vehicle_index >= vehicle_amount:  # If all vehicles in the partition are assigned, break
+                            if vehicle_index >= vehicle_amount:
+                                # If all vehicles in the partition are assigned, break
                                 break
-                    if vehicle_index >= vehicle_amount:  # If all vehicles in the partition are assigned, break
+                    if vehicle_index >= vehicle_amount:
+                        # If all vehicles in the partition are assigned, break
                         break
-                    if final_truck_id == truck_id:  # If we have loaded the final truck that was booked, break
+                    if final_truck_id == truck_id:
+                        # If we have loaded the final truck that was booked, break
                         break
-                while vehicle_index < vehicle_amount:  # All remaining vehicles remain at the current location for another day
+                while vehicle_index < vehicle_amount:
+                    # All remaining vehicles remain at the current location for another day
                     vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(sorted_partition[vehicle_index].id)
                     vehicle_index += 1
     v_assignments_list = list(vehicle_assignments.values())
