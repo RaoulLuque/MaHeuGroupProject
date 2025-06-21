@@ -1,6 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
+from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group
 from maheu_group_project.heuristics.old_flow.types import NodeIdentifier, NodeType
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
@@ -8,6 +9,10 @@ from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truc
     FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY, \
     convert_vehicle_assignments_to_truck_assignments
 from datetime import timedelta, date
+
+# Multiplier used to artificially increase the cost of edges that correspond to later trucks, to incentivize earlier
+# transportation.
+ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
 def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]):
@@ -20,6 +25,9 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
 
     Additionally, helper nodes are created for DEALER locations to account for the possibility of delays. These helper nodes
     make it possible to 'go back in time' and account for the costs associated with unplanned and planned delays.
+
+    The network is a multicommodity flow network, that is, it contains multiple commodities to be transported. Each
+    commodity corresponds to a group of vehicles that have the same destination and due date.
 
     Args:
         vehicles (list[Vehicle]): List of vehicles to be transported.
@@ -53,13 +61,16 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Create a node for each day and each location
     for day in days:
         for location in locations:
-            flow_network.add_node(NodeIdentifier(day, location, NodeType.NORMAL), demand=0)
+            node = NodeIdentifier(day, location, NodeType.NORMAL)
+            flow_network.add_node(node)
 
-    # Adjust the flow of each node according to the vehicles produced and expected on that day
+    # Create a dict mapping Commodity group to the vehicles that belong to it
+    # A commodity group is a group of vehicles that have the same destination and due_date
+    # TODO
+
+    # Iterate over the vehicles and add demand in their respective commodity group for each vehicle to the flow network
     for vehicle in vehicles:
-        # A positive demand indicates that flow should end there, reverse for negative
-        flow_network.nodes[NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)]['demand'] -= 1
-        flow_network.nodes[NodeIdentifier(vehicle.due_date, vehicle.destination, NodeType.NORMAL)]['demand'] += 1
+        add_commodity_demand_to_node(flow_network, vehicle)
 
     # Create the edges of the flow network for the trucks
     for truck in trucks.values():
@@ -68,13 +79,14 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
 
         # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
         # ignored when computing the actual objective value of the solution.
-        day_price = (truck.arrival_date - first_day).days
+        day_price = (truck.arrival_date - first_day).days * ARTIFICIAL_EDGE_COST_MULTIPLIER
         price = truck.price if truck.price != 0 else day_price
 
-        # Add an edge from the start node to the end node with the truck's capacity as the flow.
-        # The key of the edge is the truck_number to distinguish parallel edges. These will be the keys in the flow
-        # dict.
+        # Add an edge from the start node to the end node with the truck's capacity, price and truck number as a key.
+        # The key of the edge is the truck_number to distinguish parallel edges. These will be the keys in the resulting
+        # flow dict.
         flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=price, key=truck.truck_number)
+
     # Create the helper edges for the flow network connecting the columns
     for day in days:
         for location in locations:
@@ -138,6 +150,30 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
     return flow_network
+
+
+def add_commodity_demand_to_node(flow_network: MultiDiGraph[NodeIdentifier], vehicle: Vehicle):
+    """
+    Adds the demand for a vehicle to the flow network.
+
+    Args:
+        flow_network (MultiDiGraph[NodeIdentifier]): The flow network to which the demand should be added.
+        vehicle (Vehicle): The vehicle for which the demand should be added.
+    """
+
+    start_node = NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)
+    end_node = NodeIdentifier(vehicle.available_date, vehicle.destination, NodeType.NORMAL)
+    commodity_group = vehicle_to_commodity_group(vehicle)
+    # We check if the respective nodes already have a demand for this commodity group and adjust it accordingly to avoid
+    # key errors.
+    if flow_network.nodes[start_node].get(commodity_group) is None:
+        flow_network.nodes[start_node][commodity_group] = -1
+    else:
+        flow_network.nodes[start_node][commodity_group] -= 1
+    if flow_network.nodes[end_node].get(commodity_group) is None:
+        flow_network.nodes[end_node][commodity_group] = 1
+    else:
+        flow_network.nodes[end_node][commodity_group] += 1
 
 def solve_deterministically(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
