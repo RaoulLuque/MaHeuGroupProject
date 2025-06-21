@@ -1,6 +1,6 @@
 from enum import Enum
 
-from maheu_group_project.heuristics.old_flow.old_solve import solve_as_flow
+from maheu_group_project.heuristics.old_flow.old_solve import old_solve_as_flow
 from maheu_group_project.heuristics.greedy.greedy import greedy_solver
 from maheu_group_project.parsing import read_data, get_shortest_paths
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Vehicle, Truck, \
@@ -68,7 +68,7 @@ def solve_and_return_data(solver_type: SolverType, dataset_dir_name: str, realis
 
     match solver_type:
         case SolverType.FLOW:
-            vehicle_assignments, truck_assignments = solve_as_flow(vehicles, trucks_realised, locations)
+            vehicle_assignments, truck_assignments = old_solve_as_flow(vehicles, trucks_realised, locations)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case SolverType.GREEDY:
             shortest_paths = get_shortest_paths(dataset_dir_name, locations)

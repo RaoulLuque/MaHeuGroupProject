@@ -1,7 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.old_flow.old_types import NodeIdentifier, NodeType
+from maheu_group_project.heuristics.old_flow.old_types import OldNodeIdentifier, OldNodeType
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
@@ -10,7 +10,7 @@ from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truc
 from datetime import timedelta, date
 
 
-def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
+def old_solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the vehicle assignment problem using a flow-based approach. It creates a flow network to model the transportation
@@ -40,24 +40,24 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
 
     # Create a Network to model the flow
-    flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
+    flow_network: MultiDiGraph[OldNodeIdentifier] = MultiDiGraph()
 
     # Create the vertices of the flow network
     # Create a node for each day and each location
     for day in days:
         for location in locations:
-            flow_network.add_node(NodeIdentifier(day, location, NodeType.NORMAL), demand=0)
+            flow_network.add_node(OldNodeIdentifier(day, location, OldNodeType.NORMAL), demand=0)
 
     # Adjust the flow of each node according to the vehicles produced and expected on that day
     for vehicle in vehicles:
         # A positive demand indicates that flow should end there, reverse for negative
-        flow_network.nodes[NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)]['demand'] -= 1
-        flow_network.nodes[NodeIdentifier(vehicle.due_date, vehicle.destination, NodeType.NORMAL)]['demand'] += 1
+        flow_network.nodes[OldNodeIdentifier(vehicle.available_date, vehicle.origin, OldNodeType.NORMAL)]['demand'] -= 1
+        flow_network.nodes[OldNodeIdentifier(vehicle.due_date, vehicle.destination, OldNodeType.NORMAL)]['demand'] += 1
 
     # Create the edges of the flow network for the trucks
     for truck in trucks.values():
-        start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
-        end_node = NodeIdentifier(truck.arrival_date, truck.end_location, NodeType.NORMAL)
+        start_node = OldNodeIdentifier(truck.departure_date, truck.start_location, OldNodeType.NORMAL)
+        end_node = OldNodeIdentifier(truck.arrival_date, truck.end_location, OldNodeType.NORMAL)
 
         # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
         # ignored when computing the actual objective value of the solution.
@@ -71,11 +71,11 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
     # Create the helper edges for the flow network connecting the columns
     for day in days:
         for location in locations:
-            current_node = NodeIdentifier(day, location, NodeType.NORMAL)
+            current_node = OldNodeIdentifier(day, location, OldNodeType.NORMAL)
             # Add edges to the next day for each location
             if day < last_day:
                 # Create an edge to the next day node
-                next_day_node = NodeIdentifier(day + timedelta(days=1), location, NodeType.NORMAL)
+                next_day_node = OldNodeIdentifier(day + timedelta(days=1), location, OldNodeType.NORMAL)
                 flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED, weight=0)
 
     # Create the helper nodes for each DEALER location
@@ -83,41 +83,41 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
         for location in locations:
             if location.type == LocationType.DEALER:
                 # Add the first helper node
-                current_helper_node_one = NodeIdentifier(day, location, NodeType.HELPER_NODE_ONE)
+                current_helper_node_one = OldNodeIdentifier(day, location, OldNodeType.HELPER_NODE_ONE)
                 flow_network.add_node(current_helper_node_one)
 
                 # Distinguish case of first 7 days including current_day
                 if day < current_day + timedelta(days=7):
                     # Add edges to first helper node (UNPLANNED DELAY, since we are in the first 7 days)
-                    current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
+                    current_normal_node = OldNodeIdentifier(day, location, OldNodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
                                           weight=FIXED_UNPLANNED_DELAY_COST)
                     flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0)
                     if day != first_day:
                         # Add an edge to the HELPER_NODE_ONE above
-                        previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
-                                                                  NodeType.HELPER_NODE_ONE)
+                        previous_helper_node_one = OldNodeIdentifier(day - timedelta(days=1), location,
+                                                                     OldNodeType.HELPER_NODE_ONE)
                         flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
                 else:
                     # Add edges to first helper node (PLANNED DELAY, since we are after the first 7 days)
-                    current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
+                    current_normal_node = OldNodeIdentifier(day, location, OldNodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
                                           weight=FIXED_PLANNED_DELAY_COST)
                     flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0)
 
                     # Add the second helper node and an edge to it
-                    current_helper_node_two = NodeIdentifier(day, location, NodeType.HELPER_NODE_TWO)
+                    current_helper_node_two = OldNodeIdentifier(day, location, OldNodeType.HELPER_NODE_TWO)
                     flow_network.add_edge(current_normal_node, current_helper_node_two, capacity=UNBOUNDED,
                                           weight=FIXED_UNPLANNED_DELAY_COST)
 
                     # Distinguish 8th day or not
                     if day != current_day + timedelta(days=7):
                         # Add edges connecting current HELPER_NODE_ONE and _TWO to the previous days' nodes respectively
-                        previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
-                                                                  NodeType.HELPER_NODE_ONE)
-                        previous_helper_node_two = NodeIdentifier(day - timedelta(days=1), location,
-                                                                  NodeType.HELPER_NODE_TWO)
+                        previous_helper_node_one = OldNodeIdentifier(day - timedelta(days=1), location,
+                                                                     OldNodeType.HELPER_NODE_ONE)
+                        previous_helper_node_two = OldNodeIdentifier(day - timedelta(days=1), location,
+                                                                     OldNodeType.HELPER_NODE_TWO)
                         flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_PLANNED_DELAY_DAY)
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_two, capacity=UNBOUNDED,
@@ -125,25 +125,25 @@ def solve_as_flow(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck],
 
                     else:
                         # Add only an edge from the current HELPER_NODE_TWO to the HELPER_NODE_ONE from the previous day
-                        previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
-                                                                  NodeType.HELPER_NODE_ONE)
+                        previous_helper_node_one = OldNodeIdentifier(day - timedelta(days=1), location,
+                                                                     OldNodeType.HELPER_NODE_ONE)
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
     # visualize_flow_graph(flow_network, first_day, locations)
     flow = nx.min_cost_flow(flow_network)
-    vehicle_assignments = extract_solution_from_flow(flow, vehicles)
+    vehicle_assignments = old_extract_solution_from_flow(flow, vehicles)
     # visualize_flow_graph(flow_network, first_day, locations, flow)
     return vehicle_assignments, convert_vehicle_assignments_to_truck_assignments(vehicle_assignments, trucks)
 
 
-def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                               vehicles: list[Vehicle]) -> list[VehicleAssignment]:
+def old_extract_solution_from_flow(flow: dict[OldNodeIdentifier, dict[OldNodeIdentifier, dict[int, int]]],
+                                   vehicles: list[Vehicle]) -> list[VehicleAssignment]:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow.
 
     Args:
-        flow (dict[NodeIdentifier, dict[NodeIdentifier, float]]): The flow from which to extract the solution.
+        flow (dict[OldNodeIdentifier, dict[NodeIdentifier, float]]): The flow from which to extract the solution.
         vehicles (list[Vehicle]): List of vehicles to be transported.
 
     Returns:
@@ -173,8 +173,8 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
     # Loop over the vehicles and extract the assignments
     # For each vehicle, heuristically find the fastest path from its origin to its destination
     for vehicle in vehicles_sorted:
-        current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
-        destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
+        current_node = OldNodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=OldNodeType.NORMAL)
+        destination = OldNodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=OldNodeType.NORMAL)
 
         # Create a vehicle assignment
         id = vehicle.id
@@ -230,9 +230,9 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
                         break
                 if next_node is None:
                     # If we have not found a next node, that means we should wait at the current location
-                    current_node = NodeIdentifier(day=current_node.day + timedelta(days=1),
-                                                  location=current_node.location,
-                                                  type=current_node.type)
+                    current_node = OldNodeIdentifier(day=current_node.day + timedelta(days=1),
+                                                     location=current_node.location,
+                                                     type=current_node.type)
 
             else:
                 # We have reached the destination location. Either we have arrived early or we have delay to take care of.

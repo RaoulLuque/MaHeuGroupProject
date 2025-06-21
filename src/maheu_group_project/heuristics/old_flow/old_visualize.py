@@ -6,12 +6,12 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.old_flow.old_types import NodeIdentifier, NodeType
+from maheu_group_project.heuristics.old_flow.old_types import OldNodeIdentifier, OldNodeType
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
-def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location],
-                         flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
+def old_visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location],
+                             flow: dict[OldNodeIdentifier, dict[OldNodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -22,7 +22,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
     """
     # Ensure correct type for flow_network
-    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+    flow_network: MultiDiGraph[OldNodeIdentifier] = flow_network
 
     # Check if flow data is provided
     flow_data_provided = flow is not None
@@ -35,7 +35,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
         day = node.day
         location = node.location
         # NORMAL nodes are aligned in columns by location
-        if node.type == NodeType.NORMAL:
+        if node.type == OldNodeType.NORMAL:
             pos[node] = (locations.index(location) * scale, -(day.toordinal() - first_day.toordinal()) * scale)
         else:
             # HELPER nodes are offset horizontally to avoid overlap
@@ -89,7 +89,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
             label_y = (pos[u][1] + pos[v][1]) / 2
 
             # Adjust label position slightly based on curvature and direction of edge
-            if u.type == NodeType.HELPER_NODE_ONE and v.type == NodeType.NORMAL:
+            if u.type == OldNodeType.HELPER_NODE_ONE and v.type == OldNodeType.NORMAL:
                 label_y += abs(pos[u][0] - pos[v][0]) * rad * 2.5
             else:
                 label_y -= abs(pos[u][0] - pos[v][0]) * rad * 2.5
