@@ -1,6 +1,6 @@
 from enum import Enum
 
-from maheu_group_project.heuristics.flow.solve import solve_as_flow
+from maheu_group_project.heuristics.old_flow.solve import solve_as_flow
 from maheu_group_project.heuristics.greedy.greedy import greedy_solver
 from maheu_group_project.parsing import read_data, get_shortest_paths
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Vehicle, Truck, \
