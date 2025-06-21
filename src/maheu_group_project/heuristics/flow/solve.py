@@ -63,10 +63,6 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
             node = NodeIdentifier(day, location, NodeType.NORMAL)
             flow_network.add_node(node)
 
-    # Create a dict mapping Commodity group to the vehicles that belong to it
-    # A commodity group is a group of vehicles that have the same destination and due_date
-    # TODO
-
     # Iterate over the vehicles and add demand in their respective commodity group for each vehicle to the flow network
     for vehicle in vehicles:
         add_commodity_demand_to_node(flow_network, vehicle)
@@ -175,6 +171,7 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network.nodes[end_node][commodity_group] = 1
     else:
         flow_network.nodes[end_node][commodity_group] += 1
+
 
 def solve_deterministically(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
