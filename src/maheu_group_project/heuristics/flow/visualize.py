@@ -11,19 +11,21 @@ from maheu_group_project.heuristics.old_flow.types import NodeIdentifier, NodeTy
 from maheu_group_project.solution.encoding import Location, LocationType
 
 
-def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations: list[Location],
+def visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
                          flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
     """
     Visualizes the flow network using matplotlib and networkx.
 
     Args:
         flow_network (DiGraph[NodeIdentifier]): The flow network to visualize.
-        first_day (date): The first day in the planning horizon.
         locations (list[Location]): List of all locations in the network.
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    # Get the first day in the flow network to align nodes vertically
+    first_day = min(node.day for node in flow_network.nodes)
 
     # Check if flow data is provided
     flow_data_provided = flow is not None
@@ -58,7 +60,7 @@ def visualize_flow_graph(flow_network: MultiDiGraph, first_day: date, locations:
 
     # Annotate each node with its demand (capacity) in red
     for node, (x, y) in pos.items():
-        if node.location.type == LocationType.DEALER:
+        if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
             ax.text(x, y, str(demand), fontsize=6, color='red', ha='center', va='center')

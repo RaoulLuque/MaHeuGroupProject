@@ -1,8 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group
-from maheu_group_project.heuristics.old_flow.types import NodeIdentifier, NodeType
+from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group, NodeIdentifier, NodeType
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
@@ -152,7 +151,7 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     return flow_network
 
 
-def add_commodity_demand_to_node(flow_network: MultiDiGraph[NodeIdentifier], vehicle: Vehicle):
+def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
     """
     Adds the demand for a vehicle to the flow network.
 
@@ -160,6 +159,8 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph[NodeIdentifier], veh
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network to which the demand should be added.
         vehicle (Vehicle): The vehicle for which the demand should be added.
     """
+    # Ensure correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     start_node = NodeIdentifier(vehicle.available_date, vehicle.origin, NodeType.NORMAL)
     end_node = NodeIdentifier(vehicle.available_date, vehicle.destination, NodeType.NORMAL)
