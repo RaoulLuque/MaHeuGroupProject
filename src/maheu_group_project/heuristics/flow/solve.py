@@ -11,6 +11,25 @@ from datetime import timedelta, date
 
 
 def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]):
+    """
+    Creates a flow network for the transportation problem based on the provided vehicles, trucks, and locations.
+
+    The flow network is a directed graph containing a node for each day and each location. Edges between different locations
+    represent the transportation of vehicles by trucks. There are also edges between nodes of the same location to represent
+    the option of waiting for the next day.
+
+    Additionally, helper nodes are created for DEALER locations to account for the possibility of delays. These helper nodes
+    make it possible to 'go back in time' and account for the costs associated with unplanned and planned delays.
+
+    Args:
+        vehicles (list[Vehicle]): List of vehicles to be transported.
+        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
+        locations (list[Location]): List of locations involved in the transportation.
+
+    Returns:
+        MultiDiGraph: A directed graph representing the flow network for the transportation problem.
+
+    """
     # Set a parameter representing unbounded capacity
     # UNBOUNDED = float('inf')
     UNBOUNDED = len(vehicles)
@@ -18,8 +37,10 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Create a list of all days we are considering. The first day is day 0 and the day when the first vehicle is available
     first_day: date = min(min(vehicles, key=lambda vehicle: vehicle.available_date).available_date,
                           min(trucks.values(), key=lambda truck: truck.departure_date).departure_date)
-    last_day: date = max(max(vehicles, key=lambda vehicle: vehicle.available_date).available_date,
-                         max(trucks.values(), key=lambda truck: truck.arrival_date).arrival_date)
+    # The last day is the day when the last vehicle is due or the last truck arrives. We add a buffer of 7 days to make
+    # sure we catch trucks that arrive after the last vehicle is due and were not planned for that day.
+    last_day: date = max(max(vehicles, key=lambda vehicle: vehicle.due_date).due_date,
+                         max(trucks.values(), key=lambda truck: truck.arrival_date).arrival_date) + timedelta(days=7)
     current_day = first_day
 
     number_of_days = (last_day - first_day).days + 1
@@ -28,7 +49,7 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Create a Network to model the flow
     flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
 
-    # Create the vertices of the flow network behind the MIP
+    # Create the vertices of the flow network
     # Create a node for each day and each location
     for day in days:
         for location in locations:
@@ -115,6 +136,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                                                                   NodeType.HELPER_NODE_ONE)
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
+
+    return flow_network
 
 def solve_deterministically(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
