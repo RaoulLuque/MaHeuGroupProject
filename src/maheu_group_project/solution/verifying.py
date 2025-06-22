@@ -37,7 +37,7 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         print(
             f"The truck with ID {vehicle_path[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't.")
         return False
-    if not (vehicle_assignment.id in truck_assignment.load):
+    if vehicle_assignment.id not in truck_assignment.load:
         print(
             f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't.")
         return False
@@ -71,7 +71,7 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
             print(
                 f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} does not start at the end location of the previous truck.")
             return False
-        if not (vehicle_assignment.id in truck_assignment.load):
+        if vehicle_assignment.id not in truck_assignment.load:
             # The vehicle should be part of the truck's load
             print(
                 f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {truck_id}, but it isn't.")
@@ -102,7 +102,7 @@ def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
     for vehicle in vehicle_assignments:
         # Check if every vehicle whose ID is in the truck's load actually uses the truck
         if vehicle.id in truck_assignment.load:
-            if not (truck_id in vehicle.paths_taken):
+            if truck_id not in vehicle.paths_taken:
                 print(
                     f"The vehicle {vehicle.id} does not use the truck with ID {truck_id}, but it is part of the truck's load.")
                 return False

@@ -1,13 +1,10 @@
-from datetime import date
-
 import networkx as nx
-import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.old_flow.old_types import OldNodeIdentifier, OldNodeType
-from maheu_group_project.solution.encoding import Location, LocationType
+from maheu_group_project.solution.encoding import Location
 
 
 def old_visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Location],
@@ -17,7 +14,6 @@ def old_visualize_flow_graph(flow_network: MultiDiGraph, locations: list[Locatio
 
     Args:
         flow_network (DiGraph[NodeIdentifier]): The flow network to visualize.
-        first_day (date): The first day in the planning horizon.
         locations (list[Location]): List of all locations in the network.
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
     """

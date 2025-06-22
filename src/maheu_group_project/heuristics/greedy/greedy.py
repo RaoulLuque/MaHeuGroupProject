@@ -1,5 +1,3 @@
-from platform import mac_ver
-
 from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, \
     VehicleAssignment
 from datetime import date, timedelta
@@ -47,7 +45,8 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
     Location_indices: dict[Location, int] = {loc: i for i, loc in enumerate(LocationList)}
     Vehicle_from_id: dict[int, Vehicle] = {vehicle.id: vehicle for vehicle in requested_vehicles}
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in days}
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+                                                                       days}
     planned_delayed_vehicles: list[Vehicle] = []
     unplanned_delayed_vehicles: list[Vehicle] = []
     for day in days:  # days from start_date to end_date
