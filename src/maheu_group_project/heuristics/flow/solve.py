@@ -1,6 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
+from maheu_group_project.heuristics.common import get_first_last_and_days
 from maheu_group_project.heuristics.flow.types import vehicle_to_commodity_group, NodeIdentifier, NodeType, \
     dealership_to_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
@@ -43,17 +44,9 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # UNBOUNDED = float('inf')
     UNBOUNDED = len(vehicles)
 
-    # Create a list of all days we are considering. The first day is day 0 and the day when the first vehicle is available
-    first_day: date = min(min(vehicles, key=lambda vehicle: vehicle.available_date).available_date,
-                          min(trucks.values(), key=lambda truck: truck.departure_date).departure_date)
-    # The last day is the day when the last vehicle is due or the last truck arrives. We add a buffer of 7 days to make
-    # sure we catch trucks that arrive after the last vehicle is due and were not planned for that day.
-    last_day: date = max(max(vehicles, key=lambda vehicle: vehicle.due_date).due_date,
-                         max(trucks.values(), key=lambda truck: truck.arrival_date).arrival_date) + timedelta(days=7)
-    current_day = first_day
+    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
 
-    number_of_days = (last_day - first_day).days + 1
-    days = [first_day + timedelta(days=i) for i in range(number_of_days)]
+    current_day = first_day
 
     # Create a Network to model the flow
     flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
@@ -183,7 +176,7 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network.nodes[end_node][commodity_group] += 1
 
 
-def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location]) -> (
+def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]], locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the multicommodity min-cost flow problem heuristically by solving multiple single commodity min-cost flow
@@ -195,7 +188,11 @@ def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location
 
     Args:
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network to solve.
+        commodity_groups (dict[str, set[int]]): A dictionary mapping each commodity group to the set of vehicles (their ids)
+        that belong to it.
         locations (list[Location]): List of locations involved in the transportation.
+        vehicles (list[Vehicle]): List of vehicles to be transported.
+        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
@@ -204,11 +201,9 @@ def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    first_day = min(node.day for node in flow_network.nodes)
-    last_day = max(node.day for node in flow_network.nodes)
+    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks={})
 
-    number_of_days = (last_day - first_day).days + 1
-    days = [first_day + timedelta(days=i) for i in range(number_of_days)]
+    current_day = first_day
 
     # We iterate over the days from first to last, then those locations which are DEALER locations
     for day in days:
@@ -226,28 +221,36 @@ def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location
                     visualize_flow_network(flow_network, locations, flow)
 
                     # Extract the solution from the flow
+                    extract_partial_solution_from_flow(flow_network=flow_network, flow=flow,
+                                                       vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                       vehicles=vehicles, current_day=current_day)
 
     return [], {}
 
 
-def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                               vehicles: list[Vehicle]) -> list[VehicleAssignment]:
+def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
+                                       vehicles_from_current_commodity: set[int], vehicles: list[Vehicle], current_day: date) -> list[VehicleAssignment]:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow.
 
     Args:
-        flow (dict[NodeIdentifier, dict[NodeIdentifier, float]]): The flow from which to extract the solution.
-        vehicles (list[Vehicle]): List of vehicles to be transported.
+        flow_network (MultiDiGraph[NodeIdentifier]): The flow network on which the flow is based. The capacities of the
+        edges of the flow are adjusted to reflect extracting the solution.
+        flow (dict[NodeIdentifier, dict[NodeIdentifier, float]]): The flow from which to extract the solution for the
+        vehicles from the current commodity group.
+        vehicles_from_current_commodity (set[int]): The set of vehicle ids that belong to the current commodity group.
+        vehicles (list[Vehicle]): List of vehicles to be transported to look up their properties using the ids.
+        current_day (date): The current day in the flow network, used to determine delays.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
         to contain their respective plans.
     """
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
     # Sort the vehicles by their available date and due date to ensure we process them in the correct order
     vehicles_sorted = sorted(vehicles, key=lambda vehicle: (vehicle.due_date, vehicle.available_date))
-
-    # This could be passed in as a parameter in the future.
-    CURRENT_DAY = min(vehicle.available_date for vehicle in vehicles_sorted)
 
     vehicle_assignments: list[VehicleAssignment] = []
 
@@ -337,7 +340,7 @@ def extract_solution_from_flow(flow: dict[NodeIdentifier, dict[NodeIdentifier, d
                     continue
                 else:
                     # Check if we have a planned delay
-                    delay_notification_period = vehicle.due_date - CURRENT_DAY
+                    delay_notification_period = vehicle.due_date - current_day
                     delay_length = current_node.day - vehicle.due_date
                     if delay_notification_period <= timedelta(days=7):
                         # We have an unplanned delay
