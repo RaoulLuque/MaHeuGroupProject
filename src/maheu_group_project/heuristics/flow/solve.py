@@ -17,7 +17,8 @@ from datetime import timedelta, date
 ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
-def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> tuple[MultiDiGraph, dict[str, set[int]]]:
+def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> \
+        tuple[MultiDiGraph, dict[str, set[int]]]:
     """
     Creates a flow network for the transportation problem based on the provided vehicles, trucks, and locations.
 
@@ -176,8 +177,10 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network.nodes[end_node][commodity_group] += 1
 
 
-def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]], locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> (
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
+                            locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> \
+        (
+                tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the multicommodity min-cost flow problem heuristically by solving multiple single commodity min-cost flow
     problems for each DEALER location and day in the flow network.
@@ -222,7 +225,7 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
                     # Compute the single commodity min-cost flow for the current commodity group
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
 
-                    # visualize_flow_network(flow_network, locations, flow)
+                    # visualize_flow_network(flow_network, locations, flow, True)
 
                     # Extract the solution from the flow and update the flow network
                     extract_flow_and_update_network(flow_network=flow_network, flow=flow,
@@ -235,13 +238,16 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
     # Return the list of vehicle assignments indexed by their id
     vehicle_assignments.sort(key=lambda va: va.id)
 
-    truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=vehicle_assignments, trucks=trucks)
+    truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=vehicle_assignments,
+                                                                         trucks=trucks)
 
     return vehicle_assignments, truck_assignments
 
 
-def extract_flow_and_update_network(flow_network: MultiDiGraph, flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle], current_day: date,
+def extract_flow_and_update_network(flow_network: MultiDiGraph,
+                                    flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
+                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
+                                    current_day: date,
                                     vehicle_assignments: list[VehicleAssignment]) -> None:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
@@ -367,4 +373,5 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph, flow: dict[NodeI
 
         # Insert the vehicle assignment into the list
         vehicle_assignments.append(
-            VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed, delayed_by=delayed_by))
+            VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed,
+                              delayed_by=delayed_by))
