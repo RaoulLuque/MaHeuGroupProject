@@ -10,7 +10,8 @@ from maheu_group_project.solution.encoding import Location, LocationType
 
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
-                           flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None):
+                           flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None,
+                           only_show_flow_nodes: bool = False):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -18,6 +19,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
         flow_network (DiGraph[NodeIdentifier]): The flow network to visualize.
         locations (list[Location]): List of all locations in the network.
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
+        only_show_flow_nodes (bool, optional): If True, only show the flow nodes in the network.
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
@@ -27,6 +29,24 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     # Check if flow data is provided
     flow_data_provided = flow is not None
+
+    # Filter out edges which have flow of 0, i.e. no flow was assigned to them.
+    filtered_flow = {}
+    for src, targets in flow.items():
+        filtered_targets = {}
+        for dst, keys in targets.items():
+            filtered_keys = {k: v for k, v in keys.items() if v > 0}
+            if filtered_keys:
+                filtered_targets[dst] = filtered_keys
+        if filtered_targets:
+            filtered_flow[src] = filtered_targets
+
+    # If a flow is provided and only_show_flow_nodes is true, we want filter the graph to only contain the nodes involved in the flow
+    if flow_data_provided and only_show_flow_nodes:
+        involved_nodes = set(filtered_flow.keys())
+        for targets in filtered_flow.values():
+            involved_nodes.update(targets.keys())
+        flow_network = nx.MultiDiGraph(flow_network.subgraph(involved_nodes))
 
     pos = {}
     scale = 100  # Controls spacing between nodes in the plot
@@ -114,6 +134,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     plt.axis('off')  # Hide axes for cleaner visualization
     plt.tight_layout()
     plt.show()
+
 
 def string_to_color(label: str) -> tuple[float, float, float]:
     """
