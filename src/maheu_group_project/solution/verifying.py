@@ -1,4 +1,4 @@
-import datetime
+from datetime import date, timedelta
 
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, Truck, TruckAssignment, Vehicle
 
@@ -46,9 +46,9 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         truck = trucks[truck_id]
         truck_assignment = truck_assignments[truck_id]
         previous_truck = trucks[vehicle_path[vehicle_path.index(truck_id) - 1]]
-        if not (truck.departure_date >= previous_truck.arrival_date):
+        if not (truck.departure_date >= previous_truck.arrival_date + timedelta(1)):
             print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs before the previous truck arrives.")
+                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs too early.")
             return False
         if not (truck.start_location == previous_truck.end_location):
             print(
@@ -65,13 +65,13 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         print(
             f"The truck with ID {vehicle_path[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
         return "one"  # Return "one" to indicate that the vehicle did not reach its destination
-    if not (vehicle_assignment.delayed_by >= datetime.timedelta(0)):  # The delay should be non-negative
+    if not (vehicle_assignment.delayed_by >= timedelta(0)):  # The delay should be non-negative
         print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
         return False
-    if not (truck.arrival_date <= vehicle.due_date and vehicle_assignment.delayed_by == datetime.timedelta(
+    if not (truck.arrival_date <= vehicle.due_date - timedelta(1) and vehicle_assignment.delayed_by == timedelta(
             0)):
         # The last truck should arrive before the vehicle's due date if there is no delay
-        if not (truck.arrival_date == vehicle.due_date + vehicle_assignment.delayed_by):
+        if not (truck.arrival_date == vehicle.due_date - timedelta(1) + vehicle_assignment.delayed_by):
             # If there is a delay, the truck's arrival date should match the due date plus the delay
             print(
                 f"Delay information for vehicle {vehicle_assignment.id} is inconsistent with actual arrival time at destination.")
