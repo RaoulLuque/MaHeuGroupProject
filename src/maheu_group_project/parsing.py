@@ -86,7 +86,7 @@ def read_trucks_from_file(file_name: str, locations: list[Location]) -> tuple[
                 path_segment = row[3]
 
                 match = re.match(
-                    r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-TRUCK-(\d+)",
+                    r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-(?:TRUCK|TRAIN)-(\d+)",
                     path_segment)
 
                 if match:
