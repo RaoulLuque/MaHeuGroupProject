@@ -22,7 +22,8 @@ def objective_function(vehicle_assignments: list[VehicleAssignment],
     for truck_identifier, truck_assignment in truck_assignments.items():
         if not len(truck_assignment.load) == 0:
             # For each truck with a non-empty load, add the corresponding price to the objective value
-            objective_value += trucks[truck_identifier].price / len(truck_assignment.load)
+            objective_value += trucks[truck_identifier].price * len(truck_assignment.load) / trucks[
+                truck_identifier].capacity
     for vehicle in vehicle_assignments:
         # Convert the delay to a float value in number of days
         delay_in_days = vehicle.delayed_by.days
