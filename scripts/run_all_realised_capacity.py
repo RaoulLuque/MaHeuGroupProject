@@ -32,9 +32,17 @@ def run_on_all_data_from_first_dataset():
                                                                                                                 os.path.basename(
                                                                                                                     file))
                 is_valid = verify_solution(vehicles, vehicle_assignments, trucks_realised, truck_assignments)
-                assert is_valid, "The solution is invalid"
+                number_of_vehicles_that_did_not_arrived = 0
+                match type(is_valid):
+                    case bool():
+                        assert is_valid, "The solution is invalid"
+                    case int():
+                        number_of_vehicles_that_did_not_arrived = is_valid
+                    case _:
+                        raise TypeError(f"Unexpected type of is_valid: {type(is_valid)}")
                 cost = objective_function(vehicle_assignments, truck_assignments, trucks_realised)
                 output = f"Cost of solution for {dataset_dir}/{os.path.basename(file)}: {cost:.2f} \n"
+                output += f"Number of vehicles that did not arrive: {number_of_vehicles_that_did_not_arrived} \n"
                 result_file.write(output)
                 metrics = get_pretty_metrics(trucks_realised, truck_assignments, vehicle_assignments)
                 output += metrics + "\n" + "\n"
