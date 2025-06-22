@@ -4,6 +4,7 @@ import os
 import sys
 
 from maheu_group_project.heuristics.solver import SolverType, solve_and_return_data
+
 from maheu_group_project.solution.verifying import verify_solution
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
