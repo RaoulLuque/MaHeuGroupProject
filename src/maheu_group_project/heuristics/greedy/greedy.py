@@ -11,11 +11,11 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                   shortest_paths: dict[tuple[Location, Location], list[Location]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
-    A greedy solver that attempts to assign vehicles to trucks in a way that minimizes the total cost.
+    A greedy solver that attempts is best to assign vehicles to trucks in a way that minimizes the total cost.
     On every day, at every location, it sends all vehicles to their respective next location using the cheapest
     available truck, while prioritizing vehicles with the soonest due-date. It decides how many trucks it needs to book
     based on their expected capacity and then only uses these booked trucks, but makes use of additional capacity on a
-    truck, if available. It completely ignores delay status of vehicles and doesn't report any delays itself. It also
+    truck, if available. It completely ignores knowledge more than one day in the future (via expected trucks), delay status of vehicles and doesn't report any delays itself. It also
     always tries to send all vehicles, never letting them stay at a location unless all booked trucks to their next
     location are full.
 
@@ -47,9 +47,102 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
     Location_indices: dict[Location, int] = {loc: i for i, loc in enumerate(LocationList)}
     Vehicle_from_id: dict[int, Vehicle] = {vehicle.id: vehicle for vehicle in requested_vehicles}
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in days}
-    planned_delayed_vehicles: list[Vehicle] = []
-    unplanned_delayed_vehicles: list[Vehicle] = []
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+                                                                       days}
+    # Run first with only expected trucks to preview delays
+    for day in days:  # days from start_date to end_date
+        # print(f"Processing day {day}")
+        for loc in LocationList:
+            # print(f"Processing location {loc} on {day}")
+            # for every day and every location, if that location is a PLANT, add vehicles that become available there
+            if loc.type == location_type_from_string("PLANT"):
+                # print(f"Location {loc} is a PLANT, adding available vehicles")
+                vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
+                                                        vehicle.origin == loc and vehicle.available_date == day]
+            nextloc_partitions = {}  # Partition the list of vehicles at the current location by what their next location is
+            for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
+                # sort vehicles by next loc
+                vehicle = Vehicle_from_id[vehicle_id]
+                if vehicle.destination == loc:
+                    vehicle_assignments[vehicle_id].delayed_by = max(timedelta(0), day - vehicle.due_date)
+                else:
+                    # If the vehicle's destination is the current location, it doesn't need to be sent anywhere
+                    vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
+                    next_loc = vehicle_path[vehicle_path.index(loc) + 1]
+                    if next_loc not in nextloc_partitions:
+                        # If the next location for a vehicle is not yet a key in the partition, add it
+                        nextloc_partitions[next_loc] = []
+                    # Add the vehicle to the partition for its next location
+                    nextloc_partitions[next_loc].append(vehicle)
+            for next_loc, partition in nextloc_partitions.items():
+                # For every next location create a list of trucks that is expected to depart today from the current location to the next location
+                # print(f"Processing {len(partition)} vehicles from {loc} to {next_loc} on {day}")
+                truck_id_list = []
+                for truck_id in expected_trucks.keys():
+                    if truck_id.start_location == loc and truck_id.end_location == next_loc and truck_id.departure_date == day:
+                        truck_id_list.append(truck_id)
+                # sort trucks by price
+                sorted_truck_id_list = sorted(truck_id_list, key=lambda truck_id: expected_trucks[truck_id].price)
+                # sort vehicles by due date
+                sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)
+                vehicle_amount = len(sorted_partition)
+                # decide how many trucks to book based on expected truck list
+                total_capacity = 0
+                final_truck_id = None
+                for truck_id in sorted_truck_id_list:
+                    total_capacity += expected_trucks[truck_id].capacity
+                    if total_capacity >= vehicle_amount:
+                        final_truck_id = truck_id
+                        break
+                # assign all vehicles in the current partition to trucks
+                vehicle_index = 0
+                for truck_id in sorted_truck_id_list:
+                    # Check if the truck actually exists
+                    # if truck_id in realised_trucks:
+                    truck = expected_trucks[truck_id]
+                    # This should always be 0, so maybe unnecessary
+                    current_truck_load = len(truck_assignments[truck_id].load)
+                    capacity = truck.capacity
+                    while current_truck_load < capacity:
+                        # While the truck is not full, assign vehicles to it
+                        vehicle_id = sorted_partition[vehicle_index].id
+                        truck_assignments[truck_id].load.append(vehicle_id)
+                        vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
+                        vehicles_at_loc_at_time[(next_loc, truck.arrival_date)].append(vehicle_id)
+                        current_truck_load += 1
+                        vehicle_index += 1
+                        if vehicle_index >= vehicle_amount:
+                            # If all vehicles in the partition are assigned, break
+                            break
+                    if vehicle_index >= vehicle_amount:
+                        # If all vehicles in the partition are assigned, break
+                        break
+                    if final_truck_id == truck_id:
+                        # If we have loaded the final truck that was booked, break
+                        break
+                while vehicle_index < vehicle_amount:
+                    # All remaining vehicles remain at the current location for another day
+                    vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(sorted_partition[vehicle_index].id)
+                    vehicle_index += 1
+    planned_delayed_vehicles: list[bool] = [False for _ in requested_vehicles]
+    for vehicle_assignment in vehicle_assignments.values():
+        vehicle = Vehicle_from_id[vehicle_assignment.id]
+        vehicle_path = vehicle_assignment.paths_taken
+        final_truck = expected_trucks[vehicle_path[-1]]
+        if vehicle_path != [] and final_truck.end_location == vehicle.destination:
+            delay = final_truck.arrival_date - vehicle.due_date
+            if delay > timedelta(0):
+                planned_delayed_vehicles[vehicle_assignment.id] = True
+
+    # reset Assignments
+    vehicle_assignments: dict[int, VehicleAssignment] = {
+        vehicle.id: VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle
+        in requested_vehicles}
+    truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
+                                                                 expected_trucks.keys()}
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+                                                                       days}
+
     for day in days:  # days from start_date to end_date
         # print(f"Processing day {day}")
         for loc in LocationList:
