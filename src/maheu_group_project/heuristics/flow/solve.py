@@ -16,7 +16,7 @@ from datetime import timedelta, date
 ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
-def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]):
+def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> tuple[MultiDiGraph, dict[str, set[int]]]:
     """
     Creates a flow network for the transportation problem based on the provided vehicles, trucks, and locations.
 
@@ -36,8 +36,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
         locations (list[Location]): List of locations involved in the transportation.
 
     Returns:
-        MultiDiGraph: A directed graph representing the flow network for the transportation problem.
-
+        MultiDiGraph: A directed graph representing the flow network for the transportation problem
+        dict[str, set[int]]: A dictionary mapping each commodity group to the set of vehicles (their ids) that belong to it.
     """
     # Set a parameter representing unbounded capacity
     # UNBOUNDED = float('inf')
@@ -58,6 +58,9 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Create a Network to model the flow
     flow_network: MultiDiGraph[NodeIdentifier] = MultiDiGraph()
 
+    # Create a dictionary mapping each commodity group to the set of vehicles (their ids) that belong to it
+    commodity_groups: dict[str, set[int]] = {}
+
     # Create the vertices of the flow network
     # Create a node for each day and each location
     for day in days:
@@ -68,6 +71,11 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Iterate over the vehicles and add demand in their respective commodity group for each vehicle to the flow network
     for vehicle in vehicles:
         add_commodity_demand_to_node(flow_network, vehicle)
+
+        commodity_group = vehicle_to_commodity_group(vehicle)
+        if commodity_group not in commodity_groups:
+            commodity_groups[commodity_group] = set()
+        commodity_groups[commodity_group].add(vehicle.id)
 
     # Create the edges of the flow network for the trucks
     for truck in trucks.values():
@@ -146,7 +154,7 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
-    return flow_network
+    return flow_network, commodity_groups
 
 
 def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
@@ -210,9 +218,14 @@ def solve_deterministically(flow_network: MultiDiGraph, locations: list[Location
                 # the current day and location.
                 commodity_group = dealership_to_commodity_group(NodeIdentifier(day, location, NodeType.NORMAL))
 
-                flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight',)
+                # First, check whether there is actually any demand for this commodity group (day and location)
+                target_node = NodeIdentifier(day, location, NodeType.NORMAL)
+                if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
+                    # Compute the single commodity min-cost flow for the current commodity group
+                    flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
+                    visualize_flow_network(flow_network, locations, flow)
 
-                visualize_flow_network(flow_network, locations, flow)
+                    # Extract the solution from the flow
 
     return [], {}
 
