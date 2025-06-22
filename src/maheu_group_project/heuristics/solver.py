@@ -3,6 +3,7 @@ from enum import Enum
 from maheu_group_project.heuristics.flow.solve import create_flow_network, solve_deterministically
 from maheu_group_project.heuristics.old_flow.old_solve import old_solve_as_flow
 from maheu_group_project.heuristics.greedy.greedy import greedy_solver
+from maheu_group_project.lower_bounds.flow.uncapacitated_flow import lower_bound_uncapacitated_flow
 from maheu_group_project.parsing import read_data, get_shortest_paths
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Vehicle, Truck, \
     Location
@@ -19,6 +20,7 @@ class SolverType(Enum):
     FLOW = 0
     GREEDY = 1
     OLD_FLOW = 2
+    LOWER_BOUND_UNCAPACITATED_FLOW = 3
 
     def __str__(self) -> str:
         """
@@ -49,7 +51,7 @@ def solve(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file
 
 def solve_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> (
         tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
-        TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
+    TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
     """
     Solves the vehicle assignment problem using the specified solver type and dataset, and returns additional data.
     Args:
@@ -84,6 +86,10 @@ def solve_and_return_data(solver_type: SolverType, dataset_dir_name: str, realis
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case SolverType.OLD_FLOW:
             vehicle_assignments, truck_assignments = old_solve_as_flow(vehicles, trucks_realised, locations)
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+        case SolverType.LOWER_BOUND_UNCAPACITATED_FLOW:
+            vehicle_assignments, truck_assignments = lower_bound_uncapacitated_flow(dataset_dir_name,
+                                                                                    realised_capacity_file_name)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")
