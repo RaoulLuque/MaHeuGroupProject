@@ -111,8 +111,7 @@ def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
 
 def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAssignment],
                     trucks: dict[TruckIdentifier, Truck],
-                    truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
-    # datatypes of input: list[Vehicle], dict[TruckIdentifier, Truck]
+                    truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool | int:
     """
     Verifies if a given assignment of trucks and vehicles is valid.
 
@@ -121,6 +120,10 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
         vehicle_assignments (list[VehicleAssignment]): List containing assignments of the vehicles.
         trucks (dict[TruckIdentifier, Truck]): Dictionary of all trucks.
         truck_assignments (dict[TruckIdentifier, TruckAssignment]): Dictionary containing the assignments of the truck
+
+    Returns:
+        bool: True if the solution is valid, False otherwise.
+        int: If the solution is valid, but some vehicles did not reach their destination, returns the number of such vehicles.
     """
     # Check if every vehicle uses a valid path with correct delay
     for i in range(len(vehicle_assignments)):
