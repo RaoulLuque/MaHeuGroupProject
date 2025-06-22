@@ -56,13 +56,19 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
         ax=ax
     )
 
-    # Annotate each node with its demand (capacity) in red
+    # Annotate nodes
     for node, (x, y) in pos.items():
+        # Annotate the dealership nodes with their commodity group demand in different colors
         if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
             commodity_group = dealership_to_commodity_group(node)
             demand = flow_network.nodes[node].get(commodity_group, 0)
             color = string_to_color(commodity_group)
             ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
+
+        # Annotate PLANT nodes with the days of their date
+        elif node.location.type == LocationType.PLANT:
+            label = node.day.strftime('%d')
+            ax.text(x, y, label, fontsize=7, color='black', ha='center', va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():

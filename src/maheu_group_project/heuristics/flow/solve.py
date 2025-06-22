@@ -201,9 +201,12 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks={})
-
+    # Get the days involved in the flow network
+    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
     current_day = first_day
+
+    # Create a list to store the vehicle assignments
+    vehicle_assignments: list[VehicleAssignment] = []
 
     # We iterate over the days from first to last, then those locations which are DEALER locations
     for day in days:
@@ -220,18 +223,31 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
                     visualize_flow_network(flow_network, locations, flow)
 
-                    # Extract the solution from the flow
-                    extract_partial_solution_from_flow(flow_network=flow_network, flow=flow,
-                                                       vehicles_from_current_commodity=commodity_groups[commodity_group],
-                                                       vehicles=vehicles, current_day=current_day)
+                    # Extract the solution from the flow and update the flow network
+                    extract_flow_and_update_network(flow_network=flow_network, flow=flow,
+                                                    vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                    vehicles=vehicles, current_day=current_day,
+                                                    vehicle_assignments=vehicle_assignments)
 
-    return [], {}
+                    visualize_flow_network(flow_network, locations)
+
+    # Return the list of vehicle assignments indexed by their id
+    vehicle_assignments.sort(key=lambda va: va.id)
+
+    truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=vehicle_assignments, trucks=trucks)
+
+    return vehicle_assignments, truck_assignments
 
 
-def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                                       vehicles_from_current_commodity: set[int], vehicles: list[Vehicle], current_day: date) -> list[VehicleAssignment]:
+def extract_flow_and_update_network(flow_network: MultiDiGraph, flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
+                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle], current_day: date,
+                                    vehicle_assignments: list[VehicleAssignment]) -> None:
     """
-    Extracts the solution in terms of vehicle and truck assignments from a provided flow.
+    Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
+
+    This function adjusts the flow such that it should be empty at the end.
+    Furthermore, it adjusts the capacities of the edges used by the flow in the flow network,
+    to make them unavailable for the next flows.
 
     Args:
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network on which the flow is based. The capacities of the
@@ -241,6 +257,7 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
         vehicles_from_current_commodity (set[int]): The set of vehicle ids that belong to the current commodity group.
         vehicles (list[Vehicle]): List of vehicles to be transported to look up their properties using the ids.
         current_day (date): The current day in the flow network, used to determine delays.
+        vehicle_assignments (list[VehicleAssignment]): The list of current vehicle assignments.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
@@ -249,12 +266,7 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    # Sort the vehicles by their available date and due date to ensure we process them in the correct order
-    vehicles_sorted = sorted(vehicles, key=lambda vehicle: (vehicle.due_date, vehicle.available_date))
-
-    vehicle_assignments: list[VehicleAssignment] = []
-
-    # Filter out edges which have no positive flow
+    # Filter out edges which have flow of 0, i.e. no flow was assigned to them.
     filtered_flow = {}
     for src, targets in flow.items():
         filtered_targets = {}
@@ -268,12 +280,14 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
 
     # Loop over the vehicles and extract the assignments
     # For each vehicle, heuristically find the fastest path from its origin to its destination
-    for vehicle in vehicles_sorted:
+    for vehicle_id in vehicles_from_current_commodity:
+        # Get the actual vehicle from the list of vehicles
+        vehicle = vehicles[vehicle_id]
+
         current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
         destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
 
         # Create a vehicle assignment
-        id = vehicle.id
         paths_taken = []
         planned_delayed = False
         delayed_by: timedelta = timedelta(0)
@@ -283,20 +297,22 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
             # Greedily find the next edge from the current node in the flow that has a positive flow value
             next_node = None
 
-            # In the following loop we skip letting the vehicle stay at the same location. Thus, if the vehicle is already
-            # at its destination, we will skip this loop.
+            # In the following loop, we skip letting the vehicle stay at the same location. Thus, if the vehicle is already
+            # at its destination location (possibly not correct date), we will skip this loop.
             if current_node.location != vehicle.destination:
-                # Filter out the possible next nodes which don't have any positive flow
+                # Get the possible next nodes from the current node in the flow (these will all have non-zero flow)
                 possible_next_nodes = list(flow[current_node].items())
+
                 # Sort the possible next nodes by the day of the node to ensure we always take the earliest possible next node
                 possible_next_nodes.sort(key=lambda x: x[0].day)
                 for identifier, flows in possible_next_nodes:
                     if identifier.location == current_node.location:
-                        # We want to skip letting the vehicle stay at the same location for now and only allow consider moving
-                        # it forward in this loop
+                        # We want to skip letting the vehicle stay at the same location for now and only consider moving
+                        # it forward
                         continue
                     else:
-                        # If the next node is not the same location, we can take it
+                        # If the next node is a different location, we can take it
+                        # This also means, that we are currently 'looking' at an edge that corresponds to a truck
                         next_node = identifier
 
                         # Find the edge index for this edge
@@ -304,6 +320,7 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
 
                         # We subtract one from the flow of this edge to make it unavailable for the next vehicles
                         flow[current_node][next_node][edge_index] -= 1
+                        flow_network[current_node][next_node][edge_index]['capacity'] -= 1
 
                         # If the flow of this edge is now 0, we remove it from the flow dict
                         if flow[current_node][next_node][edge_index] == 0:
@@ -332,13 +349,8 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
 
             else:
                 # We have reached the destination location. Either we have arrived early or we have delay to take care of.
-                arrived = True
-
                 # Check if we have a delay
-                if current_node.day <= vehicle.due_date:
-                    # We have no delay
-                    continue
-                else:
+                if current_node.day > vehicle.due_date:
                     # Check if we have a planned delay
                     delay_notification_period = vehicle.due_date - current_day
                     delay_length = current_node.day - vehicle.due_date
@@ -350,12 +362,8 @@ def extract_partial_solution_from_flow(flow_network: MultiDiGraph, flow: dict[No
                         # We have a planned delay
                         planned_delayed = True
                         delayed_by = delay_length
+                break
 
         # Insert the vehicle assignment into the list
         vehicle_assignments.append(
-            VehicleAssignment(id=id, paths_taken=paths_taken, planned_delayed=planned_delayed, delayed_by=delayed_by))
-
-    # Return the list of vehicle assignments indexed by their id
-    vehicle_assignments.sort(key=lambda va: va.id)
-
-    return vehicle_assignments
+            VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed, delayed_by=delayed_by))
