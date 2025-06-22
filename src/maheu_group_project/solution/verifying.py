@@ -142,7 +142,7 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
                 print(f"Truck {truck_id} has an invalid load.")
                 return False
     if number_of_cars_which_did_not_reach_destination > 0:
-        # Return number_of_cars_which_did_not_reach_destination to indicate that the solution is valid, but some vehicles have reached their destination
+        # Return number_of_cars_which_did_not_reach_destination to indicate that the solution is valid, but some vehicles have not reached their destination
         print(f"{number_of_cars_which_did_not_reach_destination} vehicles did not reach their destination.")
         return number_of_cars_which_did_not_reach_destination
     return True
