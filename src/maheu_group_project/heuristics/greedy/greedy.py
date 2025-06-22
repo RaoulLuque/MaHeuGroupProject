@@ -39,16 +39,14 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
                           min(expected_trucks.values(), key=lambda truck: truck.departure_date).departure_date)
     last_day: date = max(max(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
                          max(expected_trucks.values(), key=lambda truck: truck.arrival_date).arrival_date)
-    min_truck_number: int = min(truck_id.truck_number for truck_id in expected_trucks.keys())
-    max_truck_number: int = max(truck_id.truck_number for truck_id in expected_trucks.keys())
-
+    day_of_planning = first_day
     number_of_days = (last_day - first_day).days + 1
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
     LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
-    Location_indices: dict[Location, int] = {loc: i for i, loc in enumerate(LocationList)}
     Vehicle_from_id: dict[int, Vehicle] = {vehicle.id: vehicle for vehicle in requested_vehicles}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
-                                                                       days}
+                                                                       (days + [(last_day + timedelta(
+                                                                           1))])}  # Include the next day to allow for vehicles to stay at a location for another day
     # Run first with only expected trucks to preview delays
     for day in days:  # days from start_date to end_date
         # print(f"Processing day {day}")
@@ -129,10 +127,11 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
         vehicle = Vehicle_from_id[vehicle_assignment.id]
         vehicle_path = vehicle_assignment.paths_taken
         final_truck = expected_trucks[vehicle_path[-1]]
-        if vehicle_path != [] and final_truck.end_location == vehicle.destination:
-            delay = final_truck.arrival_date - vehicle.due_date
-            if delay > timedelta(0):
-                planned_delayed_vehicles[vehicle_assignment.id] = True
+        if vehicle.due_date - day_of_planning >= timedelta(7):
+            if vehicle_path != [] and final_truck.end_location == vehicle.destination:
+                delay = final_truck.arrival_date - vehicle.due_date
+                if delay > timedelta(0):
+                    planned_delayed_vehicles[vehicle_assignment.id] = True
 
     # reset Assignments
     vehicle_assignments: dict[int, VehicleAssignment] = {
@@ -141,7 +140,8 @@ def greedy_solver(requested_vehicles: list[Vehicle], expected_trucks: dict[Truck
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                  expected_trucks.keys()}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
-                                                                       days}
+                                                                       (days + [(last_day + timedelta(
+                                                                           1))])}
 
     for day in days:  # days from start_date to end_date
         # print(f"Processing day {day}")
