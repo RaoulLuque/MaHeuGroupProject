@@ -33,7 +33,7 @@ def run_on_all_data_from_first_dataset():
                                                                                                                     file))
                 is_valid = verify_solution(vehicles, vehicle_assignments, trucks_realised, truck_assignments)
                 number_of_vehicles_that_did_not_arrived = 0
-                match type(is_valid):
+                match is_valid:
                     case bool():
                         assert is_valid, "The solution is invalid"
                     case int():
