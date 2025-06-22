@@ -63,7 +63,15 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             pos[node] = ((locations.index(location) + node.type.value * 0.5) * scale,
                          -(day.toordinal() - first_day.toordinal()) * scale)
 
-    plt.figure(figsize=(16, 64), dpi=150)
+    # Default plot size
+    plot_size = (16, 64)
+    dpi = 150
+    if only_show_flow_nodes:
+        # Adjust the plot size
+        plot_size = (16, 16)
+        dpi = 75
+
+    plt.figure(figsize=plot_size, dpi=dpi)
     ax = plt.gca()
 
     # Draw all nodes as white circles with black borders

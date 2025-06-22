@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
-SOLVER = SolverType.GREEDY
+SOLVER = SolverType.FLOW
 
 
 def run_on_all_data_from_first_dataset():
@@ -35,6 +35,7 @@ def run_on_all_data_from_first_dataset():
             output = f"Cost of solution for {os.path.basename(file)}: {cost:.2f} \n"
             result_file.write(output)
             print(output)
+            break
 
 
 if __name__ == '__main__':
