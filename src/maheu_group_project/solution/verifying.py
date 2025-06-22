@@ -4,7 +4,7 @@ from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdenti
 
 
 def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
-                        truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
+                        truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool | int:
     """
     Tests if a vehicle departs from a location after it arrives there, the segments form a path from origin to destination,
     delay information is consistent with the vehicle's arrival date at the destination, and the vehicle is part of the truck's load.
@@ -41,23 +41,6 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         print(
             f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't.")
         return False
-    truck = trucks[vehicle_path[-1]]  # The last truck in the path
-    if not (truck.end_location == vehicle.destination):
-        # The last truck should end at the vehicle's destination
-        print(
-            f"The truck with ID {vehicle_path[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return False
-    if not (vehicle_assignment.delayed_by >= datetime.timedelta(0)):  # The delay should be non-negative
-        print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
-        return False
-    if not (truck.arrival_date <= vehicle.due_date and vehicle_assignment.delayed_by == datetime.timedelta(
-            0)):
-        # The last truck should arrive before the vehicle's due date if there is no delay
-        if not (truck.arrival_date == vehicle.due_date + vehicle_assignment.delayed_by):
-            # If there is a delay, the truck's arrival date should match the due date plus the delay
-            print(
-                f"Delay information for vehicle {vehicle_assignment.id} is inconsistent with actual arrival time at destination.")
-            return False
     for truck_id in vehicle_path[1:]:
         # Check if trucks are in the correct order, dates are consistent and vehicle is part of the truck's load
         truck = trucks[truck_id]
@@ -75,6 +58,23 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
             # The vehicle should be part of the truck's load
             print(
                 f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {truck_id}, but it isn't.")
+            return False
+    truck = trucks[vehicle_path[-1]]  # The last truck in the path
+    if not (truck.end_location == vehicle.destination):
+        # The last truck should end at the vehicle's destination
+        print(
+            f"The truck with ID {vehicle_path[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
+        return 1  # Return 1 to indicate that the vehicle did not reach its destination
+    if not (vehicle_assignment.delayed_by >= datetime.timedelta(0)):  # The delay should be non-negative
+        print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
+        return False
+    if not (truck.arrival_date <= vehicle.due_date and vehicle_assignment.delayed_by == datetime.timedelta(
+            0)):
+        # The last truck should arrive before the vehicle's due date if there is no delay
+        if not (truck.arrival_date == vehicle.due_date + vehicle_assignment.delayed_by):
+            # If there is a delay, the truck's arrival date should match the due date plus the delay
+            print(
+                f"Delay information for vehicle {vehicle_assignment.id} is inconsistent with actual arrival time at destination.")
             return False
     return True
 
@@ -126,8 +126,11 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
         int: If the solution is valid, but some vehicles did not reach their destination, returns the number of such vehicles.
     """
     # Check if every vehicle uses a valid path with correct delay
+    number_of_cars_which_did_not_reach_destination = 0
     for i in range(len(vehicle_assignments)):
-        if not verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments):
+        if verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments) is 1:
+            number_of_cars_which_did_not_reach_destination += 1
+        elif not verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments):
             print(f"Vehicle {vehicles[i].id} has an invalid path.")
             return False
     # Check if every truck has a valid load
@@ -138,4 +141,8 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
             if not verify_truck_load(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
                 print(f"Truck {truck_id} has an invalid load.")
                 return False
+    if number_of_cars_which_did_not_reach_destination > 0:
+        # Return number_of_cars_which_did_not_reach_destination to indicate that the solution is valid, but some vehicles have reached their destination
+        print(f"{number_of_cars_which_did_not_reach_destination} vehicles did not reach their destination.")
+        return number_of_cars_which_did_not_reach_destination
     return True
