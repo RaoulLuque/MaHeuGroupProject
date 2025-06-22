@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
-SOLVER = SolverType.GREEDY
+SOLVER = SolverType.FLOW
 
 
 def run_on_all_data_from_first_dataset():

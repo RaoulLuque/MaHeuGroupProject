@@ -221,7 +221,8 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
                 if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
                     # Compute the single commodity min-cost flow for the current commodity group
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
-                    visualize_flow_network(flow_network, locations, flow)
+
+                    # visualize_flow_network(flow_network, locations, flow)
 
                     # Extract the solution from the flow and update the flow network
                     extract_flow_and_update_network(flow_network=flow_network, flow=flow,
@@ -229,7 +230,7 @@ def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[s
                                                     vehicles=vehicles, current_day=current_day,
                                                     vehicle_assignments=vehicle_assignments)
 
-                    visualize_flow_network(flow_network, locations)
+                    # visualize_flow_network(flow_network, locations)
 
     # Return the list of vehicle assignments indexed by their id
     vehicle_assignments.sort(key=lambda va: va.id)
