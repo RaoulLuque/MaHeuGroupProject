@@ -88,8 +88,8 @@ def solve_and_return_data(solver_type: SolverType, dataset_dir_name: str, realis
             vehicle_assignments, truck_assignments = old_solve_as_flow(vehicles, trucks_realised, locations)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case SolverType.LOWER_BOUND_UNCAPACITATED_FLOW:
-            vehicle_assignments, truck_assignments = lower_bound_uncapacitated_flow(dataset_dir_name,
-                                                                                    realised_capacity_file_name)
+            vehicle_assignments, truck_assignments, trucks_realised = lower_bound_uncapacitated_flow(dataset_dir_name,
+                                                                                                     realised_capacity_file_name)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")

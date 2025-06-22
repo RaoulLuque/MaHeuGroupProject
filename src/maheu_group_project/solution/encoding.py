@@ -152,6 +152,26 @@ class Truck:
             departure_date=self.departure_date
         )
 
+    def new_from_capacity(self, capacity: int) -> 'Truck':
+        """
+        Returns a new Truck instance with the specified capacity.
+
+        Args:
+            capacity (int): The new capacity for the truck.
+
+        Returns:
+            Truck: A new Truck instance with the updated capacity.
+        """
+        return Truck(
+            start_location=self.start_location,
+            end_location=self.end_location,
+            departure_date=self.departure_date,
+            arrival_date=self.arrival_date,
+            truck_number=self.truck_number,
+            capacity=capacity,
+            price=self.price
+        )
+
 
 @dataclass
 class TruckAssignment:
@@ -235,7 +255,8 @@ class VehicleAssignment:
         self.delayed_by = delayed_by
 
 
-def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[VehicleAssignment], trucks: dict[TruckIdentifier, Truck]) -> dict[
+def convert_vehicle_assignments_to_truck_assignments(vehicle_assignments: list[VehicleAssignment],
+                                                     trucks: dict[TruckIdentifier, Truck]) -> dict[
     TruckIdentifier, TruckAssignment]:
     """
     Converts a list of VehicleAssignments into a dictionary of TruckAssignments.

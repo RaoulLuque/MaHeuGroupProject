@@ -1,10 +1,10 @@
 from maheu_group_project.heuristics.flow.solve import create_flow_network, solve_deterministically
 from maheu_group_project.parsing import read_data
-from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment
+from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Truck
 
 
 def lower_bound_uncapacitated_flow(dataset_dir_name: str, realised_capacity_file_name: str) -> (
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], dict[TruckIdentifier, Truck]]:
     """
     Solves the vehicle assignment problem using a flow-based approach with uncapacitated trucks.
 
@@ -19,14 +19,16 @@ def lower_bound_uncapacitated_flow(dataset_dir_name: str, realised_capacity_file
         tuple: A tuple containing:
             - list[VehicleAssignment]: List of vehicle assignments.
             - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
+            - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with uncapped
+            capacities.
     """
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
 
     # Adapt trucks to make them uncapacitated
     number_of_vehicles = len(vehicles)
-    for truck in trucks_realised.values():
+    for truck_identifier, truck in trucks_realised.items():
         # Set the capacity of each truck to number of vehicles to make them practically uncapacitated
-        truck.capacity = number_of_vehicles
+        trucks_realised[truck_identifier] = truck.new_from_capacity(number_of_vehicles)
 
     flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
                                                          locations=locations)
@@ -34,4 +36,4 @@ def lower_bound_uncapacitated_flow(dataset_dir_name: str, realised_capacity_file
                                                                      commodity_groups=commodity_groups,
                                                                      locations=locations, vehicles=vehicles,
                                                                      trucks=trucks_realised)
-    return vehicle_assignments, truck_assignments
+    return vehicle_assignments, truck_assignments, trucks_realised
