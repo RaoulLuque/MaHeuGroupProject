@@ -45,7 +45,8 @@ def read_data(dataset_dir_name: str,
                 available_date = datetime.datetime.strptime(row[6], "%d/%m/%Y-%H:%M:%S").date()
                 due_date = datetime.datetime.strptime(row[8], "%d/%m/%Y-%H:%M:%S").date()
                 vehicle = Vehicle(
-                    id=vehicle_id,
+                    # The vehicle_id is 1-based in the CSV, so we subtract 1 to make it 0-based
+                    id=vehicle_id - 1,
                     origin=origin,
                     destination=destination,
                     available_date=available_date,
