@@ -1,6 +1,7 @@
 from enum import Enum
 
-from maheu_group_project.heuristics.flow.solve import create_flow_network, solve_deterministically
+from maheu_group_project.heuristics.flow.solve import solve_deterministically
+from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.heuristics.old_flow.old_solve import old_solve_as_flow
 from maheu_group_project.heuristics.greedy.greedy import greedy_solver
 from maheu_group_project.lower_bounds.flow.uncapacitated_flow import lower_bound_uncapacitated_flow

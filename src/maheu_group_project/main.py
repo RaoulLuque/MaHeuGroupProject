@@ -1,4 +1,4 @@
-from maheu_group_project.heuristics.flow.solve import create_flow_network
+from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_graph
 from maheu_group_project.parsing import read_data
 

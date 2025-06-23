@@ -1,4 +1,5 @@
-from maheu_group_project.heuristics.flow.solve import create_flow_network, solve_deterministically
+from maheu_group_project.heuristics.flow.solve import solve_deterministically
+from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.parsing import read_data
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Truck
 
