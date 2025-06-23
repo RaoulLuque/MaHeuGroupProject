@@ -66,7 +66,14 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
     # Create the edges of the flow network for the trucks
     for truck in trucks.values():
         start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
-        end_node = NodeIdentifier(truck.arrival_date, truck.end_location, NodeType.NORMAL)
+
+        # It the truck's end location is not a DEALER, we delay the arrival date by one day to account for the
+        # one day rest.
+        truck_arrival_date = truck.arrival_date
+        if truck.end_location.type != LocationType.DEALER:
+            truck_arrival_date += timedelta(days=1)
+
+        end_node = NodeIdentifier(truck_arrival_date, truck.end_location, NodeType.NORMAL)
 
         # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
         # ignored when computing the actual objective value of the solution.
