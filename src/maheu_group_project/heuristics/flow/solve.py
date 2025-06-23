@@ -15,8 +15,8 @@ from datetime import timedelta, date
 ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
-def solve_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
-                            locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> \
+def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
+                                 locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> \
         (
                 tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """

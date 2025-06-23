@@ -3,7 +3,7 @@ import glob
 import os
 import sys
 
-from maheu_group_project.heuristics.solver import SolverType, solve_and_return_data
+from maheu_group_project.heuristics.solver import SolverType, solve_deterministically_and_return_data
 from maheu_group_project.solution.metrics import get_pretty_metrics
 
 from maheu_group_project.solution.verifying import verify_solution
@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
-SOLVER = SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
+SOLVER = SolverType.FLOW
 
 
 def run_on_all_data_from_first_dataset():
@@ -27,10 +27,11 @@ def run_on_all_data_from_first_dataset():
             pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
             files = sorted(glob.glob(pattern))
             for file in files:
-                vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _ = solve_and_return_data(SOLVER,
-                                                                                                                dataset_dir,
-                                                                                                                os.path.basename(
-                                                                                                                    file))
+                vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _ = solve_deterministically_and_return_data(
+                    SOLVER,
+                    dataset_dir,
+                    os.path.basename(file)
+                )
                 is_valid = verify_solution(vehicles, vehicle_assignments, trucks_realised, truck_assignments)
                 number_of_vehicles_that_did_not_arrived = 0
                 match is_valid:

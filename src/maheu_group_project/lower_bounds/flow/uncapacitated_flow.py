@@ -1,4 +1,4 @@
-from maheu_group_project.heuristics.flow.solve import solve_deterministically
+from maheu_group_project.heuristics.flow.solve import solve_flow_deterministically
 from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.parsing import read_data
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Truck
@@ -33,8 +33,8 @@ def lower_bound_uncapacitated_flow(dataset_dir_name: str, realised_capacity_file
 
     flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
                                                          locations=locations)
-    vehicle_assignments, truck_assignments = solve_deterministically(flow_network=flow_network,
-                                                                     commodity_groups=commodity_groups,
-                                                                     locations=locations, vehicles=vehicles,
-                                                                     trucks=trucks_realised)
+    vehicle_assignments, truck_assignments = solve_flow_deterministically(flow_network=flow_network,
+                                                                          commodity_groups=commodity_groups,
+                                                                          locations=locations, vehicles=vehicles,
+                                                                          trucks=trucks_realised)
     return vehicle_assignments, truck_assignments, trucks_realised
