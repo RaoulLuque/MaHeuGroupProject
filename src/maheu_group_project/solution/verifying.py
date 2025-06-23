@@ -1,10 +1,20 @@
 from datetime import timedelta
+from enum import Enum
 
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, Truck, TruckAssignment, Vehicle
 
 
+class VerifyVehiclePathResult(Enum):
+    """
+    Class to represent the possible results of verifying a vehicle's path.
+    """
+    VALID = 0
+    INVALID = 1
+    NOT_REACHED_DESTINATION = 2
+
+
 def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
-                        truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool | str:
+                        truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> VerifyVehiclePathResult:
     """
     Tests if a vehicle departs from a location after it arrives there, the segments form a path from origin to destination,
     delay information is consistent with the vehicle's arrival date at the destination, and the vehicle is part of the truck's load.
@@ -19,64 +29,80 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
     Returns:
         bool: True if the vehicle's path is valid, False otherwise.
     """
-    # Check if start and end locations and dates are correct
-    # Take the first truck in the path and its assignment
+    # Get the path taken by the vehicle
     vehicle_path = vehicle_assignment.paths_taken
-    if vehicle_path == []:
+
+    # Check if the vehicle actually took any trucks
+    if len(vehicle_path) == 0:
         print(f"The vehicle {vehicle_assignment.id} has no trucks assigned.")
-        return True  # No path taken, nothing to verify
-    truck = trucks[vehicle_path[0]]
-    truck_assignment = truck_assignments[vehicle_path[0]]
-    if not (truck.start_location == vehicle.origin):
-        # The first truck should start at the vehicle's origin
+        return VerifyVehiclePathResult.NOT_REACHED_DESTINATION
+
+    # Check if the first truck in the path starts at the vehicle's origin, departs after the vehicle is available
+    # and is part of the truck's load
+    first_truck = trucks[vehicle_path[0]]
+    first_truck_assignment = truck_assignments[vehicle_path[0]]
+    # Check origin
+    if not (first_truck.start_location == vehicle.origin):
         print(
             f"The truck with ID {vehicle_path[0]} needs to start at origin of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return False
-    if not (truck.departure_date >= vehicle.available_date):
-        # The first truck should depart after the vehicle is available
+        return VerifyVehiclePathResult.INVALID
+    # Check the availability date
+    if not (first_truck.departure_date >= vehicle.available_date):
         print(
             f"The truck with ID {vehicle_path[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return False
-    if vehicle_assignment.id not in truck_assignment.load:
+        return VerifyVehiclePathResult.INVALID
+    # Check if the vehicle is part of the truck's load
+    if vehicle_assignment.id not in first_truck_assignment.load:
         print(
             f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't.")
-        return False
-    for truck_id in vehicle_path[1:]:
-        # Check if trucks are in the correct order, dates are consistent and vehicle is part of the truck's load
-        truck = trucks[truck_id]
-        truck_assignment = truck_assignments[truck_id]
-        previous_truck = trucks[vehicle_path[vehicle_path.index(truck_id) - 1]]
-        if not (truck.departure_date >= previous_truck.arrival_date + timedelta(1)):
+        return VerifyVehiclePathResult.INVALID
+
+    # For each truck in the path, check if it departs earliest one day after the previous truck arrives,
+    # starts at the end location of the previous truck, and the vehicle is part of the truck's load
+    for current_truck_id in vehicle_path[1:]:
+        current_truck = trucks[current_truck_id]
+        current_truck_assignment = truck_assignments[current_truck_id]
+        previous_truck = trucks[vehicle_path[vehicle_path.index(current_truck_id) - 1]]
+        # Check the departure date
+        if not (current_truck.departure_date >= previous_truck.arrival_date + timedelta(1)):
             print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs too early. That is, the vehicle departs on the same day it arrives and does not respect the obligatory rest-day 💪")
-            return False
-        if not (truck.start_location == previous_truck.end_location):
+                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} departs too early. That is, the vehicle departs on the same day it arrives and does not respect the obligatory rest-day 💪")
+            return VerifyVehiclePathResult.INVALID
+        # Check locations
+        if not (current_truck.start_location == previous_truck.end_location):
             print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} does not start at the end location of the previous truck.")
-            return False
-        if vehicle_assignment.id not in truck_assignment.load:
-            # The vehicle should be part of the truck's load
+                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} does not start at the end location of the previous truck.")
+            return VerifyVehiclePathResult.INVALID
+        # Check load
+        if vehicle_assignment.id not in current_truck_assignment.load:
             print(
-                f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {truck_id}, but it isn't.")
-            return False
-    truck = trucks[vehicle_path[-1]]  # The last truck in the path
-    if not (truck.end_location == vehicle.destination):
-        # The last truck should end at the vehicle's destination
+                f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {current_truck_id}, but it isn't.")
+            return VerifyVehiclePathResult.INVALID
+
+    # Check if the last truck in the path ends at the vehicle's destination
+    last_truck = trucks[vehicle_path[-1]]
+    if not (last_truck.end_location == vehicle.destination):
         print(
             f"The truck with ID {vehicle_path[-1]} needs to end at destination of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return "one"  # Return "one" to indicate that the vehicle did not reach its destination
-    if not (vehicle_assignment.delayed_by >= timedelta(0)):  # The delay should be non-negative
+        return VerifyVehiclePathResult.NOT_REACHED_DESTINATION
+
+    # Check delay information
+    if not (vehicle_assignment.delayed_by >= timedelta(0)):
         print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
-        return False
-    if not (truck.arrival_date <= vehicle.due_date - timedelta(1) and vehicle_assignment.delayed_by == timedelta(
-            0)):
-        # The last truck should arrive before the vehicle's due date if there is no delay
-        if not (truck.arrival_date == vehicle.due_date - timedelta(1) + vehicle_assignment.delayed_by):
-            # If there is a delay, the truck's arrival date should match the due date plus the delay
+        return VerifyVehiclePathResult.INVALID
+    # Check if the last truck's arrival date is consistent with the vehicle's due date and delay information
+    if last_truck.arrival_date > vehicle.due_date:
+        # The vehicle is delayed, check if this is consistent with the assignment data
+        if vehicle_assignment.delayed_by == timedelta(0):
             print(
-                f"Delay information for vehicle {vehicle_assignment.id} is inconsistent with actual arrival time at destination.")
-            return False
-    return True
+                f"The vehicle {vehicle_assignment.id} is actually delayed: {(last_truck.arrival_date - vehicle.due_date).days} days, but this is not consistent with the vehicle assignment: {vehicle_assignment}.")
+            return VerifyVehiclePathResult.INVALID
+        else:
+            if last_truck.arrival_date != vehicle.due_date + vehicle_assignment.delayed_by:
+                print(
+                    f"Delay information for vehicle {vehicle_assignment.id}: {vehicle_assignment.delayed_by.days} days is inconsistent with actual arrival delay of: {(last_truck.arrival_date - vehicle.due_date).days} days")
+                return VerifyVehiclePathResult.INVALID
+    return VerifyVehiclePathResult.VALID
 
 
 def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
@@ -130,12 +156,11 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
     for i in range(len(vehicle_assignments)):
         vehicle_path_is_valid = verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments)
         match vehicle_path_is_valid:
-            case str():
+            case VerifyVehiclePathResult.NOT_REACHED_DESTINATION:
                 number_of_cars_which_did_not_reach_destination += 1
-            case bool():
-                if not vehicle_path_is_valid:
-                    print(f"Vehicle {vehicles[i].id} has an invalid path.")
-                    return False
+            case VerifyVehiclePathResult.INVALID:
+                print(f"Vehicle {vehicles[i].id} has an invalid path.")
+                return False
 
     # Check if every truck has a valid load
     for truck_id in trucks.keys():
