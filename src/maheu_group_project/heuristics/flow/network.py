@@ -3,7 +3,7 @@ from datetime import timedelta
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
-from maheu_group_project.heuristics.flow.solve import ARTIFICIAL_EDGE_COST_MULTIPLIER
+from maheu_group_project.heuristics.flow.solve_deterministically import ARTIFICIAL_EDGE_COST_MULTIPLIER
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, vehicle_to_commodity_group
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     FIXED_UNPLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, FIXED_PLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY
