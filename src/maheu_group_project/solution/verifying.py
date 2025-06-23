@@ -16,8 +16,13 @@ class VerifyVehiclePathResult(Enum):
 def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
                         truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> VerifyVehiclePathResult:
     """
-    Tests if a vehicle departs from a location after it arrives there, the segments form a path from origin to destination,
-    delay information is consistent with the vehicle's arrival date at the destination, and the vehicle is part of the truck's load.
+    Tests if a vehicle path is valid.
+
+    That is, checks the following: \n
+    - The first truck in the path starts at the vehicle's origin, departs after the vehicle is available, and is part of the truck's load.
+    - For each truck in the path, it leaves earliest one day after the previous truck arrives, starts at the end location of the previous truck, and the vehicle is part of the truck's load.
+    - The last truck in the path ends at the vehicle's destination.
+    - The delay information is consistent with the actual arrival date of the last truck in the path.
 
     Args:
         vehicle (Vehicle): The vehicle to verify.
@@ -27,7 +32,9 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
             assignments.
 
     Returns:
-        bool: True if the vehicle's path is valid, False otherwise.
+        - VerifyVehiclePathResult.VALID if the path is valid.
+        - VerifyVehiclePathResult.INVALID if the path is invalid.
+        - VerifyVehiclePathResult.NOT_REACHED_DESTINATION if the vehicle did not reach its destination.
     """
     # Get the path taken by the vehicle
     vehicle_path = vehicle_assignment.paths_taken
@@ -121,12 +128,15 @@ def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
     # Get the truck's identifier and load
     truck_id = truck.get_identifier()
     total_load = len(truck_assignment.load)
+
+    # Check if the total load exceeds the truck's capacity
     if total_load > truck.capacity:
         print(
             f"The truck with ID {truck_id} has a load of {total_load}, which exceeds its capacity of {truck.capacity}.")
         return False
+
+    # For each vehicle in the truck's load, check if the truck is actually used in the vehicle's paths_taken
     for vehicle in vehicle_assignments:
-        # Check if every vehicle whose ID is in the truck's load actually uses the truck
         if vehicle.id in truck_assignment.load:
             if truck_id not in vehicle.paths_taken:
                 print(
