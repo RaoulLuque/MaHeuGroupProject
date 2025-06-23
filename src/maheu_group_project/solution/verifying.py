@@ -48,7 +48,7 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         previous_truck = trucks[vehicle_path[vehicle_path.index(truck_id) - 1]]
         if not (truck.departure_date >= previous_truck.arrival_date + timedelta(1)):
             print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs too early.")
+                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {truck_id} departs too early. That is, the vehicle departs on the same day it arrives and does not respect the obligatory rest-day 💪")
             return False
         if not (truck.start_location == previous_truck.end_location):
             print(
