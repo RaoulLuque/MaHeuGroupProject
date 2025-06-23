@@ -1,5 +1,3 @@
-from platform import mac_ver
-
 from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, \
     VehicleAssignment
 from datetime import date, timedelta
