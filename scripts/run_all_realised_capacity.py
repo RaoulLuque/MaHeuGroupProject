@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
-SOLVER = SolverType.FLOW
+SOLVER = SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
 
 
 def run_on_all_data_from_first_dataset():
@@ -42,8 +42,11 @@ def run_on_all_data_from_first_dataset():
                         raise TypeError(f"Unexpected type of is_valid: {type(is_valid)}")
                 cost = objective_function(vehicle_assignments, truck_assignments, trucks_realised)
                 output = f"Cost of solution for {dataset_dir}/{os.path.basename(file)}: {cost:.2f} \n"
-                output += f"Number of vehicles that did not arrive: {number_of_vehicles_that_did_not_arrived} \n"
+                if number_of_vehicles_that_did_not_arrived != 0:
+                    output += f"Number of vehicles that did not arrive: {number_of_vehicles_that_did_not_arrived} \n"
                 result_file.write(output)
+                if number_of_vehicles_that_did_not_arrived == 0:
+                    output += f"Number of vehicles that did not arrive: {number_of_vehicles_that_did_not_arrived} \n"
                 metrics = get_pretty_metrics(trucks_realised, truck_assignments, vehicle_assignments)
                 output += metrics + "\n" + "\n"
                 pretty_result_file.write(output)
