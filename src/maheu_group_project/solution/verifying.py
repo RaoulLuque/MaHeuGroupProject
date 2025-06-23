@@ -158,16 +158,16 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
         truck_assignments (dict[TruckIdentifier, TruckAssignment]): Dictionary containing the assignments of the truck
 
     Returns:
-        bool: True if the solution is valid, False otherwise.
         int: If the solution is valid, but some vehicles did not reach their destination, returns the number of such vehicles.
+        bool: True if the solution is (entirely) valid, False otherwise.
     """
-    # Check if every vehicle uses a valid path with correct delay
-    number_of_cars_which_did_not_reach_destination: int = 0
+    # Check if every vehicle uses a valid path
+    number_of_vehicles_which_did_not_reach_destination: int = 0
     for i in range(len(vehicle_assignments)):
         vehicle_path_is_valid = verify_vehicle_path(vehicles[i], vehicle_assignments[i], trucks, truck_assignments)
         match vehicle_path_is_valid:
             case VerifyVehiclePathResult.NOT_REACHED_DESTINATION:
-                number_of_cars_which_did_not_reach_destination += 1
+                number_of_vehicles_which_did_not_reach_destination += 1
             case VerifyVehiclePathResult.INVALID:
                 print(f"Vehicle {vehicles[i].id} has an invalid path.")
                 return False
@@ -175,13 +175,15 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
     # Check if every truck has a valid load
     for truck_id in trucks.keys():
         if truck_id not in truck_assignments:
-            print(f"Truck {truck_id} has no assignment.")
+            print(f"Truck {truck_id} is not contained in the truck assignments.")
+            return False
         else:
             if not verify_truck_load(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
                 print(f"Truck {truck_id} has an invalid load.")
                 return False
-    if number_of_cars_which_did_not_reach_destination > 0:
+    if number_of_vehicles_which_did_not_reach_destination > 0:
         # Return number_of_cars_which_did_not_reach_destination to indicate that the solution is valid, but some vehicles have not reached their destination
-        print(f"{number_of_cars_which_did_not_reach_destination} vehicles did not reach their destination.")
-        return number_of_cars_which_did_not_reach_destination
-    return True
+        print(f"{number_of_vehicles_which_did_not_reach_destination} vehicles did not reach their destination.")
+        return number_of_vehicles_which_did_not_reach_destination
+    else:
+        return True
