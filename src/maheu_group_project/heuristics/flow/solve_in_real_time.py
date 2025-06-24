@@ -15,10 +15,10 @@ from datetime import timedelta, date
 ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
-def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
-                                 locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> \
-        (
-                tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
+                            locations: list[Location], vehicles: list[Vehicle], trucks_planned: dict[TruckIdentifier, Truck],
+                            trucks_realised: dict[TruckIdentifier, Truck]) -> \
+        tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the multicommodity min-cost flow problem heuristically by solving multiple single commodity min-cost flow
     problems for each DEALER location and day in the flow network.
@@ -27,13 +27,16 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     for the vehicles that are due on that day and at that location. The flow network is expected to have been created
     with the `create_flow_network` function.
 
+    In the real-time version,
+
     Args:
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network to solve.
         commodity_groups (dict[str, set[int]]): A dictionary mapping each commodity group to the set of vehicles (their ids)
         that belong to it.
         locations (list[Location]): List of locations involved in the transportation.
         vehicles (list[Vehicle]): List of vehicles to be transported.
-        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
+        trucks_planned (dict[TruckIdentifier, Truck]): Dictionary of trucks planned to be available for transportation.
+        trucks_realised (dict[TruckIdentifier, Truck]): Dictionary of trucks that have actually been realized.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
@@ -43,41 +46,56 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     # Get the days involved in the flow network
-    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
-    current_day = first_day
+    first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks=trucks_planned)
+
+    # For each commodity group, find the earliest available date for the vehicles in that group. This way, we can ignore
+    # most commodity groups at the beginning.
+    earliest_day_in_commodity_groups: dict[str, date] = {}
+    for commodity_group, vehicle_ids in commodity_groups.items():
+        # Find the earliest available date for the vehicles in the current commodity group
+        earliest_day = min(vehicles[vehicle_id].available_date for vehicle_id in vehicle_ids)
+        earliest_day_in_commodity_groups[commodity_group] = earliest_day
 
     # Create a list to store the vehicle assignments
     vehicle_assignments: list[VehicleAssignment] = []
 
     # We iterate over the days from first to last, then those locations which are DEALER locations
-    for day in days:
+    # The current day is the day for which we know the realized trucks. However, before looking
+    for current_day in days:
+        # Create a variable to store the flows planned for each commodity group
+        flow_dict: dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]] = {}
+
+        # Create a copy of the flow network to compute the flows for the current day on
+
         for location in locations:
             if location.type == LocationType.DEALER:
                 # For each DEALER location, solve a min-cost flow problem with the commodity group corresponding to
                 # the current day and location.
-                commodity_group = dealership_to_commodity_group(NodeIdentifier(day, location, NodeType.NORMAL))
+                commodity_group = dealership_to_commodity_group(NodeIdentifier(current_day, location, NodeType.NORMAL))
 
                 # First, check whether there is actually any demand for this commodity group (day and location)
-                target_node = NodeIdentifier(day, location, NodeType.NORMAL)
+                target_node = NodeIdentifier(current_day, location, NodeType.NORMAL)
                 if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
-                    # Compute the single commodity min-cost flow for the current commodity group
-                    flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
+                    # If there is demand, check whether vehicles are actually already available at the current day
+                    if current_day >= earliest_day_in_commodity_groups[commodity_group]:
+                        # Compute the single commodity min-cost flow for the current commodity group
+                        flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
+                        flow_dict[commodity_group] = flow.copy()
+                        # visualize_flow_network(flow_network, locations, flow, True)
 
-                    # visualize_flow_network(flow_network, locations, flow, True)
+                        # Extract the solution from the flow and update the flow network
+                        extract_flow_and_update_network(flow_network=flow_network, flow=flow,
+                                                        vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                        vehicles=vehicles, current_day=current_day,
+                                                        vehicle_assignments=vehicle_assignments)
 
-                    # Extract the solution from the flow and update the flow network
-                    extract_flow_and_update_network(flow_network=flow_network, flow=flow,
-                                                    vehicles_from_current_commodity=commodity_groups[commodity_group],
-                                                    vehicles=vehicles, current_day=current_day,
-                                                    vehicle_assignments=vehicle_assignments)
-
-                    # visualize_flow_network(flow_network, locations)
-
+                        # visualize_flow_network(flow_network, locations)
+                        a = 0
     # Return the list of vehicle assignments indexed by their id
     vehicle_assignments.sort(key=lambda va: va.id)
 
     truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=vehicle_assignments,
-                                                                         trucks=trucks)
+                                                                         trucks=trucks_planned)
 
     return vehicle_assignments, truck_assignments
 
