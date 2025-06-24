@@ -32,14 +32,15 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     # Filter out edges which have flow of 0, i.e. no flow was assigned to them.
     filtered_flow = {}
-    for src, targets in flow.items():
-        filtered_targets = {}
-        for dst, keys in targets.items():
-            filtered_keys = {k: v for k, v in keys.items() if v > 0}
-            if filtered_keys:
-                filtered_targets[dst] = filtered_keys
-        if filtered_targets:
-            filtered_flow[src] = filtered_targets
+    if flow_data_provided:
+        for src, targets in flow.items():
+            filtered_targets = {}
+            for dst, keys in targets.items():
+                filtered_keys = {k: v for k, v in keys.items() if v > 0}
+                if filtered_keys:
+                    filtered_targets[dst] = filtered_keys
+            if filtered_targets:
+                filtered_flow[src] = filtered_targets
 
     # If a flow is provided and only_show_flow_nodes is true, we want filter the graph to only contain the nodes involved in the flow
     if flow_data_provided and only_show_flow_nodes:
