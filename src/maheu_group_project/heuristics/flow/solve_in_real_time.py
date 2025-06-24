@@ -1,7 +1,7 @@
 import networkx as nx
 from networkx import MultiDiGraph
 
-from maheu_group_project.heuristics.common import get_first_last_and_days
+from maheu_group_project.heuristics.common import get_first_last_and_days, convert_trucks_to_dict_by_day
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
@@ -17,7 +17,8 @@ ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
 def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
-                            locations: list[Location], vehicles: list[Vehicle], trucks_planned: dict[TruckIdentifier, Truck],
+                            locations: list[Location], vehicles: list[Vehicle],
+                            trucks_planned: dict[TruckIdentifier, Truck],
                             trucks_realised: dict[TruckIdentifier, Truck]) -> \
         tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
@@ -49,8 +50,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     # Get the days involved in the flow network
     first_day, last_day, days = get_first_last_and_days(vehicles=vehicles, trucks=trucks_planned)
 
-    # Sort the realized trucks by their departure date
-    trucks_realised: dict[TruckIdentifier, Truck] = {k: v for k, v in sorted(trucks_realised.items(), key=lambda item: item[0].departure_date)}
+    # Convert the realized trucks to a dictionary indexed by their departure date
+    trucks_realised_by_day: dict[date, dict[TruckIdentifier, Truck]] = convert_trucks_to_dict_by_day(trucks_realised)
 
     # For each commodity group, find the earliest available date for the vehicles in that group. This way, we can ignore
     # most commodity groups at the beginning.
@@ -72,30 +73,31 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         flow_dict: dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]] = {}
 
         # Create a variable to store the vehicle assignments planned for the current_day
+        current_day_planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
         # Create a copy of the flow network capacities. These will be loaded after computing all flows for the current day
         capacities_copy = {edge: data['capacity'] for edge, data in flow_network.edges.items()}
 
-        # Iterate over all days and DEALER locations. Note that this day is different to current_day. In the sense that
-        # current_day is the day for which we know the realized trucks, while day is the day for which we are currently
-        # solving the min-cost flow problem for. That is, for each current_day, we iterate over all days.
-        for day in days:
+        # Iterate over all days and DEALER locations. Note that this flow_day is different to current_day. In the sense that
+        # current_day is the day for which we know the realized trucks, while flow_day is the day for which we are currently
+        # solving the (single commodity) min-cost flow problem for. That is, for each current_day, we iterate over all days.
+        for flow_day in days:
             for location in locations:
                 if location.type == LocationType.DEALER:
                     # For each DEALER location, solve a min-cost flow problem with the commodity group corresponding to
                     # the current day and location.
-                    commodity_group = dealership_to_commodity_group(NodeIdentifier(day, location, NodeType.NORMAL))
+                    commodity_group = dealership_to_commodity_group(NodeIdentifier(flow_day, location, NodeType.NORMAL))
 
                     # First, check whether there is actually any demand for this commodity group (day and location)
-                    target_node = NodeIdentifier(day, location, NodeType.NORMAL)
+                    target_node = NodeIdentifier(flow_day, location, NodeType.NORMAL)
                     if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
-
                         # Leave this check out for now
                         # # Check whether vehicles are actually already available at the current day
                         # if current_day >= earliest_day_in_commodity_groups[commodity_group]:
 
                         # Compute the single commodity min-cost flow for the current commodity group
-                        flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
+                        flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity',
+                                                weight='weight')
 
                         # Copy the flow to the flow_dict for the current commodity group
                         flow_dict[commodity_group] = copy_flow_and_filter(flow)
@@ -103,17 +105,17 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                         # Extract the solution from the flow and update the flow network. This only updates the capacities
                         # in the flow network.
                         extract_flow_and_update_network(flow_network=flow_network, flow=flow_dict[commodity_group],
-                                                        vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                        vehicles_from_current_commodity=commodity_groups[
+                                                            commodity_group],
                                                         vehicles=vehicles, current_day=current_day,
-                                                        vehicle_assignments=vehicle_assignments)
+                                                        truck_assignments=current_day_planned_truck_assignments)
 
         # Load the capacities back into the flow network after all flows for the current day have been computed
         for edge, capacity in capacities_copy.items():
             flow_network.edges[edge]['capacity'] = capacity
 
-        # After all days have been processed, we have the vehicle assignments for all vehicles
-
-
+        # After all days have been processed, we have the planned vehicle assignments for the current day.
+        # We now need to try our best to make them work with the realized trucks.
 
     # Return the list of vehicle assignments indexed by their id
     vehicle_assignments.sort(key=lambda va: va.id)
@@ -128,7 +130,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                     flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
                                     vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
                                     current_day: date,
-                                    vehicle_assignments: list[VehicleAssignment]) -> None:
+                                    truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> None:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
 
@@ -144,7 +146,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         vehicles_from_current_commodity (set[int]): The set of vehicle ids that belong to the current commodity group.
         vehicles (list[Vehicle]): List of vehicles to be transported to look up their properties using the ids.
         current_day (date): The current day in the flow network, used to determine delays.
-        vehicle_assignments (list[VehicleAssignment]): The list of current vehicle assignments.
+        truck_assignments (dict[TruckIdentifier, TruckAssignment]): A dictionary to store the truck assignments for the vehicles.
 
     Returns:
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
@@ -164,12 +166,6 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
 
         current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
         destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
-
-        # Create a vehicle assignment
-        paths_taken = []
-        planned_delayed = False
-        delayed_by: timedelta = timedelta(0)
-        arrived = False
 
         while current_node != destination and not arrived:
             # Greedily find the next edge from the current node in the flow that has a positive flow value
@@ -211,9 +207,21 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                         # `key` when adding an edge. For trucks, this is set as the truck id which starts at 1, and other
                         # edges cannot have parallel edges (which would result in edge_numbers bigger than 0).
                         if edge_index != 0:
-                            paths_taken.append(
-                                TruckIdentifier(start_location=current_node.location, end_location=next_node.location,
-                                                truck_number=edge_index, departure_date=current_node.day))
+                            # Here, we would usually append the truck to the paths taken of the vehicle.
+                            # However, since we are working in the real-time setting, we check if the truck departs on
+                            # the current day and then add the vehicle to the trucks' load.
+                            if current_node.day == current_day:
+                                truck_identifier = TruckIdentifier(start_location=current_node.location,
+                                                                   end_location=next_node.location,
+                                                                   truck_number=edge_index,
+                                                                   departure_date=current_node.day)
+                                if truck_identifier not in truck_assignments:
+                                    # If the truck is not already assigned, we create a new TruckAssignment
+                                    truck_assignments[truck_identifier] = TruckAssignment(
+                                        load=[],
+                                    )
+                                # Add the vehicle to the truck's load
+                                truck_assignments[truck_identifier].load.append(vehicle_id)
 
                         # Set the current node to the next node
                         current_node = next_node
@@ -226,29 +234,12 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                                   type=current_node.type)
 
             else:
-                # We have reached the destination location. Either we have arrived early or we have delay to take care of.
-                # Check if we have a delay
-                if current_node.day > vehicle.due_date:
-                    # Check if we have a planned delay
-                    delay_notification_period = vehicle.due_date - current_day
-                    delay_length = current_node.day - vehicle.due_date
-                    if delay_notification_period <= timedelta(days=7):
-                        # We have an unplanned delay
-                        planned_delayed = False
-                        delayed_by = delay_length
-                    else:
-                        # We have a planned delay
-                        planned_delayed = True
-                        delayed_by = delay_length
+                # We have reached the destination location, we don't take care of delays here, so we can just break
                 break
 
-        # Insert the vehicle assignment into the list
-        vehicle_assignments.append(
-            VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed,
-                              delayed_by=delayed_by))
 
-
-def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]) -> dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]:
+def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]) -> dict[
+    NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]:
     """
     Creates a copy of the flow and filters out edges that have a flow of 0.
 
