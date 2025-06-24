@@ -28,3 +28,21 @@ def get_first_last_and_days(vehicles: list[Vehicle], trucks: dict[TruckIdentifie
     days = [first_day + timedelta(days=i) for i in range(number_of_days)]
 
     return first_day, last_day, days
+
+
+def convert_trucks_to_dict_by_day(trucks: dict[TruckIdentifier, Truck]) -> dict[date, dict[TruckIdentifier, Truck]]:
+    """
+    Returns a dictionary mapping each day to a dict of trucks available on that day.
+
+    Args:
+        trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks involved in the planning.
+
+    Returns:
+        dict[date, list[Truck]]: A dictionary mapping each day to a list of trucks available on that day.
+    """
+    truck_dict_by_day: dict[date, dict[TruckIdentifier, Truck]] = {}
+    for truck in trucks.values():
+        if truck.departure_date not in truck_dict_by_day:
+            truck_dict_by_day[truck.departure_date] = {}
+        truck_dict_by_day[truck.departure_date][truck.get_identifier()] = truck
+    return truck_dict_by_day
