@@ -38,7 +38,7 @@ def convert_trucks_to_dict_by_day(trucks: dict[TruckIdentifier, Truck]) -> dict[
         trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks involved in the planning.
 
     Returns:
-        dict[date, list[Truck]]: A dictionary mapping each day to a list of trucks available on that day.
+        dict[date, list[Truck]]: A dictionary mapping each day to a dict of trucks available on that day.
     """
     truck_dict_by_day: dict[date, dict[TruckIdentifier, Truck]] = {}
     for truck in trucks.values():
