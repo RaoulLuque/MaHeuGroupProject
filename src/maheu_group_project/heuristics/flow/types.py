@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 
-from maheu_group_project.solution.encoding import Location, Vehicle, LocationType
+from maheu_group_project.solution.encoding import Location, Vehicle, LocationType, TruckIdentifier
 
 
 class NodeType(Enum):
@@ -43,6 +43,29 @@ class NodeIdentifier:
     day: date
     location: Location
     type: NodeType
+
+
+@dataclass
+class AssignmentToday:
+    """
+    Represents the assignment of a truck to a vehicle for the current day.
+
+    Attributes:
+        assignment (TruckIdentifier): The identifier of the truck assigned to the vehicle.
+    """
+    assignment: TruckIdentifier
+
+
+@dataclass
+class NoAssignmentToday:
+    """
+    Represents the case where no truck is assigned to a vehicle for the current day. However, the vehicle is still planned
+    to be assigned to a truck in the future.
+    """
+    next_planned_assignment: TruckIdentifier
+
+
+PlannedVehicleAssignment = AssignmentToday | NoAssignmentToday
 
 
 def vehicle_to_commodity_group(vehicle: Vehicle) -> str:
