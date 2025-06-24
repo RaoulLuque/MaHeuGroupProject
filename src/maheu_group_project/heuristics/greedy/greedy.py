@@ -59,11 +59,8 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
             for vehicle_id in vehicles_at_loc_at_time[(loc, day)]:
                 # sort vehicles by next loc
                 vehicle = Vehicle_from_id[vehicle_id]
-                if vehicle.destination == loc:
-                    # If the vehicle's destination is the current location, it doesn't need to be sent anywhere
-                    vehicle_assignments[vehicle_id].delayed_by = max(timedelta(0),
-                                                                     day - vehicle.due_date)  # this delay already accounts for 1 day waiting
-                else:
+                if vehicle.destination != loc:
+                    # If the vehicle's destination is not the current location, it needs to be sent onwards
                     vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
                     next_loc = vehicle_path[vehicle_path.index(loc) + 1]
                     if next_loc not in nextloc_partitions:
@@ -128,7 +125,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
         final_truck = trucks_planned[vehicle_path[-1]]
         if vehicle.due_date - day_of_planning >= timedelta(7):
             if vehicle_path != [] and final_truck.end_location == vehicle.destination:
-                delay = final_truck.arrival_date - vehicle.due_date + timedelta(1)
+                delay = final_truck.arrival_date - vehicle.due_date
                 if delay > timedelta(0):
                     planned_delayed_vehicles[vehicle_assignment.id] = True
 
@@ -137,7 +134,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
         vehicle.id: VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle
         in requested_vehicles}
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
-                                                                 trucks_planned.keys()}
+                                                                 (trucks_planned.keys() | trucks_realised.keys())}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
                                                                        (days + [(last_day + timedelta(
                                                                            1))])}
@@ -156,9 +153,9 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
                 # sort vehicles by next loc
                 vehicle = Vehicle_from_id[vehicle_id]
                 if vehicle.destination == loc:
-                    # If the vehicle's destination is the current location, it doesn't need to be sent anywhere
+                    # If the vehicle's destination is the current location, we can measure its delay
                     vehicle_assignments[vehicle_id].delayed_by = max(timedelta(0),
-                                                                     day - vehicle.due_date)  # this delay already accounts for 1 day waiting
+                                                                     day - timedelta(1) - vehicle.due_date)
                 else:
                     vehicle_path = shortest_paths[vehicle.origin, vehicle.destination]
                     next_loc = vehicle_path[vehicle_path.index(loc) + 1]
