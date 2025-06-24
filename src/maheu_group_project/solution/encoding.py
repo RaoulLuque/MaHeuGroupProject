@@ -192,6 +192,19 @@ class TruckAssignment:
         """
         self.load = load if load is not None else []
 
+    def get_capacity_left(self, truck: Truck) -> int:
+        """
+        Returns the remaining capacity of the truck after accounting for the vehicles already assigned to it.
+
+        Args:
+            truck (Truck): The truck for which to calculate the remaining capacity.
+
+        Returns:
+            int: The remaining capacity of the truck.
+        """
+        capacity_left = truck.capacity - len(self.load)
+        assert capacity_left >= 0, f"Truck {truck.get_identifier()} has negative capacity left: {capacity_left}"
+        return capacity_left
 
 @dataclass
 class Vehicle:
