@@ -141,18 +141,23 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                     continue
 
                 for vehicle_id in vehicles:
-                    vehicle = current_day_planned_vehicle_assignments.get(vehicle_id, None)
-                    if vehicle is not None:
-                        match vehicle:
-                            case AssignmentToday(assignment):
-                                if check_if_truck_has_capacity_for_another_vehicle(realised_truck_identifier, realised_truck, final_truck_assignments):
-                                    assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_vehicle_assignments, final_truck_assignments)
+                    # Get what the vehicle is planned to do today / where it is supposed to move to next
+                    next_vehicle_assignment = current_day_planned_vehicle_assignments.get(vehicle_id, None)
+                    if next_vehicle_assignment is not None:
+                        realised_trucks_today = trucks_realised_by_day[current_day]
+                        match next_vehicle_assignment:
+                            case AssignmentToday(planned_assignment):
+                                # If the vehicle is planned to be assigned to a truck today, we check if there is a truck
+                                # on that route today (it might have less capacity than planned, or it might have been
+                                # canceled entirely).
+                                if check_if_planned_truck_exists_and_has_capacity(planned_assignment, realised_trucks_today, final_truck_assignments):
+                                    assign_vehicle_to_truck(vehicle_id, planned_assignment, final_vehicle_assignments, final_truck_assignments)
                             case NoAssignmentToday(next_planned_assignment):
                                 truck_identifier = check_if_there_is_a_suitable_truck_before_schedule()
                                 if truck_identifier is not None:
                                     assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_truck_assignments, final_truck_assignments)
                             case _:
-                                raise TypeError(f"Unexpected type of vehicle assignment: {type(vehicle)}")
+                                raise TypeError(f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
 
 
     # Return the list of vehicle assignments indexed by their id
@@ -180,13 +185,33 @@ def compare_capacities_of_trucks(this: Truck, other: Truck | None) -> int:
     return this.capacity - other.capacity
 
 
-def check_if_truck_has_capacity_for_another_vehicle(truck_identifier: TruckIdentifier, truck: Truck, truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
-    if truck_identifier not in truck_assignments and truck.capacity > 0:
-        # If the truck is not already assigned, we can assign it
-        return True
+def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIdentifier,
+                                                   realised_trucks: dict[TruckIdentifier, Truck],
+                                                   truck_assignments: dict[TruckIdentifier,
+                                                   TruckAssignment]) -> bool:
+    """
+    Checks if a planned truck exists in the realized trucks and if it has capacity left.
+
+    Args:
+        planned_assignment: TruckIdentifier: The identifier of the planned truck.
+        realised_trucks: dict[TruckIdentifier, Truck]: A dictionary of realized trucks indexed by their identifiers. This is used
+            to check if the planned truck actually travels today.
+        truck_assignments: dict[TruckIdentifier, TruckAssignment]: A dictionary of truck assignments indexed by their identifiers.
+            This is used to check if the truck has capacity left.
+
+    Returns:
+        bool: True if the planned truck exists in the realized trucks and has capacity left, False otherwise.
+    """
+    if planned_assignment not in realised_trucks:
+        # If the planned truck does not exist in the realized trucks, we return None
+        return False
     else:
         # If the truck is already assigned, we check if it has capacity left
-        return truck_assignments[truck_identifier].get_capacity_left(truck) > 0
+        return truck_assignments[planned_assignment].get_capacity_left(realised_trucks[planned_assignment]) > 0
+
+
+def check_if_there_is_a_suitable_truck_before_schedule():
+    return
 
 
 def assign_vehicle_to_truck(vehicle_id: int, truck_identifier: TruckIdentifier, vehicle_assignments: dict[int, VehicleAssignment], truck_assignments):
