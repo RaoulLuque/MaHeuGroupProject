@@ -52,7 +52,7 @@ def create_logistics_network(locations: list[Location], trucks: dict[TruckIdenti
     return logistics_network
 
 
-def calculate_candiate_paths(logistics_network: MultiDiGraph) -> dict[tuple[Location, Location], list[list[Location]]]:
+def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[tuple[Location, Location], list[list[Location]]]:
     k = 3  # Number of shortest paths to compute
     candidate_paths = {}
 
