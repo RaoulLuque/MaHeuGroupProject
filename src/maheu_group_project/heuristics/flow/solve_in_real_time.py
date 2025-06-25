@@ -62,7 +62,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         earliest_day_in_commodity_groups[commodity_group] = earliest_day
 
     # Create variables for final assignments of vehicles and trucks
-    final_vehicle_assignments: list[VehicleAssignment] = []
+    final_vehicle_assignments: dict[int, VehicleAssignment] = {}
     final_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
     visualize_flow_network(flow_network, locations)
@@ -120,7 +120,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # After all days have been processed, we have the planned vehicle assignments for the current day.
         # We now need to try our best to make them work with the realized trucks.
 
-        # First, we check if there are any realized trucks which for the day which have a higher capacity than planned
+        # First, we check if there are any realized trucks which for current day have a higher capacity than planned
         trucks_realised_additional_capacity: dict[TruckIdentifier, int] = {}
         for truck_identifier, realised_truck in trucks_realised_by_day.get(current_day, {}).items():
             capacity_difference = compare_capacities_of_trucks(realised_truck, trucks_planned.get(truck_identifier, None))
@@ -128,31 +128,31 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                 # If so, we add it to the additional capacity dict
                 trucks_realised_additional_capacity[realised_truck.get_identifier()] = capacity_difference
 
-        # To this end, we iterate over the realized trucks for the current day and try to assign the vehicles.
-        # If there are no realized trucks for the current day, we loop 0 times.
-        for realised_truck_identifier, realised_truck in trucks_realised_by_day.get(current_day, {}).items():
+        # To this end, we iterate over the commodity groups, their vehicles and then the realized trucks for the current day.
+        # Then, we try to assign the vehicles to the realized trucks based on current_day_planned_vehicle_assignments.
+
+        # First, check if there are any realized trucks for the current day. Otherwise, we can skip this day.
+        if len(trucks_realised_by_day.get(current_day, {})) != 0:
             # Iterate over all commodity groups and their vehicles
-            for day in days:
-                for location in locations:
-                    if location.type == LocationType.DEALER:
-                        commodity_group = dealership_to_commodity_group(NodeIdentifier(day, location, NodeType.NORMAL))
+            for commodity_group, vehicles in commodity_groups.items():
+                if earliest_day_in_commodity_groups[commodity_group] > current_day:
+                    # If the earliest day in the commodity group is later than the current day, we skip this commodity group
+                    # since there are no vehicles available yet.
+                    continue
 
-                        # Get the vehicles from the current commodity group
-                        vehicles_from_current_commodity = commodity_groups.get(commodity_group, set())
-
-                        for vehicle_id in vehicles_from_current_commodity:
-                            vehicle = current_day_planned_vehicle_assignments.get(vehicle_id, None)
-                            if vehicle is not None:
-                                match vehicle:
-                                    case AssignmentToday(assignment):
-                                        if check_if_truck_can_take_another_vehicle(realised_truck_identifier, realised_truck, final_truck_assignments):
-                                            assign_vehicle_to_truck
-                                    case NoAssignmentToday(next_planned_assignment):
-                                        a = 0
-                                    case _:
-                                        raise TypeError(f"Unexpected type of vehicle assignment: {type(vehicle)}")
-
-
+                for vehicle_id in vehicles:
+                    vehicle = current_day_planned_vehicle_assignments.get(vehicle_id, None)
+                    if vehicle is not None:
+                        match vehicle:
+                            case AssignmentToday(assignment):
+                                if check_if_truck_has_capacity_for_another_vehicle(realised_truck_identifier, realised_truck, final_truck_assignments):
+                                    assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_vehicle_assignments, final_truck_assignments)
+                            case NoAssignmentToday(next_planned_assignment):
+                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule()
+                                if truck_identifier is not None:
+                                    assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_truck_assignments, final_truck_assignments)
+                            case _:
+                                raise TypeError(f"Unexpected type of vehicle assignment: {type(vehicle)}")
 
 
     # Return the list of vehicle assignments indexed by their id
@@ -180,13 +180,42 @@ def compare_capacities_of_trucks(this: Truck, other: Truck | None) -> int:
     return this.capacity - other.capacity
 
 
-def check_if_truck_can_take_another_vehicle(truck_identifier: TruckIdentifier, truck: Truck, truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
+def check_if_truck_has_capacity_for_another_vehicle(truck_identifier: TruckIdentifier, truck: Truck, truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
     if truck_identifier not in truck_assignments and truck.capacity > 0:
         # If the truck is not already assigned, we can assign it
         return True
     else:
         # If the truck is already assigned, we check if it has capacity left
         return truck_assignments[truck_identifier].get_capacity_left(truck) > 0
+
+
+def assign_vehicle_to_truck(vehicle_id: int, truck_identifier: TruckIdentifier, vehicle_assignments: dict[int, VehicleAssignment], truck_assignments):
+    """
+    Assigns a vehicle to a truck and updates the vehicle and truck assignments.
+
+    Args:
+        vehicle_id (int): The id of the vehicle to assign.
+        truck_identifier (TruckIdentifier): The identifier of the truck to which the vehicle is assigned.
+        vehicle_assignments (dict[int, VehicleAssignment]): A dictionary mapping vehicle ids to their assignments.
+        truck_assignments (dict[TruckIdentifier, TruckAssignment]): A dictionary mapping truck identifiers to their assignments.
+    """
+    # Adapt the vehicle assignment
+    if vehicle_id not in vehicle_assignments:
+        # Create a new VehicleAssignment if not present yet
+        vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
+    vehicle_assignments[vehicle_id].paths_taken.append(truck_identifier)
+
+    if truck_identifier not in truck_assignments:
+        # Create a new TruckAssignment if not present yet
+        truck_assignments[truck_identifier] = TruckAssignment(load=[])
+    truck_assignments[truck_identifier].load.append(vehicle_id)
+
+    # If the truck is not already assigned, we create a new TruckAssignment
+    if truck_identifier not in truck_assignments:
+        truck_assignments[truck_identifier] = TruckAssignment(load=[])
+
+    # Add the vehicle to the truck's load
+    truck_assignments[truck_identifier].load.append(vehicle_id)
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
