@@ -86,13 +86,15 @@ def read_trucks_from_file(file_name: str, locations: list[Location]) -> tuple[
                 path_segment = row[3]
 
                 match = re.match(
-                    r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-(?:TRUCK|TRAIN)-(\d+)",
+                    r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-(TRUCK|TRAIN)-(\d+)",
                     path_segment)
 
                 if match:
                     start_code = match.group(1)
                     end_code = match.group(2)
-                    truck_number = int(match.group(3))
+                    truck_number = int(match.group(4))
+                    if match.group(3) == "TRAIN":
+                        truck_number += 10
 
                 else:
                     print("No match found for path segment:", path_segment)
