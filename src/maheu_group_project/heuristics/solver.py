@@ -31,8 +31,8 @@ class SolverType(Enum):
         return self.name
 
 
-def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> (
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> \
+        tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the vehicle assignment problem deterministically (directly using the realized data) using the specified
     solver type and dataset.
@@ -53,9 +53,9 @@ def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, real
 
 
 def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir_name: str,
-                                            realised_capacity_file_name: str) -> (
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
-    TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
+                                            realised_capacity_file_name: str) -> \
+        tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
+            TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
     """
     Solves the vehicle assignment problem deterministically (directly using the realized data) using the specified
     solver type and dataset, and returns additional data.
@@ -102,8 +102,8 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
             raise ValueError(f"Unknown solver type: {solver_type}")
 
 
-def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> (
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> \
+        tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Solves the vehicle assignment problem in real-time (only using the realized data as available) using the specified
     solver type and dataset.
@@ -124,9 +124,9 @@ def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_cap
 
 
 def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> \
-(
-        tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
-    TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
+        tuple[
+            list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
+                TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
     """
     Solves the vehicle assignment problem in real-time (only using the realized data as available) using the specified
     solver type and dataset, and returns additional data.
