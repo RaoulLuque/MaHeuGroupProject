@@ -2,6 +2,7 @@ from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdenti
     VehicleAssignment
 from datetime import date, timedelta
 from maheu_group_project.solution.encoding import location_type_from_string
+from maheu_group_project.heuristics.common import get_first_last_and_days
 
 
 def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckIdentifier, Truck],
@@ -29,15 +30,11 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
             - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping TruckIdentifier to TruckAssignment objects representing the assignments of trucks.
     """
 
-    first_day: date = min(min(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
-                          min(trucks_planned.values(), key=lambda truck: truck.departure_date).departure_date)
-    last_day: date = max(max(requested_vehicles, key=lambda vehicle: vehicle.available_date).available_date,
-                         max(trucks_planned.values(), key=lambda truck: truck.arrival_date).arrival_date)
-    day_of_planning = first_day
-    number_of_days = (last_day - first_day).days + 1
-    days = [first_day + timedelta(days=i) for i in range(number_of_days)]
-    LocationList: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+    first_day, last_day, days = get_first_last_and_days(vehicles=requested_vehicles, trucks=trucks_planned)
+    day_of_planning = first_day  # today (is relevant for planned delay calculation)
+    location_list: list[Location] = list(set(loc for path in shortest_paths.values() for loc in path))
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
+                                                                       in
                                                                        (days + [(last_day + timedelta(
                                                                            1))])}  # Include the next day to allow for vehicles to stay at a location for another day
     # Run first with only expected trucks to preview delays
@@ -45,7 +42,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
         VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
         in requested_vehicles]
     for day in days:  # days from start_date to end_date)
-        for loc in LocationList:
+        for loc in location_list:
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
             if loc.type == location_type_from_string("PLANT"):
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
@@ -126,12 +123,13 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
         in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                  (trucks_planned.keys() | trucks_realised.keys())}
-    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in LocationList for day in
+    vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
+                                                                       in
                                                                        (days + [(last_day + timedelta(
                                                                            1))])}
 
     for day in days:  # days from start_date to end_date
-        for loc in LocationList:
+        for loc in location_list:
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
             if loc.type == location_type_from_string("PLANT"):
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
