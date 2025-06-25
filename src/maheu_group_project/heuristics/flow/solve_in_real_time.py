@@ -152,10 +152,16 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                 # canceled entirely).
                                 if check_if_planned_truck_exists_and_has_capacity(planned_assignment, realised_trucks_today, final_truck_assignments):
                                     assign_vehicle_to_truck(vehicle_id, planned_assignment, final_vehicle_assignments, final_truck_assignments)
+
                             case NoAssignmentToday(next_planned_assignment):
-                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule()
+                                # If the vehicle is not planned to be assigned to a truck today, we check if coincidentally
+                                # there is a truck on that route today that has more capacity than planned.
+                                next_planned_assignment_is_not_free = trucks_planned[next_planned_assignment].price > 0
+                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today, trucks_realised_additional_capacity)
+
                                 if truck_identifier is not None:
                                     assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_truck_assignments, final_truck_assignments)
+
                             case _:
                                 raise TypeError(f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
 
@@ -193,10 +199,10 @@ def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIden
     Checks if a planned truck exists in the realized trucks and if it has capacity left.
 
     Args:
-        planned_assignment: TruckIdentifier: The identifier of the planned truck.
-        realised_trucks: dict[TruckIdentifier, Truck]: A dictionary of realized trucks indexed by their identifiers. This is used
+        planned_assignment (TruckIdentifier): The identifier of the planned truck.
+        realised_trucks (dict[TruckIdentifier, Truck]): A dictionary of realized trucks indexed by their identifiers. This is used
             to check if the planned truck actually travels today.
-        truck_assignments: dict[TruckIdentifier, TruckAssignment]: A dictionary of truck assignments indexed by their identifiers.
+        truck_assignments (dict[TruckIdentifier, TruckAssignment]): A dictionary of truck assignments indexed by their identifiers.
             This is used to check if the truck has capacity left.
 
     Returns:
@@ -210,8 +216,37 @@ def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIden
         return truck_assignments[planned_assignment].get_capacity_left(realised_trucks[planned_assignment]) > 0
 
 
-def check_if_there_is_a_suitable_truck_before_schedule():
-    return
+def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: TruckIdentifier,
+                                                       planned_assignment_is_not_free: bool,
+                                                       realised_trucks_today: dict[TruckIdentifier, Truck],
+                                                       trucks_realised_additional_capacity: dict[TruckIdentifier, int]) -> TruckIdentifier | None:
+    """
+    Checks if there is a suitable truck for the planned assignment before the scheduled assignment.
+    A truck is considered suitable if it travels on the same route as the planned assignment, has additional capacity,
+    and either has a price of 0 or does not but the planned assignment is also not free.
+
+
+    Args:
+        planned_assignment (TruckIdentifier): The identifier of the planned truck assignment.
+        planned_assignment_is_not_free (bool): Whether the planned assignment is not free (i.e., has a price > 0).
+        realised_trucks_today (dict[TruckIdentifier, Truck]): A dictionary of realized trucks for today indexed by their identifiers.
+        trucks_realised_additional_capacity (dict[TruckIdentifier, int]): A dictionary of realized trucks for today with additional capacity indexed by their identifiers.
+
+    Returns:
+        TruckIdentifier | None: The identifier of the suitable truck if found, None otherwise.
+    """
+    for realised_truck_identifier, realised_truck in realised_trucks_today.items():
+        # First, we check if the truck has additional capacity compared to the planned assignment
+        if trucks_realised_additional_capacity[realised_truck_identifier] > 0:
+            if realised_truck_identifier.start_location == planned_assignment.start_location and \
+                    realised_truck_identifier.end_location == planned_assignment.end_location:
+                # At last, we check if the costs match the planned assignment
+                if realised_truck.price == 0 or planned_assignment_is_not_free:
+                    # We found a suitable truck. We subtract one from the additional capacity (left) of the truck and
+                    # return its truck identifier.
+                    trucks_realised_additional_capacity[realised_truck_identifier] -= 1
+                    return realised_truck_identifier
+    return None
 
 
 def assign_vehicle_to_truck(vehicle_id: int, truck_identifier: TruckIdentifier, vehicle_assignments: dict[int, VehicleAssignment], truck_assignments):
