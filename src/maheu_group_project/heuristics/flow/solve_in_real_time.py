@@ -146,6 +146,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                     if next_vehicle_assignment is not None:
                         realised_trucks_today = trucks_realised_by_day[current_day]
                         match next_vehicle_assignment:
+                            # TODO: Adjust the demands in the flow network according to the assign_vehicle_to_truck
                             case AssignmentToday(planned_assignment):
                                 # If the vehicle is planned to be assigned to a truck today, we check if there is a truck
                                 # on that route today (it might have less capacity than planned, or it might have been
@@ -160,7 +161,10 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                 truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today, trucks_realised_additional_capacity)
 
                                 if truck_identifier is not None:
-                                    assign_vehicle_to_truck(vehicle_id, realised_truck_identifier, final_truck_assignments, final_truck_assignments)
+                                    # We subtract one from the additional capacity of the truck, since we are assigning a
+                                    # vehicle to it.
+                                    trucks_realised_additional_capacity[truck_identifier] -= 1
+                                    assign_vehicle_to_truck(vehicle_id, truck_identifier, final_vehicle_assignments, final_truck_assignments)
 
                             case _:
                                 raise TypeError(f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
@@ -242,9 +246,7 @@ def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: Truck
                     realised_truck_identifier.end_location == planned_assignment.end_location:
                 # At last, we check if the costs match the planned assignment
                 if realised_truck.price == 0 or planned_assignment_is_not_free:
-                    # We found a suitable truck. We subtract one from the additional capacity (left) of the truck and
-                    # return its truck identifier.
-                    trucks_realised_additional_capacity[realised_truck_identifier] -= 1
+                    # We found a suitable truck and return its truck identifier.
                     return realised_truck_identifier
     return None
 
