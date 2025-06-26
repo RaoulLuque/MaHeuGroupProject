@@ -206,6 +206,11 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
     final_vehicle_assignments.sort(key=lambda va: va.id)
 
+    # Make sure the truck assignments contains all trucks
+    for truck_identifier in trucks_realised.keys():
+        if truck_identifier not in final_truck_assignments:
+            final_truck_assignments[truck_identifier] = TruckAssignment(load=[])
+
     return final_vehicle_assignments, final_truck_assignments
 
 
