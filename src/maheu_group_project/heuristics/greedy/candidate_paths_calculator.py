@@ -2,19 +2,13 @@ import networkx as nx
 from networkx import MultiDiGraph
 import statistics
 from matplotlib.patches import FancyArrowPatch
-from matplotlib.path import Path
 import matplotlib.pyplot as plt
-import networkx as nx
 import numpy as np
+import heapq
+from itertools import count
+from maheu_group_project.solution.encoding import TruckIdentifier, Truck, Location, LocationType
 
-from maheu_group_project.heuristics.flow.types import NodeIdentifier
-from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
-    TruckAssignment, \
-    VehicleAssignment, \
-    FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, COST_PER_PLANNED_DELAY_DAY, \
-    convert_vehicle_assignments_to_truck_assignments
-from datetime import timedelta, date
-from networkx.algorithms.simple_paths import shortest_simple_paths
+c = 50  # additional cost for each edge
 
 
 def create_logistics_network(locations: list[Location], trucks: dict[TruckIdentifier, Truck]) -> MultiDiGraph:
@@ -25,51 +19,136 @@ def create_logistics_network(locations: list[Location], trucks: dict[TruckIdenti
         logistics_network.add_node(location)
 
     # Create the edges of the flow network for the trucks
-    nonfree_truck_prices: dict[tuple[Location, Location], list[float]] = {}
-    free_trucks: set[tuple[Location, Location]] = set()
+    nonfree_truck_prices: dict[tuple[Location, Location], dict] = {}
+
     for truck in trucks.values():
         start_node = truck.start_location
         end_node = truck.end_location
+        truck_number = truck.truck_number
 
         if truck.price > 0:
             if (start_node, end_node) not in nonfree_truck_prices:
-                nonfree_truck_prices[(start_node, end_node)] = []
-            nonfree_truck_prices[(start_node, end_node)].append(truck.price)
+                nonfree_truck_prices[(start_node, end_node)] = {'prices': [], 'truck_number': truck_number}
+            nonfree_truck_prices[(start_node, end_node)]['prices'].append(truck.price)
         else:
-            free_trucks.add((start_node, end_node))
-
-    for (start_node, end_node) in free_trucks:
-        # TODO: Define edge cost based on truck parameters
-        edge_cost = 0
-
-        logistics_network.add_edge(start_node, end_node, weight=edge_cost)
+            if not logistics_network.has_edge(start_node, end_node):
+                edge_cost = 0 + c
+                logistics_network.add_edge(start_node, end_node, weight=edge_cost, truck_number=truck_number)
 
     for (start_node, end_node) in nonfree_truck_prices:
-        # TODO: Define edge cost based on truck parameters
-        edge_cost = statistics.mean(nonfree_truck_prices[(start_node, end_node)])
+        edge_cost = statistics.mean(nonfree_truck_prices[(start_node, end_node)]['prices']) + c
+        truck_number = nonfree_truck_prices[(start_node, end_node)]['truck_number']
 
-        logistics_network.add_edge(start_node, end_node, weight=edge_cost)
+        logistics_network.add_edge(start_node, end_node, weight=edge_cost, truck_number=truck_number)
+
     return logistics_network
 
 
-def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[tuple[Location, Location], list[list[Location]]]:
-    k = 3  # Number of shortest paths to compute
+def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
+    tuple[Location, Location], list[tuple[Location, int, bool]]]:
     candidate_paths = {}
 
     for source in logistics_network.nodes:
         if source.type == LocationType.DEALER:
             continue
         for target in logistics_network.nodes:
-            if target.type != LocationType.DEALER:
+            if target.type != LocationType.DEALER or source == target:
                 continue
-            try:
-                paths_generator = shortest_simple_paths(logistics_network, source, target, weight='weight')
-                candidate_paths[(source, target)] = [path for _, path in zip(range(k), paths_generator)]
-            except nx.NetworkXNoPath:
-                print(f"No path found from {source} to {target}.")
-                candidate_paths[(source, target)] = []
+
+            seen_edges = set()
+            for path, is_free in shortest_paths(logistics_network, source, target):
+                if not path:
+                    continue
+                u, v, key, data = path[0]
+                if (u, v, key) in seen_edges:
+                    continue
+                seen_edges.add((u, v, key))
+                next_location = v
+                truck_number = data.get("truck_number")
+                candidate_paths.setdefault((source, target), []).append((next_location, truck_number, is_free))
 
     return candidate_paths
+
+
+def shortest_paths(network: MultiDiGraph, start_location: Location, end_location: Location) -> list[
+    tuple[list[tuple[Location, Location, int, dict]], bool]]:
+    """
+    Finds the k shortest paths between two locations in a logistics network.
+
+    :param network: The logistics network represented as a MultiDiGraph.
+    :param start_location: The starting location for the paths.
+    :param end_location: The destination location for the paths.
+    :return: A list of tuples, each containing a path (list of edges) and a boolean indicating if the path is free.
+    """
+    k = 10  # max number of shortest paths to find
+
+    def dijkstra_edge_path(G: MultiDiGraph, source: Location, target: Location) -> list[
+        tuple[Location, Location, int, dict]]:
+        counter = count()
+        queue = [(0, next(counter), source, [])]
+        visited = set()
+
+        while queue:
+            cost, _, node, path = heapq.heappop(queue)
+            if node == target:
+                return path
+            if node in visited:
+                continue
+            visited.add(node)
+            for neighbor in G.successors(node):
+                for key, data in G.get_edge_data(node, neighbor).items():
+                    if data.get("weight", float("inf")) is not None:
+                        heapq.heappush(queue, (
+                            cost + data["weight"],
+                            next(counter),
+                            neighbor,
+                            path + [(node, neighbor, key, data)]
+                        ))
+        raise nx.NetworkXNoPath(f"No path between {source} and {target}")
+
+    def total_path_weight(edge_path: list[tuple[Location, Location, int, dict]]) -> float:
+        return sum(data.get("weight", 0) for (_, _, _, data) in edge_path)
+
+    A = []
+    B = []
+
+    try:
+        first_path = dijkstra_edge_path(network, start_location, end_location)
+        A.append(first_path)
+    except nx.NetworkXNoPath:
+        return []
+
+    for k_idx in range(1, k):
+        for i in range(len(A[-1])):
+            spur_node = A[-1][i][0]
+            root_path = A[-1][:i]
+
+            removed_edges = []
+            for path in A:
+                if len(path) > i and path[:i] == root_path:
+                    u, v, key, _ = path[i]
+                    if network.has_edge(u, v, key):
+                        data = network[u][v][key]
+                        removed_edges.append((u, v, key, data))
+                        network.remove_edge(u, v, key)
+
+            try:
+                spur_path = dijkstra_edge_path(network, spur_node, end_location)
+                total_path = root_path + spur_path
+                if total_path not in B:
+                    B.append(total_path)
+            except nx.NetworkXNoPath:
+                pass
+
+            for u, v, key, data in removed_edges:
+                network.add_edge(u, v, key=key, **data)
+
+        if not B:
+            break
+        B.sort(key=total_path_weight)
+        A.append(B.pop(0))
+
+    return [(path, all(edge[3].get("weight", 0) == c for edge in path)) for path in A]
 
 
 def visualize_logistics_network(network: MultiDiGraph):
@@ -126,7 +205,9 @@ def visualize_logistics_network(network: MultiDiGraph):
             )
             ax.add_patch(arrow)
 
-            label = f"{int(data.get('weight', 0))}"
+            weight = int(data.get('weight', 0))
+            truck_number = data.get('truck_number', 'N/A')
+            label = f"{weight}  (#{truck_number})"
             # Extract only the arc portion before the arrow head
             path = arrow.get_path()
             codes = path.codes
