@@ -327,6 +327,7 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)
     edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known)
+    vehicle_destination_node = NodeIdentifier(day=vehicle.due_date, location= vehicle.destination, type=NodeType.NORMAL)
 
     # Adapt the demand on the nodes.
     commodity_group = vehicle_to_commodity_group(vehicle)
@@ -338,10 +339,12 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # The end node of the edge is only supposed to have a positive value, if it is the destination of the vehicle.
     # In fact, it might not even have an entry for the current commodity group at all.
     if edge_end_node.location == vehicle.destination:
-        assert flow_network.nodes[edge_end_node][commodity_group] > 0
-    if commodity_group not in flow_network.nodes[edge_end_node]:
-        flow_network.nodes[edge_end_node][commodity_group] = 0
-    flow_network.nodes[edge_end_node][commodity_group] -= 1
+        assert flow_network.nodes[vehicle_destination_node][commodity_group] > 0
+        flow_network.nodes[vehicle_destination_node][commodity_group] -= 1
+    else:
+        if commodity_group not in flow_network.nodes[edge_end_node]:
+            flow_network.nodes[edge_end_node][commodity_group] = 0
+        flow_network.nodes[edge_end_node][commodity_group] -= 1
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
