@@ -70,7 +70,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     final_vehicle_assignments: dict[int, VehicleAssignment] = {}
     final_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
-    visualize_flow_network(flow_network, locations)
+    visualize_flow_network(flow_network, locations, commodity_groups)
 
     # We iterate over the days from first to last; then those locations which are DEALER locations
     # The current day is the day for which we know the realized trucks. However, before looking
@@ -190,7 +190,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
             # next iteration.
             remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
 
-            visualize_flow_network(flow_network, locations, show_demands=(set(commodity_groups.keys()), True))
+            visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     # Convert the final_vehicle_assignments to a list and sort them by their id
     final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
@@ -265,7 +265,7 @@ def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: Truck
     """
     for realised_truck_identifier, realised_truck in realised_trucks_today.items():
         # First, we check if the truck has additional capacity compared to the planned assignment
-        if trucks_realised_additional_capacity[realised_truck_identifier] > 0:
+        if trucks_realised_additional_capacity.get(realised_truck_identifier, 0) > 0:
             if realised_truck_identifier.start_location == planned_assignment.start_location and \
                     realised_truck_identifier.end_location == planned_assignment.end_location:
                 # At last, we check if the costs match the planned assignment
@@ -317,22 +317,22 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     truck_assignments[truck_identifier].load.append(vehicle_id)
 
     # Adapt the flow network to reflect the assignment
-    start_node_edge, end_node_edge = get_start_and_end_nodes_for_truck(truck)
+    edge_start_node, edge_end_node = get_start_and_end_nodes_for_truck(truck)
 
     # Adapt the demand on the nodes.
     commodity_group = vehicle_to_commodity_group(vehicle)
 
     # Negative demand means that the node is a source, positive demand means that the node is a sink.
-    assert flow_network.nodes[start_node_edge][commodity_group] < 0
-    flow_network.nodes[start_node_edge][commodity_group] += 1
+    assert flow_network.nodes[edge_start_node][commodity_group] < 0
+    flow_network.nodes[edge_start_node][commodity_group] += 1
 
     # The end node of the edge is only supposed to have a positive value, if it is the destination of the vehicle.
     # In fact, it might not even have an entry for the current commodity group at all.
-    if end_node_edge.location == vehicle.destination:
-        assert flow_network.nodes[end_node_edge][commodity_group] > 0
-    if commodity_group not in flow_network.nodes[end_node_edge]:
-        flow_network.nodes[end_node_edge][commodity_group] = 0
-    flow_network.nodes[end_node_edge][commodity_group] -= 1
+    if edge_end_node.location == vehicle.destination:
+        assert flow_network.nodes[edge_end_node][commodity_group] > 0
+    if commodity_group not in flow_network.nodes[edge_end_node]:
+        flow_network.nodes[edge_end_node][commodity_group] = 0
+    flow_network.nodes[edge_end_node][commodity_group] -= 1
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
