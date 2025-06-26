@@ -5,7 +5,7 @@ from maheu_group_project.heuristics.common import get_first_last_and_days, conve
 from maheu_group_project.heuristics.flow.network import remove_trucks_from_network, get_start_and_end_nodes_for_truck
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group, PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
-    get_day_and_location_for_commodity_group
+    get_day_and_location_for_commodity_group, vehicle_to_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
@@ -320,14 +320,19 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     start_node_edge, end_node_edge = get_start_and_end_nodes_for_truck(truck)
 
     # Adapt the demand on the nodes.
-    # Negative demand means that the node is a source, positive demand means that the node is a sink.
-    assert flow_network.nodes[start_node_edge]['demand'] < 0
-    flow_network.nodes[start_node_edge]['demand'] += 1
+    commodity_group = vehicle_to_commodity_group(vehicle)
 
-    # The end node of the edge is only supposed to have a positive, if it is the destination of the vehicle.
+    # Negative demand means that the node is a source, positive demand means that the node is a sink.
+    assert flow_network.nodes[start_node_edge][commodity_group] < 0
+    flow_network.nodes[start_node_edge][commodity_group] += 1
+
+    # The end node of the edge is only supposed to have a positive value, if it is the destination of the vehicle.
+    # In fact, it might not even have an entry for the current commodity group at all.
     if end_node_edge.location == vehicle.destination:
-        assert flow_network.nodes[end_node_edge]['demand'] > 0
-    flow_network.nodes[end_node_edge]['demand'] -= 1
+        assert flow_network.nodes[end_node_edge][commodity_group] > 0
+    if commodity_group not in flow_network.nodes[end_node_edge]:
+        flow_network.nodes[end_node_edge][commodity_group] = 0
+    flow_network.nodes[end_node_edge][commodity_group] -= 1
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
