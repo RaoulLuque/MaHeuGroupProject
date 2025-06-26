@@ -123,7 +123,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # First, we check if there are any realized trucks which for current day have a higher capacity than planned
         trucks_realised_additional_capacity: dict[TruckIdentifier, int] = {}
         for truck_identifier, realised_truck in trucks_realised_by_day.get(current_day, {}).items():
-            capacity_difference = compare_capacities_of_trucks(realised_truck, trucks_planned.get(truck_identifier, None))
+            capacity_difference = compare_capacities_of_trucks(realised_truck,
+                                                               trucks_planned.get(truck_identifier, None))
             if capacity_difference > 0:
                 # If so, we add it to the additional capacity dict
                 trucks_realised_additional_capacity[realised_truck.get_identifier()] = capacity_difference
@@ -134,47 +135,55 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # First, check if there are any realized trucks for the current day. Otherwise, we can skip this day.
         if len(trucks_realised_by_day.get(current_day, {})) != 0:
             # Iterate over all commodity groups and their vehicles
-            for commodity_group, vehicles in commodity_groups.items():
+            for commodity_group, vehicles_in_commodity_group in commodity_groups.items():
                 if earliest_day_in_commodity_groups[commodity_group] > current_day:
                     # If the earliest day in the commodity group is later than the current day, we skip this commodity group
                     # since there are no vehicles available yet.
                     continue
 
-                for vehicle_id in vehicles:
+                for vehicle_id in vehicles_in_commodity_group:
+                    # Get the vehicle object from the list of vehicles
+                    vehicle = vehicles[vehicle_id]
+
                     # Get what the vehicle is planned to do today / where it is supposed to move to next
                     next_vehicle_assignment = current_day_planned_vehicle_assignments.get(vehicle_id, None)
                     if next_vehicle_assignment is not None:
                         realised_trucks_today = trucks_realised_by_day[current_day]
                         match next_vehicle_assignment:
-                            # TODO: Adjust the demands in the flow network according to the assign_vehicle_to_truck
                             case AssignmentToday(planned_assignment):
                                 # If the vehicle is planned to be assigned to a truck today, we check if there is a truck
                                 # on that route today (it might have less capacity than planned, or it might have been
                                 # canceled entirely).
-                                if check_if_planned_truck_exists_and_has_capacity(planned_assignment, realised_trucks_today, final_truck_assignments):
-                                    assign_vehicle_to_truck(vehicle_id, planned_assignment, final_vehicle_assignments, final_truck_assignments)
+                                if check_if_planned_truck_exists_and_has_capacity(planned_assignment,
+                                                                                  realised_trucks_today,
+                                                                                  final_truck_assignments):
+                                    assign_vehicle_to_truck(flow_network, vehicle,
+                                                            realised_trucks_today[planned_assignment],
+                                                            final_vehicle_assignments, final_truck_assignments)
 
                             case NoAssignmentToday(next_planned_assignment):
                                 # If the vehicle is not planned to be assigned to a truck today, we check if coincidentally
                                 # there is a truck on that route today that has more capacity than planned.
                                 next_planned_assignment_is_not_free = trucks_planned[next_planned_assignment].price > 0
-                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today, trucks_realised_additional_capacity)
+                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(
+                                    next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today,
+                                    trucks_realised_additional_capacity)
 
                                 if truck_identifier is not None:
                                     # We subtract one from the additional capacity of the truck, since we are assigning a
                                     # vehicle to it.
                                     trucks_realised_additional_capacity[truck_identifier] -= 1
-                                    assign_vehicle_to_truck(vehicle_id, truck_identifier, final_vehicle_assignments, final_truck_assignments)
+                                    assign_vehicle_to_truck(flow_network, vehicle,
+                                                            realised_trucks_today[truck_identifier],
+                                                            final_vehicle_assignments, final_truck_assignments)
 
                             case _:
-                                raise TypeError(f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
+                                raise TypeError(
+                                    f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
 
-
-    # Return the list of vehicle assignments indexed by their id
+    # Convert the final_vehicle_assignments to a list and sort them by their id
+    final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
     final_vehicle_assignments.sort(key=lambda va: va.id)
-
-    final_truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=final_vehicle_assignments,
-                                                                         trucks=trucks_planned)
 
     return final_vehicle_assignments, final_truck_assignments
 
@@ -223,7 +232,8 @@ def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIden
 def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: TruckIdentifier,
                                                        planned_assignment_is_not_free: bool,
                                                        realised_trucks_today: dict[TruckIdentifier, Truck],
-                                                       trucks_realised_additional_capacity: dict[TruckIdentifier, int]) -> TruckIdentifier | None:
+                                                       trucks_realised_additional_capacity: dict[
+                                                           TruckIdentifier, int]) -> TruckIdentifier | None:
     """
     Checks if there is a suitable truck for the planned assignment before the scheduled assignment.
     A truck is considered suitable if it travels on the same route as the planned assignment, has additional capacity,
@@ -251,16 +261,31 @@ def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: Truck
     return None
 
 
-def assign_vehicle_to_truck(vehicle_id: int, truck_identifier: TruckIdentifier, vehicle_assignments: dict[int, VehicleAssignment], truck_assignments):
+def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck: Truck,
+                            vehicle_assignments: dict[int, VehicleAssignment],
+                            truck_assignments: dict[TruckIdentifier, TruckAssignment]):
     """
     Assigns a vehicle to a truck and updates the vehicle and truck assignments.
+    Also updates the flow network to reflect the assignment. That is, adapt the demand on the start and end node of the
+    edge/truck taken by the vehicle.
 
     Args:
-        vehicle_id (int): The id of the vehicle to assign.
-        truck_identifier (TruckIdentifier): The identifier of the truck to which the vehicle is assigned.
+        flow_network (MultiDiGraph[NodeIdentifier]): The flow network we are working with.
+        vehicle (Vehicle): The vehicle to be assigned to the truck.
+        truck (Truck): The truck object to which the vehicle is assigned.
         vehicle_assignments (dict[int, VehicleAssignment]): A dictionary mapping vehicle ids to their assignments.
         truck_assignments (dict[TruckIdentifier, TruckAssignment]): A dictionary mapping truck identifiers to their assignments.
     """
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    # Get the truck identifier from the truck object
+    truck_identifier = truck.get_identifier()
+
+    # Get the vehicle id from the vehicle object
+    vehicle_id = vehicle.id
+
+    # Adapt the truck and vehicle assignments
     # Adapt the vehicle assignment
     if vehicle_id not in vehicle_assignments:
         # Create a new VehicleAssignment if not present yet
@@ -271,13 +296,25 @@ def assign_vehicle_to_truck(vehicle_id: int, truck_identifier: TruckIdentifier, 
         # Create a new TruckAssignment if not present yet
         truck_assignments[truck_identifier] = TruckAssignment(load=[])
     truck_assignments[truck_identifier].load.append(vehicle_id)
-
     # If the truck is not already assigned, we create a new TruckAssignment
     if truck_identifier not in truck_assignments:
         truck_assignments[truck_identifier] = TruckAssignment(load=[])
-
     # Add the vehicle to the truck's load
     truck_assignments[truck_identifier].load.append(vehicle_id)
+
+    # Adapt the flow network to reflect the assignment
+    start_node_edge = NodeIdentifier(day=truck.departure_date, location=truck.start_location, type=NodeType.NORMAL)
+    end_node_edge = NodeIdentifier(day=truck.arrival_date, location=truck.end_location, type=NodeType.NORMAL)
+
+    # Adapt the demand on the nodes.
+    # Negative demand means that the node is a source, positive demand means that the node is a sink.
+    assert flow_network.nodes[start_node_edge]['demand'] < 0
+    flow_network.nodes[start_node_edge]['demand'] += 1
+
+    # The end node of the edge is only supposed to have a positive, if it is the destination of the vehicle.
+    if end_node_edge.location == vehicle.destination:
+        assert flow_network.nodes[end_node_edge]['demand'] > 0
+    flow_network.nodes[end_node_edge]['demand'] -= 1
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
@@ -308,6 +345,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
         to contain their respective plans.
     """
+    # TODO: Change to return PlannedVehicleAssignment and adapt to start current node at latest point of paths_taken
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
@@ -376,8 +414,6 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                 )
                             # Add the vehicle to the truck's load
                             truck_assignments[truck_identifier].load.append(vehicle_id)
-
-
 
                     # Set the current node to the next node
                     current_node = next_node
