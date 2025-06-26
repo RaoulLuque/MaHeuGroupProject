@@ -301,32 +301,10 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    # Get the truck identifier from the truck object
-    truck_identifier = truck.get_identifier()
-
-    # Get the vehicle id from the vehicle object
-    vehicle_id = vehicle.id
-
-    # Adapt the truck and vehicle assignments
-    # Adapt the vehicle assignment
-    if vehicle_id not in vehicle_assignments:
-        # Create a new VehicleAssignment if not present yet
-        vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
-    vehicle_assignments[vehicle_id].paths_taken.append(truck_identifier)
-
-    if truck_identifier not in truck_assignments:
-        # Create a new TruckAssignment if not present yet
-        truck_assignments[truck_identifier] = TruckAssignment(load=[])
-    truck_assignments[truck_identifier].load.append(vehicle_id)
-    # If the truck is not already assigned, we create a new TruckAssignment
-    if truck_identifier not in truck_assignments:
-        truck_assignments[truck_identifier] = TruckAssignment(load=[])
-    # Add the vehicle to the truck's load
-    truck_assignments[truck_identifier].load.append(vehicle_id)
-
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)
-    edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known)
+    edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments,
+                                                              trucks_realised_by_day_known)
     vehicle_destination_node = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
 
     # Adapt the demand on the nodes.
@@ -345,6 +323,28 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
         if commodity_group not in flow_network.nodes[edge_end_node]:
             flow_network.nodes[edge_end_node][commodity_group] = 0
         flow_network.nodes[edge_end_node][commodity_group] -= 1
+
+    # Adapt the truck and vehicle assignments
+    # Get the truck identifier from the truck object
+    truck_identifier = truck.get_identifier()
+
+    # Get the vehicle id from the vehicle object
+    vehicle_id = vehicle.id
+    # Adapt the vehicle assignment
+    if vehicle_id not in vehicle_assignments:
+        # Create a new VehicleAssignment if not present yet
+        vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
+    vehicle_assignments[vehicle_id].paths_taken.append(truck_identifier)
+
+    if truck_identifier not in truck_assignments:
+        # Create a new TruckAssignment if not present yet
+        truck_assignments[truck_identifier] = TruckAssignment(load=[])
+    truck_assignments[truck_identifier].load.append(vehicle_id)
+    # If the truck is not already assigned, we create a new TruckAssignment
+    if truck_identifier not in truck_assignments:
+        truck_assignments[truck_identifier] = TruckAssignment(load=[])
+    # Add the vehicle to the truck's load
+    truck_assignments[truck_identifier].load.append(vehicle_id)
 
 
 def extract_flow_and_update_network(flow_network: MultiDiGraph,
