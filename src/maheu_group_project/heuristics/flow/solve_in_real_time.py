@@ -336,10 +336,6 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
         vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
     vehicle_assignments[vehicle_id].paths_taken.append(truck_identifier)
 
-    if truck_identifier not in truck_assignments:
-        # Create a new TruckAssignment if not present yet
-        truck_assignments[truck_identifier] = TruckAssignment(load=[])
-    truck_assignments[truck_identifier].load.append(vehicle_id)
     # If the truck is not already assigned, we create a new TruckAssignment
     if truck_identifier not in truck_assignments:
         truck_assignments[truck_identifier] = TruckAssignment(load=[])
