@@ -4,7 +4,8 @@ from networkx import MultiDiGraph
 from maheu_group_project.heuristics.common import get_first_last_and_days, convert_trucks_to_dict_by_day
 from maheu_group_project.heuristics.flow.network import remove_trucks_from_network, get_start_and_end_nodes_for_truck
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
-    dealership_to_commodity_group, PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday
+    dealership_to_commodity_group, PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
+    get_day_and_location_for_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
@@ -83,42 +84,39 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # Create a copy of the flow network capacities. These will be loaded after computing all flows for the current day
         capacities_copy = {edge: data['capacity'] for edge, data in flow_network.edges.items()}
 
-        # Iterate over all days and DEALER locations. Note that this flow_day is different to current_day. In the sense that
-        # current_day is the day for which we know the realized trucks, while flow_day is the day for which we are currently
-        # solving the (single commodity) min-cost flow problem for. That is, for each current_day, we iterate over all days.
-        for flow_day in days:
-            for location in locations:
-                if location.type == LocationType.DEALER:
-                    # For each DEALER location, solve a min-cost flow problem with the commodity group corresponding to
-                    # the current day and location.
-                    commodity_group = dealership_to_commodity_group(NodeIdentifier(flow_day, location, NodeType.NORMAL))
+        # Iterate over all commodity groups solve the single commodity flow problem for them.
+        for commodity_group in commodity_groups.keys():
+            commodity_group_day, commodity_group_location = get_day_and_location_for_commodity_group(commodity_group)
 
-                    # First, check whether there is actually any demand for this commodity group (day and location)
-                    target_node = NodeIdentifier(flow_day, location, NodeType.NORMAL)
-                    if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
-                        # Leave this check out for now
-                        # # Check whether vehicles are actually already available at the current day
-                        # if current_day >= earliest_day_in_commodity_groups[commodity_group]:
+            # First, check whether there is actually any demand for this commodity group (day and location)
+            target_node = NodeIdentifier(commodity_group_day, commodity_group_location, NodeType.NORMAL)
+            if flow_network.nodes[target_node].get(commodity_group, 0) != 0:
+                # Leave this check out for now
+                # # Check whether vehicles are actually already available at the current day
+                # if current_day >= earliest_day_in_commodity_groups[commodity_group]:
 
-                        # Compute the single commodity min-cost flow for the current commodity group
-                        flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity',
-                                                weight='weight')
+                # Compute the single commodity min-cost flow for the current commodity group
+                flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity',
+                                        weight='weight')
 
-                        # Copy the flow to the flow_dict for the current commodity group
-                        flow_dict[commodity_group] = copy_flow_and_filter(flow)
+                # Copy the flow to the flow_dict for the current commodity group
+                flow_dict[commodity_group] = copy_flow_and_filter(flow)
 
-                        # Extract the solution from the flow and update the flow network. This updates the capacities
-                        # in the flow network as well as add the next planned vehicle assignments for the current day
-                        # to the current_day_planned_vehicle_assignments.
-                        # Note that trucks_realised_by_day is passed to this function, however, only the trucks earlier
-                        # than the current day are looked at, so no cheating here 🤝 (see get_current_location_of_vehicle_as_node).
-                        current_day_planned_vehicle_assignments = extract_flow_and_update_network(flow_network=flow_network, flow=flow_dict[commodity_group],
-                                                        vehicles_from_current_commodity=commodity_groups[
-                                                            commodity_group],
-                                                        vehicles=vehicles, current_day=current_day,
-                                                        planned_vehicle_assignments=current_day_planned_vehicle_assignments,
-                                                        final_vehicle_assignments=final_vehicle_assignments,
-                                                        trucks_realised_by_day=trucks_realised_by_day)
+                # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()), flow)
+
+                # Extract the solution from the flow and update the flow network. This updates the capacities
+                # in the flow network as well as add the next planned vehicle assignments for the current day
+                # to the current_day_planned_vehicle_assignments.
+                # Note that trucks_realised_by_day is passed to this function, however, only the trucks earlier
+                # than the current day are looked at, so no cheating here 🤝 (see get_current_location_of_vehicle_as_node).
+                current_day_planned_vehicle_assignments = extract_flow_and_update_network(flow_network=flow_network,
+                                                                                          flow=flow_dict[commodity_group],
+                                                                                          vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                                                          vehicles=vehicles,
+                                                                                          current_day=current_day,
+                                                                                          planned_vehicle_assignments=current_day_planned_vehicle_assignments,
+                                                                                          final_vehicle_assignments=final_vehicle_assignments,
+                                                                                          trucks_realised_by_day=trucks_realised_by_day)
 
         # Load the capacities back into the flow network after all flows for the current day have been computed
         for edge, capacity in capacities_copy.items():
@@ -192,7 +190,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
             # next iteration.
             remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
 
-            visualize_flow_network(flow_network, locations)
+            visualize_flow_network(flow_network, locations, show_demands=(set(commodity_groups.keys()), True))
 
     # Convert the final_vehicle_assignments to a list and sort them by their id
     final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
@@ -237,8 +235,12 @@ def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIden
         # If the planned truck does not exist in the realized trucks, we return None
         return False
     else:
-        # If the truck is already assigned, we check if it has capacity left
-        return truck_assignments[planned_assignment].get_capacity_left(realised_trucks[planned_assignment]) > 0
+        # If the truck does not exist yet, we just check if it has capacity greater than 0.
+        if planned_assignment not in truck_assignments:
+            return realised_trucks[planned_assignment].capacity > 0
+        else:
+            # If the truck is already assigned, we check if it has capacity left
+            return truck_assignments[planned_assignment].get_capacity_left(realised_trucks[planned_assignment]) > 0
 
 
 def check_if_there_is_a_suitable_truck_before_schedule(planned_assignment: TruckIdentifier,
@@ -433,9 +435,13 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                         if current_node.day == current_day:
                             planned_vehicle_assignments[vehicle_id] = AssignmentToday(assignment=truck_identifier)
                         elif current_node.day > current_day:
-                            planned_vehicle_assignments[vehicle_id] = NoAssignmentToday(next_planned_assignment=truck_identifier)
+                            planned_vehicle_assignments[vehicle_id] = NoAssignmentToday(
+                                next_planned_assignment=truck_identifier)
 
                         planned_assignment_done = True
+
+                    # Set the current node to the next node
+                    current_node = next_node
 
                     break
             if next_node is None:
@@ -473,7 +479,8 @@ def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[in
 
 
 def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assignments: dict[int, VehicleAssignment],
-                                            trucks_realised_by_day: dict[date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
+                                            trucks_realised_by_day: dict[
+                                                date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
     """
     Returns the current location of a vehicle as a NodeIdentifier. It is determined based on the vehicle's assignment.
     If an assignment exists, the last location in the paths taken is used to determine the current location. Otherwise,
@@ -498,7 +505,8 @@ def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assi
         # since it was assigned in a previous loop of the solve_flow_in_real_time function.
         # We use get_start_and_end_nodes_for_truck, since this accounts for the one rest-day of the truck if it does
         # not arrive at a DEALER location.
-        _, end_node = get_start_and_end_nodes_for_truck(trucks_realised_by_day[last_truck_identifier.departure_date][last_truck_identifier])
+        _, end_node = get_start_and_end_nodes_for_truck(
+            trucks_realised_by_day[last_truck_identifier.departure_date][last_truck_identifier])
         arrival_date = end_node.day
 
         return NodeIdentifier(day=arrival_date,

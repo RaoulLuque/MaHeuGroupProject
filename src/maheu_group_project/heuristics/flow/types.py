@@ -98,3 +98,19 @@ def dealership_to_commodity_group(node_identifier: NodeIdentifier) -> str:
     if node_identifier.type != NodeType.NORMAL or node_identifier.location.type != LocationType.DEALER:
         raise ValueError("NodeIdentifier must be of type NORMAL and LocationType DEALER to get a commodity group.")
     return node_identifier.day.__str__() + "_" + node_identifier.location.name
+
+
+def get_day_and_location_for_commodity_group(commodity_group: str) -> tuple[date, Location]:
+    """
+    Extracts the day and location from a commodity group string.
+
+    The commodity group string is expected to be in the format "YYYY-MM-DD_location_name".
+
+    Args:
+        commodity_group (str): The commodity group string.
+
+    Returns:
+        tuple[date, Location]: A tuple containing the day and the corresponding Location object.
+    """
+    day_str, location_name = commodity_group.split("_", 1)
+    return date.fromisoformat(day_str), Location(name=location_name, type=LocationType.DEALER)

@@ -10,6 +10,7 @@ from maheu_group_project.solution.encoding import Location, LocationType
 
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
+                           commodity_groups: set[str] | None = None,
                            flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None,
                            only_show_flow_nodes: bool = False):
     """
@@ -18,6 +19,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     Args:
         flow_network (DiGraph[NodeIdentifier]): The flow network to visualize.
         locations (list[Location]): List of all locations in the network.
+        commodity_groups (set[str], optional): Set of commodity groups to consider for node annotations.
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
         only_show_flow_nodes (bool, optional): If True, only show the flow nodes in the network.
     """
@@ -94,10 +96,10 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             color = string_to_color(commodity_group)
             ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
 
-        # Annotate PLANT nodes with the days of their date
-        elif node.location.type == LocationType.PLANT:
-            label = node.day.strftime('%d')
-            ax.text(x, y, label, fontsize=7, color='black', ha='center', va='center')
+        # Annotate nodes with the summarized demands
+        else:
+            demand = get_demand_sum(flow_network, commodity_groups, node)
+            ax.text(x, y, str(demand), fontsize=7, color='black', ha='center', va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():
@@ -161,3 +163,20 @@ def string_to_color(label: str) -> tuple[float, float, float]:
     r, g, b = hash_bytes[0], hash_bytes[1], hash_bytes[2]
     # Normalize to [0, 1] for matplotlib
     return r / 255, g / 255, b / 255
+
+
+def get_demand_sum(flow_network: MultiDiGraph, commodity_groups: set[str], node: NodeIdentifier) -> int:
+    """
+    Computes the sum of demands for a given node across specified commodity groups.
+
+    Args:
+        flow_network (MultiDiGraph): The flow network.
+        commodity_groups (set[str]): Set of commodity groups to consider.
+        node (NodeIdentifier): The node for which to compute the demand sum.
+
+    Returns:
+        int: The total demand for the specified commodity groups at the node.
+    """
+    if not commodity_groups:
+        return 0
+    return sum(flow_network.nodes[node].get(group, 0) for group in commodity_groups)
