@@ -9,8 +9,7 @@ class VerifyVehiclePathResult(Enum):
     Class to represent the possible results of verifying a vehicle's path.
     """
     VALID = 0
-    INVALID = 1
-    NOT_REACHED_DESTINATION = 2
+    NOT_REACHED_DESTINATION = 1
 
 
 def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment, trucks: dict[TruckIdentifier, Truck],
@@ -50,19 +49,13 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
     first_truck_assignment = truck_assignments[vehicle_path[0]]
     # Check origin
     if not (first_truck.start_location == vehicle.origin):
-        print(
-            f"The truck with ID {vehicle_path[0]} needs to start at origin of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return VerifyVehiclePathResult.INVALID
+        assert False, f"The truck with ID {vehicle_path[0]} needs to start at origin of vehicle {vehicle_assignment.id}, but it doesn't."
     # Check the availability date
     if not (first_truck.departure_date >= vehicle.available_date):
-        print(
-            f"The truck with ID {vehicle_path[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't.")
-        return VerifyVehiclePathResult.INVALID
+        assert False, f"The truck with ID {vehicle_path[0]} needs to start after availability date of vehicle {vehicle_assignment.id}, but it doesn't."
     # Check if the vehicle is part of the truck's load
     if vehicle_assignment.id not in first_truck_assignment.load:
-        print(
-            f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't.")
-        return VerifyVehiclePathResult.INVALID
+        assert False, f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {vehicle_path[0]}, but it isn't."
 
     # For each truck in the path, check if it departs earliest one day after the previous truck arrives,
     # starts at the end location of the previous truck, and the vehicle is part of the truck's load
@@ -72,19 +65,13 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
         previous_truck = trucks[vehicle_path[vehicle_path.index(current_truck_id) - 1]]
         # Check the departure date
         if not (current_truck.departure_date >= previous_truck.arrival_date + timedelta(1)):
-            print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} departs too early. That is, the vehicle departs on the same day it arrives and does not respect the obligatory rest-day 💪")
-            return VerifyVehiclePathResult.INVALID
+            assert False, f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} departs too early. That is, the vehicle departs on the same day it arrives and does not respect the obligatory rest-day 💪"
         # Check locations
         if not (current_truck.start_location == previous_truck.end_location):
-            print(
-                f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} does not start at the end location of the previous truck.")
-            return VerifyVehiclePathResult.INVALID
+            assert False, f"In delivering of vehicle {vehicle_assignment.id}, the truck with ID {current_truck_id} does not start at the end location of the previous truck."
         # Check load
         if vehicle_assignment.id not in current_truck_assignment.load:
-            print(
-                f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {current_truck_id}, but it isn't.")
-            return VerifyVehiclePathResult.INVALID
+            assert False, f"The vehicle {vehicle_assignment.id} should be part of the load of the truck with ID {current_truck_id}, but it isn't."
 
     # Check if the last truck in the path ends at the vehicle's destination
     last_truck = trucks[vehicle_path[-1]]
@@ -95,20 +82,15 @@ def verify_vehicle_path(vehicle: Vehicle, vehicle_assignment: VehicleAssignment,
 
     # Check delay information
     if not (vehicle_assignment.delayed_by >= timedelta(0)):
-        print(f"The vehicle {vehicle_assignment.id} has a negative delay.")
-        return VerifyVehiclePathResult.INVALID
+        assert False, f"The vehicle {vehicle_assignment.id} has a negative delay."
     # Check if the last truck's arrival date is consistent with the vehicle's due date and delay information
     if last_truck.arrival_date > vehicle.due_date:
         # The vehicle is delayed, check if this is consistent with the assignment data
         if vehicle_assignment.delayed_by == timedelta(0):
-            print(
-                f"The vehicle {vehicle_assignment.id} is actually delayed: {(last_truck.arrival_date - vehicle.due_date).days} days, but this is not consistent with the vehicle assignment: {vehicle_assignment}.")
-            return VerifyVehiclePathResult.INVALID
+            assert False, f"The vehicle {vehicle_assignment.id} is actually delayed: {(last_truck.arrival_date - vehicle.due_date).days} days, but this is not consistent with the vehicle assignment: {vehicle_assignment}."
         else:
             if last_truck.arrival_date != vehicle.due_date + vehicle_assignment.delayed_by:
-                print(
-                    f"Delay information for vehicle {vehicle_assignment.id}: {vehicle_assignment.delayed_by.days} days is inconsistent with actual arrival delay of: {(last_truck.arrival_date - vehicle.due_date).days} days")
-                return VerifyVehiclePathResult.INVALID
+                assert False, f"Delay information for vehicle {vehicle_assignment.id}: {vehicle_assignment.delayed_by.days} days is inconsistent with actual arrival delay of: {(last_truck.arrival_date - vehicle.due_date).days} days"
     return VerifyVehiclePathResult.VALID
 
 
@@ -131,17 +113,13 @@ def verify_truck_load(truck: Truck, truck_assignment: TruckAssignment,
 
     # Check if the total load exceeds the truck's capacity
     if total_load > truck.capacity:
-        print(
-            f"The truck with ID {truck_id} has a load of {total_load}, which exceeds its capacity of {truck.capacity}.")
-        return False
+        assert False, f"The truck with ID {truck_id} has a load of {total_load}, which exceeds its capacity of {truck.capacity}."
 
     # For each vehicle in the truck's load, check if the truck is actually used in the vehicle's paths_taken
     for vehicle in vehicle_assignments:
         if vehicle.id in truck_assignment.load:
             if truck_id not in vehicle.paths_taken:
-                print(
-                    f"The vehicle {vehicle.id} does not use the truck with ID {truck_id}, but it is part of the truck's load.")
-                return False
+                assert False, f"The vehicle {vehicle.id} does not use the truck with ID {truck_id}, but it is part of the truck's load."
     return True
 
 
@@ -168,19 +146,14 @@ def verify_solution(vehicles: list[Vehicle], vehicle_assignments: list[VehicleAs
         match vehicle_path_is_valid:
             case VerifyVehiclePathResult.NOT_REACHED_DESTINATION:
                 number_of_vehicles_which_did_not_reach_destination += 1
-            case VerifyVehiclePathResult.INVALID:
-                print(f"Vehicle {vehicles[i].id} has an invalid path.")
-                return False
 
     # Check if every truck has a valid load
     for truck_id in trucks.keys():
         if truck_id not in truck_assignments:
-            print(f"Truck {truck_id} is not contained in the truck assignments.")
-            return False
+            assert False, f"Truck {truck_id} is not contained in the truck assignments."
         else:
             if not verify_truck_load(trucks[truck_id], truck_assignments[truck_id], vehicle_assignments):
-                print(f"Truck {truck_id} has an invalid load.")
-                return False
+                assert False, f"Truck {truck_id} has an invalid load."
     if number_of_vehicles_which_did_not_reach_destination > 0:
         # Return number_of_cars_which_did_not_reach_destination to indicate that the solution is valid, but some vehicles have not reached their destination
         print(f"{number_of_vehicles_which_did_not_reach_destination} vehicles did not reach their destination.")
