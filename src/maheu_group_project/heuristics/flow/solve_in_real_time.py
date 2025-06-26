@@ -327,7 +327,7 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)
     edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known)
-    vehicle_destination_node = NodeIdentifier(day=vehicle.due_date, location= vehicle.destination, type=NodeType.NORMAL)
+    vehicle_destination_node = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
 
     # Adapt the demand on the nodes.
     commodity_group = vehicle_to_commodity_group(vehicle)
