@@ -427,7 +427,6 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                     continue
                 else:
                     # TODO: Add check to test whether the car is supposed to arrive late and then announce a delay
-
                     # If the next node is a different location, we can take it
                     # This also means, that we are currently 'looking' at an edge that corresponds to a truck
                     next_node = identifier
@@ -484,6 +483,18 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                               location=current_node.location,
                                               type=current_node.type)
 
+        # The vehicle has reached its destination location, we check if it is delayed and preemptively announce it
+        # as delayed, if so.
+        if current_node.day > vehicle.due_date:
+            # We can only announce a delay if we are 7 days before the due date.
+            if current_day + timedelta(days=7) <= vehicle.due_date:
+                if vehicle_id not in vehicle_assignments:
+                    # Create a new VehicleAssignment if not present yet
+                    vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
+
+                # Set the planned delayed flag
+                vehicle_assignments[vehicle_id].planned_delayed = True
+
     return planned_vehicle_assignments
 
 
@@ -531,7 +542,7 @@ def get_current_location_of_vehicle_as_node(vehicle: Vehicle, vehicle_assignment
     Returns:
         NodeIdentifier: The current location of the vehicle.
     """
-    if vehicle.id in vehicle_assignments:
+    if len(vehicle_assignments.get(vehicle.id, VehicleAssignment(id=vehicle.id)).paths_taken) > 0:
         # If the vehicle has an assignment, we use the last location in the paths taken
         current_assignment = vehicle_assignments[vehicle.id]
         last_truck_identifier = current_assignment.paths_taken[-1]
