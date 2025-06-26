@@ -4,13 +4,11 @@ from networkx import MultiDiGraph
 from maheu_group_project.heuristics.common import get_first_last_and_days, convert_trucks_to_dict_by_day
 from maheu_group_project.heuristics.flow.network import remove_trucks_from_network, get_start_and_end_nodes_for_truck
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
-    dealership_to_commodity_group, PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
+    PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
     get_day_and_location_for_commodity_group, vehicle_to_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
-from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
-    TruckAssignment, \
-    VehicleAssignment, \
-    convert_vehicle_assignments_to_truck_assignments
+from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, \
+    TruckAssignment, VehicleAssignment
 from datetime import timedelta, date
 
 # Multiplier used to artificially increase the cost of edges that correspond to later trucks, to incentivize earlier
