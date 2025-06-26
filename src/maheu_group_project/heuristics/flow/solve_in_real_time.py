@@ -331,15 +331,17 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # The end node of the edge is only supposed to have a positive value, if it is the destination of the vehicle.
     # In fact, it might not even have an entry for the current commodity group at all.
     if edge_end_node.location == vehicle.destination:
-        # The vehicle has arrived at its destination, so we also take care of delays
+        # The vehicle has arrived at its destination
         assert flow_network.nodes[vehicle_destination_node][commodity_group] > 0
         flow_network.nodes[vehicle_destination_node][commodity_group] -= 1
 
-        if vehicle_id not in vehicle_assignments:
-            # Create a new VehicleAssignment if not present yet
-            vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
+        # Take care of delays
+        if edge_end_node.day > vehicle.due_date:
+            if vehicle_id not in vehicle_assignments:
+                # Create a new VehicleAssignment if not present yet
+                vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
 
-        vehicle_assignments[vehicle_id].delayed_by = max(timedelta(days=0), edge_end_node.day - vehicle.due_date)
+            vehicle_assignments[vehicle_id].delayed_by = max(timedelta(days=0), edge_end_node.day - vehicle.due_date)
 
     else:
         if commodity_group not in flow_network.nodes[edge_end_node]:
