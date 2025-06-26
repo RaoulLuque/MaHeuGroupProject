@@ -112,8 +112,8 @@ class Truck:
     Attributes:
         start_location (Location): The starting location of the truck.
         end_location (Location): The ending location of the truck.
-        departure_date (datetime.datetime): The departure date and time.
-        arrival_date (datetime.datetime): The arrival date and time.
+        departure_date (datetime.datetime): The departure date.
+        arrival_date (datetime.datetime): The arrival date.
         truck_number (int): Number distinguishing different trucks on the same segment.
         capacity (int): Maximum number of vehicles the truck can carry.
         price (int): Cost associated with the truck's trip. This cost is only incurred once
