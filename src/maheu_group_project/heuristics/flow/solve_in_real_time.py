@@ -67,8 +67,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         earliest_day_in_commodity_groups[commodity_group] = earliest_day
 
     # Create variables for final assignments of vehicles and trucks
-    final_vehicle_assignments: dict[int, VehicleAssignment] = {}
-    final_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
+    vehicle_assignments: dict[int, VehicleAssignment] = {}
+    truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
     # visualize_flow_network(flow_network, locations, commodity_groups)
 
@@ -113,7 +113,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                                                                           vehicles=vehicles,
                                                                                           current_day=current_day,
                                                                                           planned_vehicle_assignments=current_day_planned_vehicle_assignments,
-                                                                                          final_vehicle_assignments=final_vehicle_assignments,
+                                                                                          vehicle_assignments=vehicle_assignments,
                                                                                           trucks_realised_by_day_known=trucks_realised_by_day_known)
 
         # Load the capacities back into the flow network after all flows for the current day have been computed
@@ -160,16 +160,16 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                 # canceled entirely).
                                 if check_if_planned_truck_exists_and_has_capacity(planned_assignment,
                                                                                   realised_trucks_today,
-                                                                                  final_truck_assignments):
+                                                                                  truck_assignments):
                                     assign_vehicle_to_truck(flow_network, vehicle,
                                                             realised_trucks_today[planned_assignment],
-                                                            final_vehicle_assignments,
-                                                            final_truck_assignments,
+                                                            vehicle_assignments,
+                                                            truck_assignments,
                                                             trucks_realised_by_day_known)
 
                             case NoAssignmentToday(next_planned_assignment):
                                 # We first need to check, if the vehicle is currently enjoying its rest day.
-                                earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle, final_vehicle_assignments, trucks_realised_by_day_known).day
+                                earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known).day
                                 if current_day < earliest_day_vehicle_is_available:
                                     continue
 
@@ -186,8 +186,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                     trucks_realised_additional_capacity[truck_identifier] -= 1
                                     assign_vehicle_to_truck(flow_network, vehicle,
                                                             realised_trucks_today[truck_identifier],
-                                                            final_vehicle_assignments,
-                                                            final_truck_assignments,
+                                                            vehicle_assignments,
+                                                            truck_assignments,
                                                             trucks_realised_by_day_known)
 
                             case _:
@@ -200,16 +200,16 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # next iteration.
         remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
 
-    # Convert the final_vehicle_assignments to a list and sort them by their id
-    final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
-    final_vehicle_assignments.sort(key=lambda va: va.id)
+    # Convert the vehicle_assignments to a list and sort them by their id
+    vehicle_assignments: list[VehicleAssignment] = list(vehicle_assignments.values())
+    vehicle_assignments.sort(key=lambda va: va.id)
 
     # Make sure the truck assignments contains all trucks
     for truck_identifier in trucks_realised.keys():
-        if truck_identifier not in final_truck_assignments:
-            final_truck_assignments[truck_identifier] = TruckAssignment(load=[])
+        if truck_identifier not in truck_assignments:
+            truck_assignments[truck_identifier] = TruckAssignment(load=[])
 
-    return final_vehicle_assignments, final_truck_assignments
+    return vehicle_assignments, truck_assignments
 
 
 def compare_capacities_of_trucks(this: Truck, other: Truck | None) -> int:
@@ -365,7 +365,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                     vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
                                     current_day: date,
                                     planned_vehicle_assignments: dict[int, PlannedVehicleAssignment],
-                                    final_vehicle_assignments: dict[int, VehicleAssignment],
+                                    vehicle_assignments: dict[int, VehicleAssignment],
                                     trucks_realised_by_day_known: dict[date, dict[TruckIdentifier, Truck]]) -> dict[int, PlannedVehicleAssignment]:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
@@ -383,7 +383,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         vehicles (list[Vehicle]): List of vehicles to be transported to look up their properties using the ids.
         current_day (date): The current day in the flow network, used to determine delays.
         planned_vehicle_assignments (dict[int, PlannedVehicleAssignment]): A dictionary containing the planned vehicle assignments for current_day.
-        final_vehicle_assignments (dict[int, VehicleAssignment]): A dictionary containing the final vehicle assignments.
+        vehicle_assignments (dict[int, VehicleAssignment]): A dictionary containing the final vehicle assignments.
         trucks_realised_by_day_known (dict[date, dict[TruckIdentifier, Truck]]): A dictionary mapping each day to the realized trucks for that day.
             Note that this dict only contains entries for days earlier than current_day.
 
@@ -403,7 +403,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         # Get the actual vehicle from the list of vehicles
         vehicle = vehicles[vehicle_id]
 
-        current_node = get_current_location_of_vehicle_as_node(vehicle, final_vehicle_assignments,
+        current_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments,
                                                                trucks_realised_by_day_known)
         planned_assignment_done = False
 
@@ -510,7 +510,7 @@ def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[in
     return new_filtered_flow
 
 
-def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assignments: dict[int, VehicleAssignment],
+def get_current_location_of_vehicle_as_node(vehicle: Vehicle, vehicle_assignments: dict[int, VehicleAssignment],
                                             trucks_realised_by_day_known: dict[
                                                 date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
     """
@@ -522,16 +522,16 @@ def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assi
 
     Args:
         vehicle (Vehicle): The vehicle for which to get the current location.
-        final_vehicle_assignments (dict[int, VehicleAssignment]): A dictionary mapping vehicle ids to their final assignments.
+        vehicle_assignments (dict[int, VehicleAssignment]): A dictionary mapping vehicle ids to their final assignments.
         trucks_realised_by_day_known (dict[date, dict[TruckIdentifier, Truck]]): A dictionary mapping each day to the realized trucks for that day.
             Note that this dict only contains entries for days earlier than current_day.
 
     Returns:
         NodeIdentifier: The current location of the vehicle.
     """
-    if vehicle.id in final_vehicle_assignments:
+    if vehicle.id in vehicle_assignments:
         # If the vehicle has an assignment, we use the last location in the paths taken
-        current_assignment = final_vehicle_assignments[vehicle.id]
+        current_assignment = vehicle_assignments[vehicle.id]
         last_truck_identifier = current_assignment.paths_taken[-1]
 
         # This is where we access trucks_realised_by_day. We use last_truck_identifier, which has to be in the past,
