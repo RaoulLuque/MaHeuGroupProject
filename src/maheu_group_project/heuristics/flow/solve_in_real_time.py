@@ -109,7 +109,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                         # to the current_day_planned_vehicle_assignments.
                         # Note that trucks_realised_by_day is passed to this function, however, only the trucks earlier
                         # than the current day are looked at, so no cheating here 🤝 (see get_current_location_of_vehicle_as_node).
-                        extract_flow_and_update_network(flow_network=flow_network, flow=flow_dict[commodity_group],
+                        current_day_planned_vehicle_assignments = extract_flow_and_update_network(flow_network=flow_network, flow=flow_dict[commodity_group],
                                                         vehicles_from_current_commodity=commodity_groups[
                                                             commodity_group],
                                                         vehicles=vehicles, current_day=current_day,
@@ -185,6 +185,9 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                 raise TypeError(
                                     f"Unexpected type of vehicle assignment: {type(next_vehicle_assignment)}")
 
+        # TODO: Remove edges for the current day from the flow network, so that they are not accidentally used in the
+        #  next iteration.
+
     # Convert the final_vehicle_assignments to a list and sort them by their id
     final_vehicle_assignments: list[VehicleAssignment] = list(final_vehicle_assignments.values())
     final_vehicle_assignments.sort(key=lambda va: va.id)
@@ -210,8 +213,7 @@ def compare_capacities_of_trucks(this: Truck, other: Truck | None) -> int:
 
 def check_if_planned_truck_exists_and_has_capacity(planned_assignment: TruckIdentifier,
                                                    realised_trucks: dict[TruckIdentifier, Truck],
-                                                   truck_assignments: dict[TruckIdentifier,
-                                                   TruckAssignment]) -> bool:
+                                                   truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> bool:
     """
     Checks if a planned truck exists in the realized trucks and if it has capacity left.
 
@@ -327,7 +329,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                     current_day: date,
                                     planned_vehicle_assignments: dict[int, PlannedVehicleAssignment],
                                     final_vehicle_assignments: dict[int, VehicleAssignment],
-                                    trucks_realised_by_day: dict[date, dict[TruckIdentifier, Truck]]):
+                                    trucks_realised_by_day: dict[date, dict[TruckIdentifier, Truck]]) -> dict[int, PlannedVehicleAssignment]:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
 
@@ -349,10 +351,9 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
             Note that we only use entries in the dictionary that are earlier than the current day (see get_current_location_of_vehicle_as_node).
 
     Returns:
-        tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
-        to contain their respective plans.
+        dict[int, PlannedVehicleAssignment]: A dictionary containing the updated planned vehicle assignments for the
+        current day. The keys are the vehicle ids and the values are the PlannedVehicleAssignment objects.
     """
-    # TODO: Change to return PlannedVehicleAssignment and adapt to start current node at latest point of paths_taken
     # TODO: Possibly adapt the start current_node to reflect if a vehicle has previously stayed at the same location (moved forward in time but not in location / space)
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
@@ -366,7 +367,9 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         # Get the actual vehicle from the list of vehicles
         vehicle = vehicles[vehicle_id]
 
-        current_node = get_current_location_of_vehicle_as_node(vehicle, final_vehicle_assignments, trucks_realised_by_day)
+        current_node = get_current_location_of_vehicle_as_node(vehicle, final_vehicle_assignments,
+                                                               trucks_realised_by_day)
+        planned_assignment_done = False
 
         # In the following loop, we skip letting the vehicle stay at the same location. Thus, if the vehicle is already
         # at its destination location (possibly not correct date), we will skip this loop.
@@ -402,29 +405,33 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                         if not flow[current_node][next_node]:
                             del flow[current_node][next_node]
 
-                    # Update the paths taken, if the edge_number is not 0
-                    # Explanation: edge_index starts at 0 by default and increments for parallel edges or are set with
-                    # `key` when adding an edge. For trucks, this is set as the truck id which starts at 1, and other
-                    # edges cannot have parallel edges (which would result in edge_numbers bigger than 0).
-                    if edge_index != 0:
-                        # Here, we would usually append the truck to the paths taken of the vehicle.
-                        # However, since we are working in the real-time setting, we check if the truck departs on
-                        # the current day and then add the vehicle to the trucks' load.
-                        if current_node.day == current_day:
-                            truck_identifier = TruckIdentifier(start_location=current_node.location,
-                                                               end_location=next_node.location,
-                                                               truck_number=edge_index,
-                                                               departure_date=current_node.day)
-                            if truck_identifier not in truck_assignments:
-                                # If the truck is not already assigned, we create a new TruckAssignment
-                                truck_assignments[truck_identifier] = TruckAssignment(
-                                    load=[],
-                                )
-                            # Add the vehicle to the truck's load
-                            truck_assignments[truck_identifier].load.append(vehicle_id)
+                    # This should be removable
+                    # # Update the paths taken, if the edge_number is not 0
+                    # # Explanation: edge_index starts at 0 by default and increments for parallel edges or are set with
+                    # # `key` when adding an edge. For trucks, this is set as the truck id which starts at 1, and other
+                    # # edges cannot have parallel edges (which would result in edge_numbers bigger than 0).
+                    # if edge_index != 0:
 
-                    # Set the current node to the next node
-                    current_node = next_node
+                    # Here, we would usually append the truck to the paths taken of the vehicle.
+                    # However, since we are in the real-time setting, we only store what the next planned truck is,
+                    # that the vehicle is supposed to take. We distinguish whether the trucks is planned for today or
+                    # a day after.
+                    # We only want to do this for the first edge we find, hence the planned_assignment_done flag.
+                    if not planned_assignment_done:
+                        # Assert that the current node is not before current_day
+                        assert current_node.day >= current_day
+
+                        truck_identifier = TruckIdentifier(start_location=current_node.location,
+                                                           end_location=next_node.location,
+                                                           truck_number=edge_index,
+                                                           departure_date=current_node.day)
+
+                        if current_node.day == current_day:
+                            planned_vehicle_assignments[vehicle_id] = AssignmentToday(assignment=truck_identifier)
+                        elif current_node.day > current_day:
+                            planned_vehicle_assignments[vehicle_id] = NoAssignmentToday(next_planned_assignment=truck_identifier)
+
+                        planned_assignment_done = True
 
                     break
             if next_node is None:
@@ -433,6 +440,7 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                                               location=current_node.location,
                                               type=current_node.type)
 
+    return planned_vehicle_assignments
 
 def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]) -> dict[
     NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]:
@@ -459,7 +467,9 @@ def copy_flow_and_filter(flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[in
     return new_filtered_flow
 
 
-def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assignments: dict[int, VehicleAssignment], trucks_realised_by_day: dict[date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
+def get_current_location_of_vehicle_as_node(vehicle: Vehicle, final_vehicle_assignments: dict[int, VehicleAssignment],
+                                            trucks_realised_by_day: dict[
+                                                date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
     """
     Returns the current location of a vehicle as a NodeIdentifier. It is determined based on the vehicle's assignment.
     If an assignment exists, the last location in the paths taken is used to determine the current location. Otherwise,
