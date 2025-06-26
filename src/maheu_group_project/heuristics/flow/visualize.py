@@ -101,6 +101,10 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             demand = get_demand_sum(flow_network, commodity_groups, node)
             ax.text(x, y, str(demand), fontsize=7, color='black', ha='center', va='center')
 
+        # We annotate the date to the left of PLANT nodes
+        if node.location.type == LocationType.PLANT:
+            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=7, color='black', ha='right', va='center')
+
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():
         edge_dict = flow_network.get_edge_data(u, v)
