@@ -306,6 +306,12 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
+    # Get the truck identifier from the truck object
+    truck_identifier = truck.get_identifier()
+
+    # Get the vehicle id from the vehicle object
+    vehicle_id = vehicle.id
+
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)
     edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments,
@@ -322,19 +328,22 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # The end node of the edge is only supposed to have a positive value, if it is the destination of the vehicle.
     # In fact, it might not even have an entry for the current commodity group at all.
     if edge_end_node.location == vehicle.destination:
+        # The vehicle has arrived at its destination, so we also take care of delays
         assert flow_network.nodes[vehicle_destination_node][commodity_group] > 0
         flow_network.nodes[vehicle_destination_node][commodity_group] -= 1
+
+        if vehicle_id not in vehicle_assignments:
+            # Create a new VehicleAssignment if not present yet
+            vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
+
+        vehicle_assignments[vehicle_id].delayed_by = max(timedelta(days=0), edge_end_node.day - vehicle.due_date)
+
     else:
         if commodity_group not in flow_network.nodes[edge_end_node]:
             flow_network.nodes[edge_end_node][commodity_group] = 0
         flow_network.nodes[edge_end_node][commodity_group] -= 1
 
     # Adapt the truck and vehicle assignments
-    # Get the truck identifier from the truck object
-    truck_identifier = truck.get_identifier()
-
-    # Get the vehicle id from the vehicle object
-    vehicle_id = vehicle.id
     # Adapt the vehicle assignment
     if vehicle_id not in vehicle_assignments:
         # Create a new VehicleAssignment if not present yet
@@ -412,6 +421,8 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
                     # it forward
                     continue
                 else:
+                    # TODO: Add check to test whether the car is supposed to arrive late and then announce a delay
+
                     # If the next node is a different location, we can take it
                     # This also means, that we are currently 'looking' at an edge that corresponds to a truck
                     next_node = identifier
