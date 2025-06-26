@@ -65,15 +65,7 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
 
     # Create the edges of the flow network for the trucks
     for truck in trucks.values():
-        start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
-
-        # It the truck's end location is not a DEALER, we delay the arrival date by one day to account for the
-        # one day rest.
-        truck_arrival_date = truck.arrival_date
-        if truck.end_location.type != LocationType.DEALER:
-            truck_arrival_date += timedelta(days=1)
-
-        end_node = NodeIdentifier(truck_arrival_date, truck.end_location, NodeType.NORMAL)
+        start_node, end_node = get_start_and_end_nodes_for_truck(truck)
 
         # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
         # ignored when computing the actual objective value of the solution.
@@ -174,3 +166,43 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
         flow_network.nodes[end_node][commodity_group] = 1
     else:
         flow_network.nodes[end_node][commodity_group] += 1
+
+
+def get_start_and_end_nodes_for_truck(truck: Truck) -> tuple[NodeIdentifier, NodeIdentifier]:
+    """
+    Returns the start and end nodes for a truck in the flow network.
+
+    Args:
+        truck (Truck): The truck for which to get the start and end nodes.
+
+    Returns:
+        tuple[NodeIdentifier, NodeIdentifier]: A tuple containing the start and end nodes for the truck.
+    """
+    start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
+
+    # If the truck's end location is not a DEALER, we delay the arrival date by one day to account for the
+    # one day rest.
+    truck_arrival_date = truck.arrival_date
+    if truck.end_location.type != LocationType.DEALER:
+        truck_arrival_date += timedelta(days=1)
+
+    end_node = NodeIdentifier(truck_arrival_date, truck.end_location, NodeType.NORMAL)
+
+    return start_node, end_node
+
+
+def remove_trucks_from_network(flow_network: MultiDiGraph, trucks: dict[TruckIdentifier, Truck]):
+    """
+    Removes the trucks (their corresponding edges) from the flow network.
+
+    Args:
+        flow_network: MultiDiGraph[NodeIdentifier]: The flow network from which the trucks should be removed.
+        trucks (dict[TruckIdentifier, Truck]): The dictionary of trucks to be removed from the network.
+    """
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    for truck in trucks.values():
+        start_node, end_node = get_start_and_end_nodes_for_truck(truck)
+
+        flow_network.remove_edge(start_node, end_node, key=truck.truck_number)
