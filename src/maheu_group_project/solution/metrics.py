@@ -30,6 +30,19 @@ def number_of_planned_delayed_cars(vehicle_assignments: list[VehicleAssignment])
     return sum(1 for va in vehicle_assignments if va.planned_delayed)
 
 
+def number_of_planned_delayed_cars_which_are_delayed(vehicle_assignments: list[VehicleAssignment]) -> int:
+    """
+    Counts the number of vehicles that are planned to be delayed and are actually delayed.
+
+    Args:
+        vehicle_assignments (list[VehicleAssignment]): A list of vehicle assignments.
+
+    Returns:
+        int: The number of vehicles that are planned to be delayed and are actually delayed.
+    """
+    return sum(1 for va in vehicle_assignments if va.planned_delayed and va.delayed_by > timedelta(days=0))
+
+
 def number_of_vehicles_transported_in_trucks_which_are_not_free(trucks: dict[TruckIdentifier, Truck],
                                                                 truck_assignments: dict[
                                                                 TruckIdentifier, TruckAssignment]) -> int:
@@ -90,16 +103,18 @@ def get_pretty_metrics(trucks: dict[TruckIdentifier, Truck], truck_assignments: 
     Returns:
         str: A formatted string containing the metrics.
     """
+    message_length = 60
     num_delayed_cars = number_of_delayed_cars(vehicle_assignments)
     num_planned_delay_cars = number_of_planned_delayed_cars(vehicle_assignments)
+    num_actual_planned_delay_cars = number_of_planned_delayed_cars_which_are_delayed(vehicle_assignments)
     num_not_free_trucks = number_of_vehicles_transported_in_trucks_which_are_not_free(trucks, truck_assignments)
     price_paid_delays = price_paid_for_delays(vehicle_assignments)
     price_paid_trucks = price_paid_for_trucks(trucks, truck_assignments)
     res = ("Metrics:\n" +
-           f"Number of delayed cars: {num_delayed_cars}\n" +
-           f"Number of planned delayed cars: {num_planned_delay_cars}\n" +
-           f"Number of cars transported in trucks which are not free: {num_not_free_trucks}\n" +
-           f"Price paid for delays: {price_paid_delays:.2f}\n" +
-           f"Price paid for trucks: {price_paid_trucks:.2f}")
+           f"Number of delayed cars:".ljust(message_length) + f"{num_delayed_cars}\n" +
+           f"Number (actual/) planned delayed cars:".ljust(message_length) + f"{num_actual_planned_delay_cars}/{num_planned_delay_cars}\n" +
+           f"Number of cars transported in trucks which are not free:".ljust(message_length) + f"{num_not_free_trucks}\n" +
+           f"Price paid for delays:".ljust(message_length) + f"{price_paid_delays:.2f}\n" +
+           f"Price paid for trucks:".ljust(message_length) + f"{price_paid_trucks:.2f}")
 
     return res
