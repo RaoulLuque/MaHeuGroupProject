@@ -63,7 +63,7 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     # Compute the single commodity min-cost flow for the current commodity group
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
 
-                    # visualize_flow_network(flow_network, locations, flow, True)
+                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow, only_show_flow_nodes=commodity_group)
 
                     # Extract the solution from the flow and update the flow network
                     extract_flow_and_update_network(flow_network=flow_network, flow=flow,
