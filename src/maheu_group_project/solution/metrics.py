@@ -60,24 +60,44 @@ def number_of_vehicles_transported_in_trucks_which_are_not_free(trucks: dict[Tru
 
 
 def delay_price(vehicle_assignment: VehicleAssignment) -> int:
+    """
+    Calculates the price paid for delays based on the vehicle assignment.
+
+    Args:
+        vehicle_assignment (VehicleAssignment): The vehicle assignment object containing delay information.
+
+    Returns:
+        int: The price paid for delays.
+    """
     if vehicle_assignment.planned_delayed:
         return FIXED_PLANNED_DELAY_COST + vehicle_assignment.delayed_by.days * COST_PER_PLANNED_DELAY_DAY
     else:
         return FIXED_UNPLANNED_DELAY_COST + vehicle_assignment.delayed_by.days * COST_PER_UNPLANNED_DELAY_DAY
 
 
-def price_paid_for_delays(vehicle_assignments: list[VehicleAssignment]) -> float:
+def price_paid_for_delays(vehicle_assignments: list[VehicleAssignment]) -> tuple[int, int, int, int, int]:
     """
-    Calculates the total price paid for delays based on the vehicle assignments.
+    Calculates the total prices paid for delays based on the vehicle assignments.
 
     Args:
         vehicle_assignments (list[VehicleAssignment]): A list of vehicle assignments.
 
     Returns:
-        float: The total price paid for delays.
+        tuple[int, int, int, int, int]: A tuple containing:
+            - Fixed cost for planned delays
+            - Summed day cost for planned delays
+            - Fixed cost for unplanned delays
+            - Summed day cost for unplanned delays
+            - Total delay cost
     """
-    return sum(delay_price(va) for va in vehicle_assignments if va.delayed_by > timedelta(days=0))
+    fixed_planned_delay_cost = sum(FIXED_PLANNED_DELAY_COST for va in vehicle_assignments if va.planned_delayed)
+    fixed_unplanned_delay_cost = sum(FIXED_UNPLANNED_DELAY_COST for va in vehicle_assignments if not va.planned_delayed and va.delayed_by > timedelta(days=0))
+    summed_day_planned_delay_cost = sum(va.delayed_by.days * COST_PER_PLANNED_DELAY_DAY for va in vehicle_assignments if va.planned_delayed and va.delayed_by > timedelta(days=0))
+    summed_day_unplanned_delay_cost = sum(va.delayed_by.days * COST_PER_UNPLANNED_DELAY_DAY for va in vehicle_assignments if not va.planned_delayed and va.delayed_by > timedelta(days=0))
 
+    total_delay_cost = fixed_planned_delay_cost + fixed_unplanned_delay_cost + summed_day_planned_delay_cost + summed_day_unplanned_delay_cost
+
+    return fixed_planned_delay_cost, summed_day_planned_delay_cost, fixed_unplanned_delay_cost, summed_day_unplanned_delay_cost, total_delay_cost
 
 def price_paid_for_trucks(trucks: dict[TruckIdentifier, Truck],
                           truck_assignments: dict[TruckIdentifier, TruckAssignment]) -> float:
@@ -103,18 +123,18 @@ def get_pretty_metrics(trucks: dict[TruckIdentifier, Truck], truck_assignments: 
     Returns:
         str: A formatted string containing the metrics.
     """
-    message_length = 60
+    message_length = 65
     num_delayed_cars = number_of_delayed_cars(vehicle_assignments)
     num_planned_delay_cars = number_of_planned_delayed_cars(vehicle_assignments)
     num_actual_planned_delay_cars = number_of_planned_delayed_cars_which_are_delayed(vehicle_assignments)
     num_not_free_trucks = number_of_vehicles_transported_in_trucks_which_are_not_free(trucks, truck_assignments)
-    price_paid_delays = price_paid_for_delays(vehicle_assignments)
+    fixed_planned_delay_cost, summed_day_planned_delay_cost, fixed_unplanned_delay_cost, summed_day_unplanned_delay_cost, total_delay_cost = price_paid_for_delays(vehicle_assignments)
     price_paid_trucks = price_paid_for_trucks(trucks, truck_assignments)
     res = ("Metrics:\n" +
            f"Number of delayed cars:".ljust(message_length) + f"{num_delayed_cars}\n" +
            f"Number (actual/) planned delayed cars:".ljust(message_length) + f"{num_actual_planned_delay_cars}/{num_planned_delay_cars}\n" +
            f"Number of cars transported in trucks which are not free:".ljust(message_length) + f"{num_not_free_trucks}\n" +
-           f"Price paid for delays:".ljust(message_length) + f"{price_paid_delays:.2f}\n" +
+           f"Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):".ljust(message_length) + f"{total_delay_cost:.2f}, ({fixed_planned_delay_cost}, {summed_day_planned_delay_cost}), ({fixed_unplanned_delay_cost}, {summed_day_unplanned_delay_cost})\n" +
            f"Price paid for trucks:".ljust(message_length) + f"{price_paid_trucks:.2f}")
 
     return res
