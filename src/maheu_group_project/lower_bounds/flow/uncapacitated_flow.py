@@ -28,8 +28,11 @@ def lower_bound_uncapacitated_flow(dataset_dir_name: str, realised_capacity_file
     # Adapt trucks to make them uncapacitated
     number_of_vehicles = len(vehicles)
     for truck_identifier, truck in trucks_realised.items():
+        current_capacity = truck.capacity
+        current_price = truck.price
+        factor = (number_of_vehicles // current_capacity) + 1
         # Set the capacity of each truck to number of vehicles to make them practically uncapacitated
-        trucks_realised[truck_identifier] = truck.new_from_capacity(number_of_vehicles)
+        trucks_realised[truck_identifier] = truck.new_from_self(capacity=current_capacity * factor, price=current_price * factor)
 
     flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
                                                          locations=locations)

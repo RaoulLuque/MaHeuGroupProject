@@ -152,24 +152,32 @@ class Truck:
             departure_date=self.departure_date
         )
 
-    def new_from_capacity(self, capacity: int) -> 'Truck':
+    def new_from_self(self, start_location: Location = None, end_location: Location = None,
+                      departure_date: date = None, arrival_date: date = None, truck_number: int = None,
+                      capacity: int = None, price: int = None) -> 'Truck':
         """
-        Returns a new Truck instance with the specified capacity.
+        Returns a new Truck instance from the current instance overwriting exactly those attributes that are provided.
 
         Args:
-            capacity (int): The new capacity for the truck.
+            start_location (Location, optional): The new starting location of the truck. Defaults to the current start location.
+            end_location (Location, optional): The new ending location of the truck. Defaults to the current end location.
+            departure_date (date, optional): The new departure date of the truck. Defaults to the current departure date.
+            arrival_date (date, optional): The new arrival date of the truck. Defaults to the current arrival date.
+            truck_number (int, optional): The new truck number. Defaults to the current truck number.
+            capacity (int, optional): The new capacity of the truck. Defaults to the current capacity.
+            price (int, optional): The new price for the truck's trip. Defaults to the current price.
 
         Returns:
-            Truck: A new Truck instance with the updated capacity.
+            Truck: A new Truck instance with the updated attributes.
         """
         return Truck(
-            start_location=self.start_location,
-            end_location=self.end_location,
-            departure_date=self.departure_date,
-            arrival_date=self.arrival_date,
-            truck_number=self.truck_number,
-            capacity=capacity,
-            price=self.price
+            start_location=self.start_location if start_location is None else start_location,
+            end_location=self.end_location if end_location is None else end_location,
+            departure_date=self.departure_date if departure_date is None else departure_date,
+            arrival_date=self.arrival_date if arrival_date is None else arrival_date,
+            truck_number=self.truck_number if truck_number is None else truck_number,
+            capacity=self.capacity if capacity is None else capacity,
+            price=self.price if price is None else price,
         )
 
 
