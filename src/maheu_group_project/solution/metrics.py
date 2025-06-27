@@ -30,8 +30,8 @@ def number_of_planned_delayed_cars(vehicle_assignments: list[VehicleAssignment])
     return sum(1 for va in vehicle_assignments if va.planned_delayed)
 
 
-def number_of_cars_transported_in_trucks_which_are_not_free(trucks: dict[TruckIdentifier, Truck],
-                                                            truck_assignments: dict[
+def number_of_vehicles_transported_in_trucks_which_are_not_free(trucks: dict[TruckIdentifier, Truck],
+                                                                truck_assignments: dict[
                                                                 TruckIdentifier, TruckAssignment]) -> int:
     """
     Counts the number of vehicles that are transported in trucks which are not free.
@@ -92,13 +92,13 @@ def get_pretty_metrics(trucks: dict[TruckIdentifier, Truck], truck_assignments: 
     """
     num_delayed_cars = number_of_delayed_cars(vehicle_assignments)
     num_planned_delay_cars = number_of_planned_delayed_cars(vehicle_assignments)
-    num_cars_not_free_trucks = number_of_cars_transported_in_trucks_which_are_not_free(trucks, truck_assignments)
+    num_not_free_trucks = number_of_vehicles_transported_in_trucks_which_are_not_free(trucks, truck_assignments)
     price_paid_delays = price_paid_for_delays(vehicle_assignments)
     price_paid_trucks = price_paid_for_trucks(trucks, truck_assignments)
     res = ("Metrics:\n" +
            f"Number of delayed cars: {num_delayed_cars}\n" +
            f"Number of planned delayed cars: {num_planned_delay_cars}\n" +
-           f"Number of cars transported in trucks which are not free: {num_cars_not_free_trucks}\n" +
+           f"Number of cars transported in trucks which are not free: {num_not_free_trucks}\n" +
            f"Price paid for delays: {price_paid_delays:.2f}\n" +
            f"Price paid for trucks: {price_paid_trucks:.2f}")
 
