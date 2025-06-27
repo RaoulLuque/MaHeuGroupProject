@@ -94,6 +94,9 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                 # # Check whether vehicles are actually already available at the current day
                 # if current_day >= earliest_day_in_commodity_groups[commodity_group]:
 
+                # TODO: Handle case where no flow is found because a truck exists but only in realised and not planned (╯°□°)╯︵ ┻━┻
+                # TODO: Handle case where no flow is found because there is no truck and the vehicle can't reach the
+                #  destination anymore ):
                 # Compute the single commodity min-cost flow for the current commodity group
                 flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity',
                                         weight='weight')
