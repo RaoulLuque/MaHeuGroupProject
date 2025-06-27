@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from maheu_group_project.solution.encoding import VehicleAssignment, TruckAssignment, TruckIdentifier, Truck
+from maheu_group_project.solution.encoding import VehicleAssignment, TruckAssignment, TruckIdentifier, Truck, \
+    COST_PER_PLANNED_DELAY_DAY, FIXED_UNPLANNED_DELAY_COST, FIXED_PLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY
 
 
 def number_of_delayed_cars(vehicle_assignments: list[VehicleAssignment]) -> int:
@@ -47,9 +48,9 @@ def number_of_cars_transported_in_trucks_which_are_not_free(trucks: dict[TruckId
 
 def delay_price(vehicle_assignment: VehicleAssignment) -> int:
     if vehicle_assignment.planned_delayed:
-        return 200 + vehicle_assignment.delayed_by.days * 50
+        return FIXED_PLANNED_DELAY_COST + vehicle_assignment.delayed_by.days * COST_PER_PLANNED_DELAY_DAY
     else:
-        return 500 + vehicle_assignment.delayed_by.days * 100
+        return FIXED_UNPLANNED_DELAY_COST + vehicle_assignment.delayed_by.days * COST_PER_UNPLANNED_DELAY_DAY
 
 
 def price_paid_for_delays(vehicle_assignments: list[VehicleAssignment]) -> float:
