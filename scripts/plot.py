@@ -36,6 +36,30 @@ def read_costs(filepath):
 
 
 if __name__ == '__main__':
+    # 1. Collect all heuristics globally
+    all_heuristics = set()
+    heuristic_file_map = {}
+    for subfolder in SUBFOLDERS:
+        dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
+        if not os.path.isdir(dir_path):
+            continue
+        files = [f for f in os.listdir(dir_path) if f.endswith('_result.txt') and not f.endswith('_pretty.txt')]
+        for f in files:
+            heuristic_match = HEURISTIC_PATTERN.search(f)
+            if not heuristic_match:
+                continue
+            heuristic = heuristic_match.group(1)
+            if heuristic.startswith('time_'):
+                heuristic = heuristic[len('time_'):]
+            if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                heuristic = 'LOWER_BOUND'
+            all_heuristics.add(heuristic)
+            heuristic_file_map.setdefault(subfolder, {}).setdefault(heuristic, []).append(f)
+
+    # Sort heuristics for consistent order
+    all_heuristics = sorted(all_heuristics)
+    heuristic_to_idx = {h: i for i, h in enumerate(all_heuristics)}
+
     for subfolder in SUBFOLDERS:
         dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
         if not os.path.isdir(dir_path):
@@ -52,23 +76,27 @@ if __name__ == '__main__':
             cases[case].append(f)
         for case, case_files in cases.items():
             plt.figure(figsize=(8, 5))
-            for idx, filename in enumerate(case_files):
+            plotted_heuristics = {}
+            for filename in case_files:
                 heuristic_match = HEURISTIC_PATTERN.search(filename)
                 if not heuristic_match:
                     continue
                 heuristic = heuristic_match.group(1)
-                # Remove 'time_' prefix if present
                 if heuristic.startswith('time_'):
                     heuristic = heuristic[len('time_'):]
-                # Rename LOWER_BOUND_UNCAPACITATED_FLOW to LOWER_BOUND
                 if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
                     heuristic = 'LOWER_BOUND'
+                idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_costs(os.path.join(dir_path, filename))
-                plt.plot(realisations, costs, label=heuristic, marker=LINE_MARKER[idx % len(LINE_MARKER)], markersize=7.5)
+                line, = plt.plot(realisations, costs, label=heuristic, marker=LINE_MARKER[idx % len(LINE_MARKER)], markersize=7.5, color=f'C{idx % 10}')
+                plotted_heuristics[heuristic] = line
             plt.xlabel('Realisation')
             plt.ylabel('Cost')
             plt.title(f'Case {case} - {subfolder}', pad=25)
-            plt.legend(ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
+            # Consistent legend order
+            handles = [plotted_heuristics[h] for h in all_heuristics if h in plotted_heuristics]
+            labels = [h for h in all_heuristics if h in plotted_heuristics]
+            plt.legend(handles, labels, ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
             plt.tight_layout()
             out_name = f"plot_case_{case}_{subfolder}.png"
             os.makedirs(os.path.join(RESULTS_BASE_DIR, "plots"), exist_ok=True)
