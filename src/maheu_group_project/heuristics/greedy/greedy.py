@@ -110,7 +110,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
     for vehicle_assignment in planned_vehicle_assignments:
         vehicle = requested_vehicles[vehicle_assignment.id]
         vehicle_path = vehicle_assignment.paths_taken
-        if vehicle_path:
+        if vehicle_path:  # If the vehicle has a path assigned
             final_truck = trucks_planned[vehicle_path[-1]]
             if vehicle.due_date - day_of_planning >= timedelta(7):
                 if vehicle_path != [] and final_truck.end_location == vehicle.destination:
@@ -120,7 +120,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
 
     # Now determine actual assignments
     vehicle_assignments: list[VehicleAssignment] = [
-        VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle
+        VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle
         in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                  (trucks_planned.keys() | trucks_realised.keys())}
@@ -163,13 +163,13 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
                 sorted_partition = sorted(partition, key=lambda vehicle: vehicle.due_date)
                 vehicle_amount = len(sorted_partition)
                 # decide how many trucks to book based on expected truck list
-                total_capacity = 0
-                final_truck_id = None
-                for truck_id in sorted_truck_id_list:
-                    total_capacity += trucks_planned[truck_id].capacity
-                    if total_capacity >= vehicle_amount:
-                        final_truck_id = truck_id
-                        break
+                # total_capacity = 0
+                # final_truck_id = None
+                # for truck_id in sorted_truck_id_list:
+                #    total_capacity += trucks_planned[truck_id].capacity
+                #    if total_capacity >= vehicle_amount:
+                #        final_truck_id = truck_id
+                #        break
                 # assign all vehicles in the current partition to trucks
                 vehicle_index = 0
                 for truck_id in sorted_truck_id_list:
@@ -192,9 +192,9 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
                     if vehicle_index >= vehicle_amount:
                         # If all vehicles in the partition are assigned, break
                         break
-                    if final_truck_id == truck_id:
-                        # If we have loaded the final truck that was booked, break
-                        break
+                    # if final_truck_id == truck_id:
+                    # If we have loaded the final truck that was booked, break
+                    #    break
                 while vehicle_index < vehicle_amount:
                     # All remaining vehicles remain at the current location for another day
                     vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(sorted_partition[vehicle_index].id)
