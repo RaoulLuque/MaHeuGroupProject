@@ -21,6 +21,15 @@ CASE_PATTERN = re.compile(r"Case_(\d+)_")
 
 
 def read_costs(filepath):
+    """
+    Reads the cost values for each realisation from a result file.
+
+    Args:
+        filepath (str): Path to the result file.
+
+    Returns:
+        tuple[list[int], list[float]]: Lists of realisation indices and corresponding costs.
+    """
     costs = []
     realisations = []
     with open(filepath, 'r') as f:
@@ -33,6 +42,7 @@ def read_costs(filepath):
 
 
 if __name__ == '__main__':
+    # Collect all heuristics globally to ensure consistent color/marker/legend order
     all_heuristics = set()
     heuristic_file_map = {}
     for subfolder in SUBFOLDERS:
@@ -45,6 +55,7 @@ if __name__ == '__main__':
             if not heuristic_match:
                 continue
             heuristic = heuristic_match.group(1)
+            # Normalize heuristic names for consistency
             if heuristic.startswith('time_'):
                 heuristic = heuristic[len('time_'):]
             if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
@@ -52,6 +63,7 @@ if __name__ == '__main__':
             all_heuristics.add(heuristic)
             heuristic_file_map.setdefault(subfolder, {}).setdefault(heuristic, []).append(f)
 
+    # Sort heuristics for consistent order in plots and legends
     all_heuristics = sorted(all_heuristics)
     heuristic_to_idx = {h: i for i, h in enumerate(all_heuristics)}
 
@@ -77,17 +89,24 @@ if __name__ == '__main__':
                 if not heuristic_match:
                     continue
                 heuristic = heuristic_match.group(1)
+                # Normalize heuristic names for consistency
                 if heuristic.startswith('time_'):
                     heuristic = heuristic[len('time_'):]
                 if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
                     heuristic = 'LOWER_BOUND'
                 idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_costs(os.path.join(dir_path, filename))
-                line, = plt.plot(realisations, costs, label=heuristic, marker=LINE_MARKER[idx % len(LINE_MARKER)], markersize=7.5, color=f'C{idx % 10}')
+                # Plot the costs for this heuristic
+                line, = plt.plot(
+                    realisations, costs, label=heuristic,
+                    marker=LINE_MARKER[idx % len(LINE_MARKER)],
+                    markersize=7.5, color=f'C{idx % 10}'
+                )
                 plotted_heuristics[heuristic] = line
             plt.xlabel('Realisation')
             plt.ylabel('Cost')
             plt.title(f'Case {case} - {subfolder}', pad=25)
+            # Ensure legend order is consistent across all plots
             handles = [plotted_heuristics[h] for h in all_heuristics if h in plotted_heuristics]
             labels = [h for h in all_heuristics if h in plotted_heuristics]
             plt.legend(handles, labels, ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
