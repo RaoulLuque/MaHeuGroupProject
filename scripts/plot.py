@@ -8,14 +8,17 @@ import re
 # # Use latex
 # os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
-LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
-NUMBER_OF_COLUMNS_IN_LEGEND = 4
-Y_OFFSET_LEGEND = 1.09
-
+# Directories involved
 RESULTS_BASE_DIR = "../results/notable/28_06"
 SUBFOLDERS = ["deterministic", "real_time"]
 
-# Helper to extract heuristic name from filename
+# Plot settings
+LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
+COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue']
+NUMBER_OF_COLUMNS_IN_LEGEND = 4
+Y_OFFSET_LEGEND = 1.09
+
+# Regex patterns to match heuristic names and case numbers
 HEURISTIC_PATTERN = re.compile(r"Case_\d+_[^_]+_(.+)_result\.txt")
 CASE_PATTERN = re.compile(r"Case_(\d+)_")
 
@@ -100,7 +103,7 @@ if __name__ == '__main__':
                 line, = plt.plot(
                     realisations, costs, label=heuristic,
                     marker=LINE_MARKER[idx % len(LINE_MARKER)],
-                    markersize=7.5, color=f'C{idx % 10}'
+                    markersize=7.5, color=COLOR_LIST[idx % len(COLOR_LIST)]
                 )
                 plotted_heuristics[heuristic] = line
             plt.xlabel('Realisation')
