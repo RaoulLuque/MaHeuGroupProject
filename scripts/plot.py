@@ -12,7 +12,7 @@ import re
 
 LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
 NUMBER_OF_COLUMNS_IN_LEGEND = 4
-Y_OFFSET_LEGEND = 0.935
+Y_OFFSET_LEGEND = 1.09
 
 RESULTS_BASE_DIR = "../results/notable/28_06"  # Change this to your target directory
 SUBFOLDERS = ["deterministic", "real_time"]
@@ -51,7 +51,7 @@ if __name__ == '__main__':
                 cases[case] = []
             cases[case].append(f)
         for case, case_files in cases.items():
-            plt.figure(figsize=(7, 3.8))
+            plt.figure(figsize=(8, 5))
             for idx, filename in enumerate(case_files):
                 heuristic_match = HEURISTIC_PATTERN.search(filename)
                 if not heuristic_match:
@@ -60,11 +60,14 @@ if __name__ == '__main__':
                 # Remove 'time_' prefix if present
                 if heuristic.startswith('time_'):
                     heuristic = heuristic[len('time_'):]
+                # Rename LOWER_BOUND_UNCAPACITATED_FLOW to LOWER_BOUND
+                if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                    heuristic = 'LOWER_BOUND'
                 realisations, costs = read_costs(os.path.join(dir_path, filename))
                 plt.plot(realisations, costs, label=heuristic, marker=LINE_MARKER[idx % len(LINE_MARKER)], markersize=7.5)
             plt.xlabel('Realisation')
             plt.ylabel('Cost')
-            plt.title(f'Case {case} - {subfolder}')
+            plt.title(f'Case {case} - {subfolder}', pad=25)
             plt.legend(ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
             plt.tight_layout()
             out_name = f"plot_case_{case}_{subfolder}.png"
