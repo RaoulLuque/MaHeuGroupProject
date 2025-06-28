@@ -131,7 +131,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                         if get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known).location != vehicle.destination:
                             current_day_planned_vehicle_assignments[vehicle_id] = InfeasibleAssignment()
 
-
         # Load the capacities back into the flow network after all flows for the current day have been computed
         for edge, capacity in capacities_copy.items():
             flow_network.edges[edge]['capacity'] = capacity
@@ -185,7 +184,9 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
 
                             case NoAssignmentToday(next_planned_assignment):
                                 # We first need to check, if the vehicle is currently enjoying its rest day.
-                                earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known).day
+                                earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle,
+                                                                                                            vehicle_assignments,
+                                                                                                            trucks_realised_by_day_known).day
                                 if current_day < earliest_day_vehicle_is_available:
                                     continue
 
@@ -246,8 +247,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                     else:
                         # In this case, the vehicle has arrived at its destination already, so we can just continue
                         continue
-
-
 
             # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
