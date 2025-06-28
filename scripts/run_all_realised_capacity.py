@@ -16,8 +16,8 @@ from maheu_group_project.solution.evaluate import objective_function
 
 # This is the solver to be used/tested
 SOLVERS: list[SolverType] = [SolverType.GREEDY]
-DETERMINISTIC = True
-DATASETS = ["CaseMaHeu25_01", "CaseMaHeu25_02", "CaseMaHeu25_03", "CaseMaHeu25_04"]
+DETERMINISTIC = False
+DATASET_INDICES = [1, 2, 3, 4]
 
 
 def run_on_all_data_from_first_dataset():
@@ -25,9 +25,14 @@ def run_on_all_data_from_first_dataset():
         results_dir = os.path.join(os.path.dirname(__file__), '..', 'results')
         os.makedirs(results_dir, exist_ok=True)
         current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        for dataset_dir in DATASETS:
-            with open(os.path.join(results_dir, f"{current_time}_{dataset_dir}_{solver}_result.txt"), 'w') as result_file:
-                with open(os.path.join(results_dir, f"{current_time}_{dataset_dir}_{solver}_result_pretty.txt"),
+        deterministic_name_tag = "deterministic" if DETERMINISTIC else "real_time"
+        results_dir = os.path.join(results_dir, deterministic_name_tag)
+        os.makedirs(results_dir, exist_ok=True)
+        for dataset_index in DATASET_INDICES:
+            dataset_dir = f"CaseMaHeu25_0{dataset_index}"
+            result_filename = f"{current_time}_Case_0{dataset_index}_{deterministic_name_tag}_{solver}"
+            with open(os.path.join(results_dir, result_filename + "_result.txt"), 'w') as result_file:
+                with open(os.path.join(results_dir, result_filename + "_result_pretty.txt"),
                           'w') as pretty_result_file:
                     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', dataset_dir))
                     pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
