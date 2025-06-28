@@ -1,9 +1,7 @@
-import numpy as np
-import matplotlib
-
 # # For Latex
 # matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+from matplotlib.image import imread
 import os
 import re
 
@@ -14,7 +12,7 @@ LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
 NUMBER_OF_COLUMNS_IN_LEGEND = 4
 Y_OFFSET_LEGEND = 1.09
 
-RESULTS_BASE_DIR = "../results/notable/28_06"  # Change this to your target directory
+RESULTS_BASE_DIR = "../results/notable/28_06"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Helper to extract heuristic name from filename
@@ -22,7 +20,6 @@ HEURISTIC_PATTERN = re.compile(r"Case_\d+_[^_]+_(.+)_result\.txt")
 CASE_PATTERN = re.compile(r"Case_(\d+)_")
 
 
-# Helper to read costs from a result file
 def read_costs(filepath):
     costs = []
     realisations = []
@@ -36,7 +33,6 @@ def read_costs(filepath):
 
 
 if __name__ == '__main__':
-    # 1. Collect all heuristics globally
     all_heuristics = set()
     heuristic_file_map = {}
     for subfolder in SUBFOLDERS:
@@ -56,7 +52,6 @@ if __name__ == '__main__':
             all_heuristics.add(heuristic)
             heuristic_file_map.setdefault(subfolder, {}).setdefault(heuristic, []).append(f)
 
-    # Sort heuristics for consistent order
     all_heuristics = sorted(all_heuristics)
     heuristic_to_idx = {h: i for i, h in enumerate(all_heuristics)}
 
@@ -93,7 +88,6 @@ if __name__ == '__main__':
             plt.xlabel('Realisation')
             plt.ylabel('Cost')
             plt.title(f'Case {case} - {subfolder}', pad=25)
-            # Consistent legend order
             handles = [plotted_heuristics[h] for h in all_heuristics if h in plotted_heuristics]
             labels = [h for h in all_heuristics if h in plotted_heuristics]
             plt.legend(handles, labels, ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
@@ -102,3 +96,27 @@ if __name__ == '__main__':
             os.makedirs(os.path.join(RESULTS_BASE_DIR, "plots"), exist_ok=True)
             plt.savefig(os.path.join(RESULTS_BASE_DIR, "plots", out_name))
             plt.close()
+
+
+# Create combined plots
+PLOTS_DIR = os.path.join(RESULTS_BASE_DIR, "plots")
+
+CASES = ["01", "02", "03", "04"]
+
+for subfolder in ["deterministic", "real_time"]:
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.suptitle(f"{subfolder.capitalize()} Results", fontsize=18, y=0.98)
+    for idx, case in enumerate(CASES):
+        row, col = divmod(idx, 2)
+        plot_path = os.path.join(PLOTS_DIR, f"plot_case_{case}_{subfolder}.png")
+        if os.path.exists(plot_path):
+            img = imread(plot_path)
+            axes[row, col].imshow(img)
+            axes[row, col].axis('off')
+            axes[row, col].set_title(f"Case {case}")
+        else:
+            axes[row, col].set_visible(False)
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    out_path = os.path.join(PLOTS_DIR, f"all_cases_{subfolder}.png")
+    plt.savefig(out_path)
+    plt.close()
