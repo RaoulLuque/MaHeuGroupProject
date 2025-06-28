@@ -139,6 +139,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
+    # Make sure the commodity groups are sorted by their names (the ones corresponding to earlier arrival dates appear first).
+    commodity_groups = dict(sorted(commodity_groups.items()))
     return flow_network, commodity_groups
 
 
