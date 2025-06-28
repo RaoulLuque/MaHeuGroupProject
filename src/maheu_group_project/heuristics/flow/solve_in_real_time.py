@@ -126,7 +126,10 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                     # to reach their destination. However, we note this in the planned_vehicle_assignments and hope
                     # that the realized trucks can help us out.
                     for vehicle_id in commodity_groups[commodity_group]:
-                        current_day_planned_vehicle_assignments[vehicle_id] = InfeasibleAssignment()
+                        vehicle = vehicles[vehicle_id]
+                        # Only assign the InfeasibleAssignment if the vehicle has not already arrived at its destination
+                        if get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known).location != vehicle.destination:
+                            current_day_planned_vehicle_assignments[vehicle_id] = InfeasibleAssignment()
 
 
         # Load the capacities back into the flow network after all flows for the current day have been computed
