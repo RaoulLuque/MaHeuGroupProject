@@ -65,7 +65,15 @@ class NoAssignmentToday:
     next_planned_assignment: TruckIdentifier
 
 
-PlannedVehicleAssignment = AssignmentToday | NoAssignmentToday
+@dataclass
+class InfeasibleAssignment:
+    """
+    Represents the case where a vehicle cannot be assigned to any truck for the current day because the flow corresponding
+    to the vehicle's commodity group is not feasible.
+    """
+
+
+PlannedVehicleAssignment = AssignmentToday | NoAssignmentToday | InfeasibleAssignment
 
 
 def vehicle_to_commodity_group(vehicle: Vehicle) -> str:
