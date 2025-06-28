@@ -224,9 +224,11 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
 
                                 # Check if there is a truck in the realised trucks with additional capacity that can take the vehicle
                                 # directly to its destination
+                                # TODO: Sort this iteration by departure date of the truck and then price
                                 for truck_identifier, capacity in trucks_realised_additional_capacity.items():
                                     if capacity > 0:
-                                        if truck_identifier.end_location == vehicle.destination:
+                                        if truck_identifier.start_location == current_location_of_vehicle and \
+                                                truck_identifier.end_location == vehicle.destination:
                                             # We found a truck that can take the vehicle directly to its destination
                                             trucks_realised_additional_capacity[truck_identifier] -= 1
                                             assign_vehicle_to_truck(flow_network, vehicle,
