@@ -110,12 +110,13 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
     for vehicle_assignment in planned_vehicle_assignments:
         vehicle = requested_vehicles[vehicle_assignment.id]
         vehicle_path = vehicle_assignment.paths_taken
-        final_truck = trucks_planned[vehicle_path[-1]]
-        if vehicle.due_date - day_of_planning >= timedelta(7):
-            if vehicle_path != [] and final_truck.end_location == vehicle.destination:
-                delay = final_truck.arrival_date - vehicle.due_date
-                if delay > timedelta(0):
-                    planned_delayed_vehicles[vehicle_assignment.id] = True
+        if vehicle_path:
+            final_truck = trucks_planned[vehicle_path[-1]]
+            if vehicle.due_date - day_of_planning >= timedelta(7):
+                if vehicle_path != [] and final_truck.end_location == vehicle.destination:
+                    delay = final_truck.arrival_date - vehicle.due_date
+                    if delay > timedelta(0):
+                        planned_delayed_vehicles[vehicle_assignment.id] = True
 
     # Now determine actual assignments
     vehicle_assignments: list[VehicleAssignment] = [
