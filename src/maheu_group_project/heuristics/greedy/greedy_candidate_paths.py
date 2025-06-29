@@ -1,5 +1,6 @@
-from maheu_group_project.solution.encoding import Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, \
-    VehicleAssignment
+from maheu_group_project.solution.encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, \
+    COST_PER_PLANNED_DELAY_DAY, \
+    COST_PER_UNPLANNED_DELAY_DAY, Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, VehicleAssignment
 from datetime import date, timedelta
 from maheu_group_project.solution.encoding import location_type_from_string
 from maheu_group_project.heuristics.common import get_first_last_and_days
@@ -7,7 +8,7 @@ from maheu_group_project.heuristics.common import get_first_last_and_days
 
 def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckIdentifier, Truck],
                                  location_list: list[Location], trucks_realised: dict[TruckIdentifier, Truck],
-                                 candidate_paths: dict[tuple[Location, Location], list[tuple[Location, int, bool]]]) \
+                                 candidate_paths: dict[tuple[Location, Location], list[dict]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     :param location_list:
@@ -19,10 +20,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
     """
     first_day, last_day, days = get_first_last_and_days(vehicles=requested_vehicles, trucks=trucks_planned)
     day_of_planning = first_day  # today (is relevant for planned delay calculation)
-    expected_travel_time: dict[tuple[Location, Location], timedelta] = {(loc, vehicle.destination): timedelta(5) for
-                                                                        vehicle in requested_vehicles for loc in
-                                                                        location_list}
-    # TODO: expected_travel_time aus candidate_paths ziehen
+
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
                                                                        in (days + [(last_day + timedelta(1))])}
     # Run first with only expected trucks to preview delays
@@ -33,6 +31,22 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                                          (
                                                                                  trucks_planned.keys() | trucks_realised.keys())}
     deterministic_expected_delayed_vehicles: list[bool] = [False for _ in requested_vehicles]
+
+    def urgency_function(veh_id: int, dayy: date, assignments: list[VehicleAssignment],
+                         exp_delayed_veh: list[bool]) -> float:
+        """
+        Calculate the urgency based on the vehicle's due date and the current day.
+        """
+        veh = requested_vehicles[veh_id]
+        assignment = assignments[veh_id]
+        if veh.due_date - dayy - 1.2 * candidate_paths[loc, veh.destination][0]['days'] >= timedelta(2):
+            return 0
+        elif assignment.planned_delayed:
+            return COST_PER_PLANNED_DELAY_DAY * (0.5 + 0.5 * exp_delayed_veh[veh_id])
+        else:
+            return COST_PER_UNPLANNED_DELAY_DAY * (0.5 + 0.5 * exp_delayed_veh[veh_id]) + FIXED_UNPLANNED_DELAY_COST * (
+                    1 - exp_delayed_veh[veh_id])
+
     for day in days:  # days from start_date to end_date
         for loc in location_list:
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
@@ -41,11 +55,10 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                         vehicle.origin == loc and vehicle.available_date == day]
             sorted_vehicles_at_loc_at_time = sorted(vehicles_at_loc_at_time[(loc, day)],
                                                     key=lambda vehicle_id: (requested_vehicles[vehicle_id].due_date -
-                                                                            expected_travel_time[
+                                                                            candidate_paths[
                                                                                 loc, requested_vehicles[
-                                                                                    vehicle_id].destination] + timedelta(
-                                                                4 * deterministic_expected_delayed_vehicles[
-                                                                    vehicle_id])))  # TODO: updaten wenn unten geupdatet wird
+                                                                                    vehicle_id].destination][0][
+                                                                                'days']))  # TODO: updaten wenn unten geupdatet wird
             for vehicle_id in sorted_vehicles_at_loc_at_time:
                 vehicle = requested_vehicles[vehicle_id]
                 if vehicle.destination == loc:
@@ -54,24 +67,20 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                                              day - timedelta(1) - vehicle.due_date)
                 else:
                     possible_paths = candidate_paths[loc, vehicle.destination]
+                    if vehicle.due_date - day - possible_paths[0]['days'] > 0:
+                        deterministic_expected_delayed_vehicles[vehicle_id] = True
+                        if vehicle.due_date - day >= timedelta(7):
+                            planned_vehicle_assignments[vehicle.id].planned_delayed = True
                     # determine how patient we are
-                    amount_of_paths = len(possible_paths)
-                    urgency = amount_of_paths  # TODO: updaten wenn unten geupdatet wird
-                    """if vehicle.due_date - day - expected_travel_time[loc, vehicle.destination] >= 0.2 * \
-                            expected_travel_time[loc, vehicle.destination] + timedelta(2):
-                        urgency = 0
-                    elif deterministic_expected_delayed_vehicles[vehicle_id]:
-                        urgency = 0
-                        for truck_option in possible_paths: 
-                            # truck_option_cost_per_vehicle ist neue Variable die aus candidate_paths kommt
-                            if (truck_option_cost_per_vehicle < 50 and vehicle.planned_delayed) or (truck_option_cost_per_vehicle < 100 and not vehicle.planned_delayed):
-                                urgency += 1 """
+                    urgency = urgency_function(vehicle_id, day, planned_vehicle_assignments,
+                                               deterministic_expected_delayed_vehicles)
                     assigned = False
-                    truck_option_index = 0
                     for truck_option in possible_paths:
                         # If the truck is free or the urgency is high enough, we take the truck
-                        if truck_option[2] or urgency > truck_option_index:
-                            truck_id = TruckIdentifier(loc, truck_option[0], truck_option[1], day)
+                        if truck_option['is_free'] or urgency >= truck_option['total_cost'] - possible_paths[0][
+                            'total_cost']:
+                            truck_id = TruckIdentifier(loc, truck_option['next_location'], truck_option['truck_number'],
+                                                       day)
                             if truck_id in trucks_planned.keys():
                                 truck = trucks_planned[truck_id]
                                 if len(planned_truck_assignments[truck_id].load) < truck.capacity:
@@ -79,18 +88,21 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                     planned_truck_assignments[truck_id].load.append(vehicle_id)
                                     planned_vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
                                     vehicles_at_loc_at_time[
-                                        (truck_option[0], truck.arrival_date + timedelta(1))].append(vehicle_id)
-                                    # TODO: Updaten wenn unten geupdatet wird
-                                    # truck_option_travel_time ist neue Variable die aus candidate_paths kommt
-                                    """if day + truck_option_travel_time > vehicle.due_date:
-                                        planned_vehicle_assignments[vehicle.id].planned_delayed = True
-                                        deterministic_expected_delayed_vehicles[vehicle.id] = True"""
+                                        (truck_option['next_location'], truck.arrival_date + timedelta(1))].append(
+                                        vehicle_id)
+                                    if day + truck_option['days'] > vehicle.due_date:
+                                        if vehicle.due_date - day >= timedelta(7):
+                                            planned_vehicle_assignments[vehicle.id].planned_delayed = True
+                                        deterministic_expected_delayed_vehicles[vehicle.id] = True
                                     assigned = True
                                     break
-                        truck_option_index += 1
                     if not assigned:
                         # If no truck was assigned, the vehicle remains at the current location for another day
                         vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
+                        if vehicle.due_date - (day + timedelta(1)) - possible_paths[0]['days'] > 0:
+                            deterministic_expected_delayed_vehicles[vehicle_id] = True
+                            if vehicle.due_date - day >= timedelta(7):
+                                planned_vehicle_assignments[vehicle.id].planned_delayed = True
     planned_delayed_vehicles: list[bool] = [False for _ in requested_vehicles]
     # Check which vehicles are delayed based on the planned vehicle assignments
     for vehicle_assignment in planned_vehicle_assignments:
@@ -121,10 +133,10 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                         vehicle.origin == loc and vehicle.available_date == day]
             sorted_vehicles_at_loc_at_time = sorted(vehicles_at_loc_at_time[(loc, day)],
                                                     key=lambda vehicle_id: (requested_vehicles[vehicle_id].due_date -
-                                                                            expected_travel_time[
+                                                                            candidate_paths[
                                                                                 loc, requested_vehicles[
-                                                                                    vehicle_id].destination] + timedelta(
-                                                                4 * expected_delayed_vehicles[vehicle_id])))
+                                                                                    vehicle_id].destination][0][
+                                                                                'days']))
             # TODO: delay time einbeziehen in urgency
             for vehicle_id in sorted_vehicles_at_loc_at_time:
                 vehicle = requested_vehicles[vehicle_id]
@@ -134,24 +146,19 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                                      day - timedelta(1) - vehicle.due_date)
                 else:
                     possible_paths = candidate_paths[loc, vehicle.destination]
+                    if vehicle.due_date - day - possible_paths[0]['days'] > 0:
+                        expected_delayed_vehicles[vehicle_id] = True
+                        if vehicle.due_date - day >= timedelta(7):
+                            vehicle_assignments[vehicle.id].planned_delayed = True
                     # determine how patient we are
-                    amount_of_paths = len(possible_paths)
-                    urgency = amount_of_paths  # TODO: Urgency Funktion schreiben
-                    """if vehicle.due_date - day - expected_travel_time[loc, vehicle.destination] >= 0.2 * \
-                            expected_travel_time[loc, vehicle.destination] + timedelta(2):
-                        urgency = 0
-                    elif expected_delayed_vehicles[vehicle_id]:
-                        urgency = 0
-                        for truck_option in possible_paths:
-                            # truck_option_cost_per_vehicle ist neue Variable die aus candidate_paths kommt
-                            if (truck_option_cost_per_vehicle < 50 and vehicle.planned_delayed) or (truck_option_cost_per_vehicle < 100 and not vehicle.planned_delayed):
-                                urgency += 1 """
+                    urgency = urgency_function(vehicle_id, day, vehicle_assignments, expected_delayed_vehicles)
                     assigned = False
-                    truck_option_index = 0
                     for truck_option in possible_paths:
                         # If the truck is free or the urgency is high enough, we take the truck
-                        if truck_option[2] or urgency > truck_option_index:
-                            truck_id = TruckIdentifier(loc, truck_option[0], truck_option[1], day)
+                        if truck_option['is_free'] or urgency >= truck_option['total_cost'] - possible_paths[0][
+                            'total_cost']:
+                            truck_id = TruckIdentifier(loc, truck_option['next_location'], truck_option['truck_number'],
+                                                       day)
                             if truck_id in (trucks_planned.keys() & trucks_realised.keys()):
                                 truck = trucks_realised[truck_id]
                                 if len(truck_assignments[truck_id].load) < truck.capacity:
@@ -159,16 +166,20 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                     truck_assignments[truck_id].load.append(vehicle_id)
                                     vehicle_assignments[vehicle_id].paths_taken.append(truck_id)
                                     vehicles_at_loc_at_time[
-                                        (truck_option[0], truck.arrival_date + timedelta(1))].append(vehicle_id)
-                                    # TODO: Add delay if expected travel time is too long
-                                    # truck_option_travel_time ist neue Variable die aus candidate_paths kommt
-                                    """if day + truck_option_travel_time > vehicle.due_date:
-                                        vehicle_assignments[vehicle.id].planned_delayed = True
-                                        expected_delayed_vehicles[vehicle.id] = True"""
+                                        (truck_option['next_location'], truck.arrival_date + timedelta(1))].append(
+                                        vehicle_id)
+                                    # Add delay if expected travel time is too long
+                                    if day + truck_option['days'] > vehicle.due_date:
+                                        if vehicle.due_date - day >= timedelta(7):
+                                            vehicle_assignments[vehicle.id].planned_delayed = True
+                                        expected_delayed_vehicles[vehicle.id] = True
                                     assigned = True
                                     break
-                        truck_option_index += 1
                     if not assigned:
                         # If no truck was assigned, the vehicle remains at the current location for another day
                         vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
+                        if vehicle.due_date - (day + timedelta(1)) - possible_paths[0]['days'] > 0:
+                            expected_delayed_vehicles[vehicle_id] = True
+                            if vehicle.due_date - day >= timedelta(7):
+                                vehicle_assignments[vehicle.id].planned_delayed = True
     return vehicle_assignments, truck_assignments
