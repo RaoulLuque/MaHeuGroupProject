@@ -56,7 +56,7 @@ def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
                 continue
 
             seen_edges = set()
-            for path, is_free, total_weight, length in shortest_paths(logistics_network, source, target):
+            for path, is_free, total_weight, length, days in shortest_paths(logistics_network, source, target):
                 if not path:
                     continue
                 u, v, key, data = path[0]
@@ -69,22 +69,24 @@ def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
                     'next_location': next_location,
                     'truck_number': truck_number,
                     'is_free': is_free,
-                    'length': length,
-                    'total_cost': total_weight
+                    'segments': length,
+                    'total_cost': total_weight - length * c,
+                    'days': days + length - 1
                 })
 
     return candidate_paths
 
 
 def shortest_paths(network: MultiDiGraph, start_location: Location, end_location: Location) -> list[
-    tuple[list[tuple[Location, Location, int, dict]], bool, float, int]]:
+    tuple[list[tuple[Location, Location, int, dict]], bool, float, int, int]]:
     """
     Finds the k shortest paths between two locations in a logistics network.
 
     :param network: The logistics network represented as a MultiDiGraph.
     :param start_location: The starting location for the paths.
     :param end_location: The destination location for the paths.
-    :return: A list of tuples, each containing a path (list of edges) and a boolean indicating if the path is free.
+    :return: A list of tuples, each containing a path (list of edges), a boolean indicating if the path is free,
+             the total path weight, the path length, and the total number of days.
     """
     k = 10  # max number of shortest paths to find
 
@@ -114,6 +116,13 @@ def shortest_paths(network: MultiDiGraph, start_location: Location, end_location
 
     def total_path_weight(edge_path: list[tuple[Location, Location, int, dict]]) -> float:
         return sum(data.get("weight", 0) for (_, _, _, data) in edge_path)
+
+    def path_days(path):
+        days = 0
+        for _, _, _, data in path:
+            tn = data.get('truck_number', 0)
+            days += 2 if tn < 10 else 3
+        return days
 
     A = []
     B = []
@@ -159,7 +168,8 @@ def shortest_paths(network: MultiDiGraph, start_location: Location, end_location
             path,
             all(edge[3].get("weight", 0) == c for edge in path),
             total_path_weight(path),
-            len(path)
+            len(path),
+            path_days(path)
         )
         for path in A
     ]
