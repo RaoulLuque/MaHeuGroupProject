@@ -45,7 +45,7 @@ def create_logistics_network(locations: list[Location], trucks: dict[TruckIdenti
 
 
 def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
-    tuple[Location, Location], list[tuple[Location, int, bool]]]:
+    tuple[Location, Location], list[dict]]:
     candidate_paths = {}
 
     for source in logistics_network.nodes:
@@ -56,7 +56,7 @@ def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
                 continue
 
             seen_edges = set()
-            for path, is_free in shortest_paths(logistics_network, source, target):
+            for path, is_free, total_weight, length in shortest_paths(logistics_network, source, target):
                 if not path:
                     continue
                 u, v, key, data = path[0]
@@ -65,13 +65,19 @@ def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
                 seen_edges.add((u, v, key))
                 next_location = v
                 truck_number = data.get("truck_number")
-                candidate_paths.setdefault((source, target), []).append((next_location, truck_number, is_free))
+                candidate_paths.setdefault((source, target), []).append({
+                    'next_location': next_location,
+                    'truck_number': truck_number,
+                    'is_free': is_free,
+                    'length': length,
+                    'total_cost': total_weight
+                })
 
     return candidate_paths
 
 
 def shortest_paths(network: MultiDiGraph, start_location: Location, end_location: Location) -> list[
-    tuple[list[tuple[Location, Location, int, dict]], bool]]:
+    tuple[list[tuple[Location, Location, int, dict]], bool, float, int]]:
     """
     Finds the k shortest paths between two locations in a logistics network.
 
@@ -148,7 +154,15 @@ def shortest_paths(network: MultiDiGraph, start_location: Location, end_location
         B.sort(key=total_path_weight)
         A.append(B.pop(0))
 
-    return [(path, all(edge[3].get("weight", 0) == c for edge in path)) for path in A]
+    return [
+        (
+            path,
+            all(edge[3].get("weight", 0) == c for edge in path),
+            total_path_weight(path),
+            len(path)
+        )
+        for path in A
+    ]
 
 
 def visualize_logistics_network(network: MultiDiGraph):
