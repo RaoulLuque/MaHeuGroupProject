@@ -8,7 +8,7 @@ import heapq
 from itertools import count
 from maheu_group_project.solution.encoding import TruckIdentifier, Truck, Location, LocationType
 
-c = 50  # additional cost for each edge
+c = 10  # additional cost for each edge
 
 
 def create_logistics_network(locations: list[Location], trucks: dict[TruckIdentifier, Truck]) -> MultiDiGraph:
@@ -29,7 +29,7 @@ def create_logistics_network(locations: list[Location], trucks: dict[TruckIdenti
         if truck.price > 0:
             if (start_node, end_node) not in nonfree_truck_prices:
                 nonfree_truck_prices[(start_node, end_node)] = {'prices': [], 'truck_number': truck_number}
-            nonfree_truck_prices[(start_node, end_node)]['prices'].append(truck.price)
+            nonfree_truck_prices[(start_node, end_node)]['prices'].append(truck.price / truck.capacity)
         else:
             if not logistics_network.has_edge(start_node, end_node):
                 edge_cost = 0 + c
