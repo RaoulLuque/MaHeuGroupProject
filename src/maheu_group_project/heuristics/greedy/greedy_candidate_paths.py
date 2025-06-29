@@ -31,7 +31,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                             requested_vehicles]
     planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
                                                                          (
-                                                                                     trucks_planned.keys() | trucks_realised.keys())}
+                                                                                 trucks_planned.keys() | trucks_realised.keys())}
     for day in days:  # days from start_date to end_date
         for loc in location_list:
             # for every day and every location, if that location is a PLANT, add vehicles that become available there
@@ -39,9 +39,10 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
             sorted_vehicles_at_loc_at_time = sorted(vehicles_at_loc_at_time[(loc, day)],
-                                                    key=lambda vehicle_id: requested_vehicles[vehicle_id].due_date -
-                                                                           expected_travel_time[loc, requested_vehicles[
-                                                                               vehicle_id].destination])  # TODO: anpassen
+                                                    key=lambda vehicle_id: (requested_vehicles[vehicle_id].due_date -
+                                                                            expected_travel_time[
+                                                                                loc, requested_vehicles[
+                                                                                    vehicle_id].destination]))  # TODO: anpassen
             for vehicle_id in sorted_vehicles_at_loc_at_time:
                 vehicle = requested_vehicles[vehicle_id]
                 if vehicle.destination == loc:
@@ -50,11 +51,11 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                                              day - timedelta(1) - vehicle.due_date)
                 else:
                     # determine how patient we are
-                    patient = True  # TODO: anpassen
+                    patient = False  # TODO: anpassen
                     assigned = False
                     for truck_option in candidate_paths[loc, vehicle.destination]:
                         if truck_option[2] or not patient:
-                            truck_id = TruckIdentifier(loc, vehicle.destination, truck_option[1], day)
+                            truck_id = TruckIdentifier(loc, truck_option[0], truck_option[1], day)
                             if truck_id in trucks_planned.keys():
                                 truck = trucks_planned[truck_id]
                                 if len(planned_truck_assignments[truck_id].load) < truck.capacity:
@@ -64,7 +65,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                     vehicles_at_loc_at_time[
                                         (truck_option[0], truck.arrival_date + timedelta(1))].append(vehicle_id)
                                     assigned = True
-                                break
+                                    break
                     if not assigned:
                         # If no truck was assigned, the vehicle remains at the current location for another day
                         vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
@@ -96,9 +97,10 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                 vehicles_at_loc_at_time[(loc, day)] += [vehicle.id for vehicle in requested_vehicles if
                                                         vehicle.origin == loc and vehicle.available_date == day]
             sorted_vehicles_at_loc_at_time = sorted(vehicles_at_loc_at_time[(loc, day)],
-                                                    key=lambda vehicle_id: requested_vehicles[vehicle_id].due_date -
-                                                                           expected_travel_time[loc, requested_vehicles[
-                                                                               vehicle_id].destination])
+                                                    key=lambda vehicle_id: (requested_vehicles[vehicle_id].due_date -
+                                                                            expected_travel_time[
+                                                                                loc, requested_vehicles[
+                                                                                    vehicle_id].destination]))
             # TODO: delay time einbeziehen in urgency
             for vehicle_id in sorted_vehicles_at_loc_at_time:
                 vehicle = requested_vehicles[vehicle_id]
@@ -108,11 +110,11 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                                                      day - timedelta(1) - vehicle.due_date)
                 else:
                     # determine how patient we are
-                    patient = True  # TODO: Funktion schreiben
+                    patient = False  # TODO: Funktion schreiben
                     assigned = False
                     for truck_option in candidate_paths[loc, vehicle.destination]:
                         if truck_option[2] or not patient:
-                            truck_id = TruckIdentifier(loc, vehicle.destination, truck_option[1], day)
+                            truck_id = TruckIdentifier(loc, truck_option[0], truck_option[1], day)
                             if truck_id in (trucks_planned.keys() & trucks_realised.keys()):
                                 truck = trucks_realised[truck_id]
                                 if len(truck_assignments[truck_id].load) < truck.capacity:
@@ -122,7 +124,8 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                     vehicles_at_loc_at_time[
                                         (truck_option[0], truck.arrival_date + timedelta(1))].append(vehicle_id)
                                     assigned = True
-                                break
+                                    # TODO: Add delay if expected travel time is too long
+                                    break
                     if not assigned:
                         # If no truck was assigned, the vehicle remains at the current location for another day
                         vehicles_at_loc_at_time[(loc, day + timedelta(1))].append(vehicle_id)
