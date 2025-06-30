@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import glob
 import os
@@ -5,7 +6,7 @@ import sys
 import time
 
 from maheu_group_project.heuristics.solver import SolverType, solve_deterministically_and_return_data, \
-    solve_real_time_and_return_data
+    solve_real_time_and_return_data, solver_type_from_string
 from maheu_group_project.solution.metrics import get_pretty_metrics
 
 from maheu_group_project.solution.verifying import verify_solution
@@ -14,10 +15,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 
 from maheu_group_project.solution.evaluate import objective_function
 
-# This is the solver to be used/tested
+# This is the default configuration of the script. It can be overridden by command line arguments.
 SOLVERS: list[SolverType] = [SolverType.GREEDY]
 DETERMINISTIC = False
-DATASET_INDICES = [1, 2, 3, 4]
+DATASET_INDICES = [2]
 
 
 def run_on_all_data_from_first_dataset():
@@ -81,5 +82,31 @@ def run_on_all_data_from_first_dataset():
                         print(output)
 
 
-if __name__ == '__main__':
+def parse_args() -> argparse.Namespace:
+    """
+    Parse command line arguments into an argparse.Namespace object.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Run all realised capacity experiments.")
+    parser.add_argument('--solvers', nargs='+', type=str, default=None, help='List of solvers (by name) to use')
+    parser.add_argument('--deterministic', action='store_true', help='Use deterministic mode')
+    parser.add_argument('--dataset_indices', nargs='+', type=int, default=None, help='List of dataset indices to use')
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    global SOLVERS, DETERMINISTIC, DATASET_INDICES
+    if args.solvers is not None:
+        SOLVERS = [solver_type_from_string(string_input.upper()) for string_input in args.solvers]
+    if args.deterministic:
+        DETERMINISTIC = True
+    if args.dataset_indices is not None:
+        DATASET_INDICES = args.dataset_indices
     run_on_all_data_from_first_dataset()
+
+
+if __name__ == '__main__':
+    main()
