@@ -259,7 +259,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
 
         # Depending on UPDATE_DELAY_NODES_IN_FLOW_NETWORK, we update the delay nodes in the flow network.
         if UPDATE_DELAY_NODES_IN_FLOW_NETWORK:
-            update_delay_nodes_in_flow_network(flow_network, current_day, locations)
+            if current_day + timedelta(days=7) <= last_day:
+                update_delay_nodes_in_flow_network(flow_network, current_day, locations)
 
         # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
