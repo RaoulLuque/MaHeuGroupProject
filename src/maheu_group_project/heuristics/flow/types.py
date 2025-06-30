@@ -122,3 +122,12 @@ def get_day_and_location_for_commodity_group(commodity_group: str) -> tuple[date
     """
     day_str, location_name = commodity_group.split("_", 1)
     return date.fromisoformat(day_str), Location(name=location_name, type=LocationType.DEALER)
+
+
+class Order(Enum):
+    """
+    Enum to represent the order in which the commodity groups are stored in the commodity groups dictionary.
+    """
+    UNORDERED = 0
+    ASCENDING = 1
+    DESCENDING = 2

@@ -4,9 +4,11 @@ from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
 from maheu_group_project.heuristics.flow.solve_deterministically import ARTIFICIAL_EDGE_COST_MULTIPLIER
-from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, vehicle_to_commodity_group
+from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, vehicle_to_commodity_group, Order
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     FIXED_UNPLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, FIXED_PLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY
+
+ORDER_OF_COMMODITY_GROUPS = Order.UNORDERED
 
 
 def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck], locations: list[Location]) -> \
@@ -139,9 +141,14 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
                                               weight=COST_PER_UNPLANNED_DELAY_DAY)
 
-    # We comment this out for now, since this seems to have negative effects on the value of the solutions (increase them).
-    # # Make sure the commodity groups are sorted by their names (the ones corresponding to earlier arrival dates appear first).
-    # commodity_groups = dict(sorted(commodity_groups.items()))
+    # Make sure the commodity groups are sorted by their names according to the specified order.
+    match ORDER_OF_COMMODITY_GROUPS:
+        case Order.UNORDERED:
+            commodity_groups = commodity_groups
+        case Order.ASCENDING:
+            commodity_groups = dict(sorted(commodity_groups.items()))
+        case Order.DESCENDING:
+            commodity_groups = dict(sorted(commodity_groups.items(), reverse=True))
     return flow_network, commodity_groups
 
 
