@@ -2,7 +2,8 @@ import networkx as nx
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days, convert_trucks_to_dict_by_day
-from maheu_group_project.heuristics.flow.network import remove_trucks_from_network, get_start_and_end_nodes_for_truck
+from maheu_group_project.heuristics.flow.network import remove_trucks_from_network, get_start_and_end_nodes_for_truck, \
+    update_delay_nodes_in_flow_network
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
     get_day_and_location_for_commodity_group, vehicle_to_commodity_group, InfeasibleAssignment
@@ -14,6 +15,8 @@ from datetime import timedelta, date
 # Multiplier used to artificially increase the cost of edges that correspond to later trucks, to incentivize earlier
 # transportation.
 ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
+
+UPDATE_DELAY_NODES_IN_FLOW_NETWORK = True
 
 
 def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
@@ -70,7 +73,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     vehicle_assignments: dict[int, VehicleAssignment] = {}
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
-    # visualize_flow_network(flow_network, locations, commodity_groups)
+    # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     # We iterate over the days from first to last; then those locations which are DEALER locations
     # The current day is the day for which we know the realized trucks. However, before looking
@@ -253,6 +256,12 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # Remove edges for the current day from the flow network, so that they are not accidentally used in the
         # next iteration.
         remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
+
+        # Depending on UPDATE_DELAY_NODES_IN_FLOW_NETWORK, we update the delay nodes in the flow network.
+        if UPDATE_DELAY_NODES_IN_FLOW_NETWORK:
+            update_delay_nodes_in_flow_network(flow_network, current_day, locations)
+
+        # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     # Convert the vehicle_assignments to a list and sort them by their id
     vehicle_assignments: list[VehicleAssignment] = list(vehicle_assignments.values())

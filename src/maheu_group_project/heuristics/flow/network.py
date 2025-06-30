@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, date
 
 from networkx import MultiDiGraph
 
@@ -216,3 +216,61 @@ def remove_trucks_from_network(flow_network: MultiDiGraph, trucks: dict[TruckIde
         start_node, end_node = get_start_and_end_nodes_for_truck(truck)
 
         flow_network.remove_edge(start_node, end_node, key=truck.truck_number)
+
+
+def update_delay_nodes_in_flow_network(flow_network: MultiDiGraph, current_day: date, locations: list[Location]):
+    """
+    Updates the delay nodes in the flow network to account for the current day.
+
+    This function updates the helper nodes for each DEALER location to ensure that they correctly represent the
+    unplanned and planned delays based on the current day.
+
+    Args:
+        flow_network (MultiDiGraph): The flow network to be updated.
+        current_day (date): The current day to be considered for updating the delay nodes.
+        locations (list[Location]): The list of locations involved in the transportation.
+    """
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    for location in locations:
+        if location.type == LocationType.DEALER:
+            # If the current day is day 0, we need to update the helper nodes / edges for day 7.
+            day_to_change = current_day + timedelta(days=7)
+
+            # Generate the important nodes for the current day
+            current_dealer_node = NodeIdentifier(day_to_change, location, NodeType.NORMAL)
+            current_helper_node_one = NodeIdentifier(day_to_change, location, NodeType.HELPER_NODE_ONE)
+            current_helper_node_two = NodeIdentifier(day_to_change, location, NodeType.HELPER_NODE_TWO)
+
+            # Remove the edge from the current normal node to the second helper node
+            flow_network.remove_edge(current_dealer_node, current_helper_node_two)
+
+            # Remove the the second helper node from the flow network
+            flow_network.remove_node(current_helper_node_two)
+
+            # Remove the edge from the next day helper node one to the current day helper node one
+            next_day_helper_node_one = NodeIdentifier(day_to_change + timedelta(days=1), location,
+                                                      NodeType.HELPER_NODE_ONE)
+            if next_day_helper_node_one in flow_network:
+                flow_network.remove_edge(next_day_helper_node_one, current_helper_node_one)
+
+            # Update the edge node weight from the current normal node to the first helper node
+            flow_network[current_dealer_node][current_helper_node_one][0]['weight'] = FIXED_UNPLANNED_DELAY_COST
+
+            # Get the UNBOUNDED capacity from the edge from current dealer node to the helper node one
+            UNBOUNDED = flow_network[current_dealer_node][current_helper_node_one][0]['capacity']
+
+            # Add an edge from the helper node one to the previous day helper node one
+            previous_helper_node_one = NodeIdentifier(day_to_change - timedelta(days=1), location,
+                                                      NodeType.HELPER_NODE_ONE)
+            flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
+                                  weight=COST_PER_UNPLANNED_DELAY_DAY)
+
+            # Add an edge from the next day helper node two to the current day helper node one
+            next_day_helper_node_two = NodeIdentifier(day_to_change + timedelta(days=1), location,
+                                                      NodeType.HELPER_NODE_TWO)
+            if next_day_helper_node_two in flow_network:
+                flow_network.add_edge(next_day_helper_node_two, current_helper_node_one, capacity=UNBOUNDED,
+                                      weight=COST_PER_UNPLANNED_DELAY_DAY)
+
