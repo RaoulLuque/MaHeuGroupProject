@@ -170,3 +170,27 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
         #     return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"This solver type is not supported: {solver_type}")
+
+
+def solver_type_from_string(solver_type_str: str) -> SolverType:
+    """
+    Converts a string representation of a solver type to the corresponding SolverType enum.
+
+    Args:
+        solver_type_str (str): The string representation of the solver type.
+
+    Returns:
+        SolverType: The corresponding SolverType enum.
+    """
+    if solver_type_str == "FLOW":
+        return SolverType.FLOW
+    elif solver_type_str == "GREEDY":
+        return SolverType.GREEDY
+    elif solver_type_str == "OLD_FLOW":
+        return SolverType.OLD_FLOW
+    elif solver_type_str == "LOWER_BOUND":
+        return SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
+    elif solver_type_str == "LOWER_BOUND_UNCAPACITATED_FLOW":
+        return SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
+    else:
+        raise ValueError(f"Unknown solver type: {solver_type_str}. Expected one of: {[str(solver) for solver in SolverType]}")
