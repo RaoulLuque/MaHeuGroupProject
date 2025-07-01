@@ -5,14 +5,12 @@ import os
 import sys
 import time
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+
 from maheu_group_project.heuristics.solver import SolverType, solve_deterministically_and_return_data, \
     solve_real_time_and_return_data, solver_type_from_string
 from maheu_group_project.solution.metrics import get_pretty_metrics
-
 from maheu_group_project.solution.verifying import verify_solution
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the default configuration of the script. It can be overridden by command line arguments.
