@@ -9,12 +9,12 @@ import re
 # os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/28_06"
+RESULTS_BASE_DIR = "../results/notable/01_07"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
 LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
-COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue']
+COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue', 'crimson', 'darkorchid', 'darkorange', 'teal', 'slategray']
 NUMBER_OF_COLUMNS_IN_LEGEND = 4
 Y_OFFSET_LEGEND = 1.09
 
@@ -63,6 +63,8 @@ if __name__ == '__main__':
                 heuristic = heuristic[len('time_'):]
             if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
                 heuristic = 'LOWER_BOUND'
+            if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                heuristic = 'GREEDY_CAN_PATHS'
             all_heuristics.add(heuristic)
             heuristic_file_map.setdefault(subfolder, {}).setdefault(heuristic, []).append(f)
 
@@ -97,6 +99,8 @@ if __name__ == '__main__':
                     heuristic = heuristic[len('time_'):]
                 if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
                     heuristic = 'LOWER_BOUND'
+                if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                    heuristic = 'GREEDY_CAN_PATHS'
                 idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_costs(os.path.join(dir_path, filename))
                 # Plot the costs for this heuristic
