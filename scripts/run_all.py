@@ -81,7 +81,8 @@ def run_on_all_data_from_first_dataset():
 
                             # And then to the pretty result file
                             if number_of_vehicles_that_did_not_arrived == 0:
-                                output += f"Number of vehicles that did not arrive: {number_of_vehicles_that_did_not_arrived} \n"
+                                output += "Number of vehicles that did not arrive: 0 \n"
+                            output += f"Solver: {solver.name} \n"
                             metrics = get_pretty_metrics(trucks_realised, truck_assignments, vehicle_assignments)
                             output += metrics + "\n" + f"Running time in seconds: {running_time}" + "\n" + "\n"
                             pretty_result_file.write(output)
