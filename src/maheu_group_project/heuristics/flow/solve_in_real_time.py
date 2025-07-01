@@ -28,11 +28,10 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     Solves the multicommodity min-cost flow problem heuristically by solving multiple single commodity min-cost flow
     problems for each DEALER location and day in the flow network.
 
-    This function iterates over each day (in ascending order) and each DEALER location, solving a min-cost flow problem
-    for the vehicles that are due on that day and at that location. The flow network is expected to have been created
-    with the `create_flow_network` function.
-
-    In the real-time version, TODO: Rework Docstring
+    This function iterates over the days on which vehicles might be transported (current_day), and for each of these
+    days, over all commodities. For each commodity, it solves the single commodity min-cost flow problem and extracts
+    an assignment of vehicles to trucks from the resulting flow. This is then compared with the realized trucks for the
+    current day, and the assignments are adjusted accordingly.
 
     Args:
         flow_network (MultiDiGraph[NodeIdentifier]): The flow network to solve.
@@ -44,8 +43,9 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         trucks_realised (dict[TruckIdentifier, Truck]): Dictionary of trucks that have actually been realized.
 
     Returns:
-        tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
-        to contain their respective plans.
+            A tuple containing:
+            - A list of VehicleAssignment objects representing the assignments of vehicles to trucks.
+            - A dictionary mapping TruckIdentifiers to TruckAssignment objects representing the assignments of trucks.
     """
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
@@ -84,10 +84,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # Create a copy of the flow network capacities. These will be loaded after computing all flows for the current day
         capacities_copy = {edge: data['capacity'] for edge, data in flow_network.edges.items()}
 
-        # TODO: Possibly optimize this loop by only iterating over the commodity groups that have vehicles available
-        #  on the current day.
-        # TODO: Possibly optimize this loop by skipping commodity groups that have been satisfied in previous days
-        #  (create a new commodity_group variable for that)
         # Iterate over all commodity groups solve the single commodity flow problem for them.
         for commodity_group in commodity_groups.keys():
             commodity_group_day, commodity_group_location = get_day_and_location_for_commodity_group(commodity_group)
@@ -99,9 +95,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                 # # Check whether vehicles are actually already available at the current day
                 # if current_day >= earliest_day_in_commodity_groups[commodity_group]:
 
-                # TODO: Handle case where no flow is found because a truck exists but only in realised and not planned (╯°□°)╯︵ ┻━┻
-                # TODO: Handle case where no flow is found because there is no truck and the vehicle can't reach the
-                #  destination anymore ):
                 # Compute the single commodity min-cost flow for the current commodity group
                 try:
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity',
