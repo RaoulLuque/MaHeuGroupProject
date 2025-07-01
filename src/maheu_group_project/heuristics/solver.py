@@ -3,6 +3,9 @@ from enum import Enum
 from maheu_group_project.heuristics.flow.solve_deterministically import solve_flow_deterministically
 from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.heuristics.flow.solve_in_real_time import solve_flow_in_real_time
+from maheu_group_project.heuristics.greedy.candidate_paths_calculator import create_logistics_network, \
+    calculate_candidate_paths
+from maheu_group_project.heuristics.greedy.greedy_candidate_paths import greedy_candidate_path_solver
 from maheu_group_project.heuristics.old_flow.old_solve import old_solve_as_flow
 from maheu_group_project.heuristics.greedy.greedy import greedy_solver
 from maheu_group_project.lower_bounds.flow.uncapacitated_flow import lower_bound_uncapacitated_flow
@@ -23,6 +26,7 @@ class SolverType(Enum):
     GREEDY = 1
     OLD_FLOW = 2
     LOWER_BOUND_UNCAPACITATED_FLOW = 3
+    GREEDY_CANDIDATE_PATHS = 4
 
     def __str__(self) -> str:
         """
@@ -98,6 +102,11 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
             vehicle_assignments, truck_assignments, trucks_realised = lower_bound_uncapacitated_flow(dataset_dir_name,
                                                                                                      realised_capacity_file_name)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+        case SolverType.GREEDY_CANDIDATE_PATHS:
+            logistics_network = create_logistics_network(locations, trucks_realised)
+            candidate_paths = calculate_candidate_paths(logistics_network)
+            vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_realised, locations, trucks_realised, candidate_paths)
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")
 
@@ -164,10 +173,12 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                    trucks_realised=trucks_realised,
                                                                    shortest_paths=shortest_paths)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
-        # case SolverType.LOWER_BOUND_UNCAPACITATED_FLOW:
-        #     vehicle_assignments, truck_assignments, trucks_realised = lower_bound_uncapacitated_flow(dataset_dir_name,
-        #                                                                                              realised_capacity_file_name)
-        #     return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+        case SolverType.GREEDY_CANDIDATE_PATHS:
+            logistics_network = create_logistics_network(locations, trucks_realised)
+            candidate_paths = calculate_candidate_paths(logistics_network)
+            vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_planned, locations,
+                                                                                  trucks_realised, candidate_paths)
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"This solver type is not supported: {solver_type}")
 
@@ -192,5 +203,9 @@ def solver_type_from_string(solver_type_str: str) -> SolverType:
         return SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
     elif solver_type_str == "LOWER_BOUND_UNCAPACITATED_FLOW":
         return SolverType.LOWER_BOUND_UNCAPACITATED_FLOW
+    elif solver_type_str == "GREEDY_CANDIDATE_PATHS":
+        return SolverType.GREEDY_CANDIDATE_PATHS
+    elif solver_type_str == "CANDIDATE_PATHS":
+        return SolverType.GREEDY_CANDIDATE_PATHS
     else:
         raise ValueError(f"Unknown solver type: {solver_type_str}. Expected one of: {[str(solver) for solver in SolverType]}")
