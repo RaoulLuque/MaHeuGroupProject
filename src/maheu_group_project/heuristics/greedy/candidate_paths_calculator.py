@@ -253,11 +253,6 @@ def visualize_logistics_network(network: MultiDiGraph):
             weight = int(data.get('weight', 0))
             truck_number = data.get('truck_number', 'N/A')
             label = f"{weight}  (#{truck_number})"
-            # Extract only the arc portion before the arrow head
-            path = arrow.get_path()
-            codes = path.codes
-            verts = path.vertices
-            trans = arrow.get_patch_transform()
 
             start = np.array(pos[u])
             end = np.array(pos[v])

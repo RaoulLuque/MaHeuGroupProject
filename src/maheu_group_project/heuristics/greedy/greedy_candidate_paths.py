@@ -1,4 +1,4 @@
-from maheu_group_project.solution.encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, \
+from maheu_group_project.solution.encoding import FIXED_UNPLANNED_DELAY_COST, \
     COST_PER_PLANNED_DELAY_DAY, \
     COST_PER_UNPLANNED_DELAY_DAY, Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, VehicleAssignment
 from datetime import date, timedelta

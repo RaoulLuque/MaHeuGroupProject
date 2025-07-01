@@ -131,10 +131,10 @@ def get_pretty_metrics(trucks: dict[TruckIdentifier, Truck], truck_assignments: 
     fixed_planned_delay_cost, summed_day_planned_delay_cost, fixed_unplanned_delay_cost, summed_day_unplanned_delay_cost, total_delay_cost = price_paid_for_delays(vehicle_assignments)
     price_paid_trucks = price_paid_for_trucks(trucks, truck_assignments)
     res = ("Metrics:\n" +
-           f"Number of delayed cars:".ljust(message_length) + f"{num_delayed_cars}\n" +
-           f"Number (actual/) planned delayed cars:".ljust(message_length) + f"{num_actual_planned_delay_cars}/{num_planned_delay_cars}\n" +
-           f"Number of cars transported in trucks which are not free:".ljust(message_length) + f"{num_not_free_trucks}\n" +
-           f"Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):".ljust(message_length) + f"{total_delay_cost:.2f}, ({fixed_planned_delay_cost}, {summed_day_planned_delay_cost}), ({fixed_unplanned_delay_cost}, {summed_day_unplanned_delay_cost})\n" +
-           f"Price paid for trucks:".ljust(message_length) + f"{price_paid_trucks:.2f}")
+           "Number of delayed cars:".ljust(message_length) + f"{num_delayed_cars}\n" +
+           "Number (actual/) planned delayed cars:".ljust(message_length) + f"{num_actual_planned_delay_cars}/{num_planned_delay_cars}\n" +
+           "Number of cars transported in trucks which are not free:".ljust(message_length) + f"{num_not_free_trucks}\n" +
+           "Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):".ljust(message_length) + f"{total_delay_cost:.2f}, ({fixed_planned_delay_cost}, {summed_day_planned_delay_cost}), ({fixed_unplanned_delay_cost}, {summed_day_unplanned_delay_cost})\n" +
+           "Price paid for trucks:".ljust(message_length) + f"{price_paid_trucks:.2f}")
 
     return res

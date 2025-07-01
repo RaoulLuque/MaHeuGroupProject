@@ -7,7 +7,6 @@ from maheu_group_project.heuristics.flow.network import remove_trucks_from_netwo
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
     get_day_and_location_for_commodity_group, vehicle_to_commodity_group, InfeasibleAssignment
-from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, \
     TruckAssignment, VehicleAssignment
 from datetime import timedelta, date
@@ -102,9 +101,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
 
                     # Copy the flow to the flow_dict for the current commodity group
                     filtered_flow = copy_flow_and_filter(flow)
-                    if current_day == date(2025, 7, 11):
-                        a = 0
-                        # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()), flow)
 
                     # Extract the solution from the flow and update the flow network. This updates the capacities
                     # in the flow network as well as add the next planned vehicle assignments for the current day
