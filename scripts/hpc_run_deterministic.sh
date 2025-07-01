@@ -20,4 +20,4 @@ pip install networkx==3.5
 pip install matplotlib==3.10.3
 
 ### Run the script
-python3 scripts/run_all.py --deterministic --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW LOWER_BOUND ... --dataset_indices 1 2 3 4
+python3 scripts/run_all.py --deterministic --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW LOWER_BOUND --dataset_indices 1 2 3 4
