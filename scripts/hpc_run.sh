@@ -2,7 +2,7 @@
 
 ### Job Parameters
 #SBATCH --ntasks=8              # MPI tasks
-#SBATCH --time=00:20:00         # Running time until timeout
+#SBATCH --time=00:40:00         # Running time until timeout
 #SBATCH --job-name=maheu_deterministic_job  # Job name
 #SBATCH --output=stdout.txt     # redirects stdout and stderr to stdout.txt
 
