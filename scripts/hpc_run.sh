@@ -1,10 +1,10 @@
 #!/usr/bin/zsh
 
 ### Job Parameters
-#SBATCH --ntasks=8              # MPI tasks
-#SBATCH --time=00:40:00         # Running time until timeout
+#SBATCH --ntasks=8                          # MPI tasks
+#SBATCH --time=00:60:00                     # Running time until timeout
 #SBATCH --job-name=maheu_deterministic_job  # Job name
-#SBATCH --output=stdout.txt     # redirects stdout and stderr to stdout.txt
+#SBATCH --output=stdout.txt                 # redirects stdout and stderr to stdout.txt
 
 ### Navigate to working directory
 cd /hpcwork/xh700552/MaHeuGroupProject
