@@ -1,6 +1,7 @@
 from enum import Enum
 
-from maheu_group_project.heuristics.flow.solve_deterministically import solve_flow_deterministically
+from maheu_group_project.heuristics.flow.solve_deterministically import solve_flow_deterministically, \
+    solve_flow_as_mip_deterministically
 from maheu_group_project.heuristics.flow.network import create_flow_network
 from maheu_group_project.heuristics.flow.solve_in_real_time import solve_flow_in_real_time
 from maheu_group_project.heuristics.greedy.candidate_paths_calculator import create_logistics_network, \
@@ -27,6 +28,7 @@ class SolverType(Enum):
     OLD_FLOW = 2
     LOWER_BOUND_UNCAPACITATED_FLOW = 3
     GREEDY_CANDIDATE_PATHS = 4
+    FLOW_MIP = 5
 
     def __str__(self) -> str:
         """
@@ -105,8 +107,15 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
         case SolverType.GREEDY_CANDIDATE_PATHS:
             logistics_network = create_logistics_network(locations, trucks_realised)
             candidate_paths = calculate_candidate_paths(logistics_network)
-            vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_realised, locations, trucks_realised, candidate_paths)
+            vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_realised, locations,
+                                                                                  trucks_realised, candidate_paths)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+        case SolverType.FLOW_MIP:
+            flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
+                                                                 locations=locations)
+            solve_flow_as_mip_deterministically(flow_network=flow_network,
+                                                commodity_groups=set(commodity_groups.keys()), locations=locations)
+            return [], {}, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")
 
@@ -207,5 +216,10 @@ def solver_type_from_string(solver_type_str: str) -> SolverType:
         return SolverType.GREEDY_CANDIDATE_PATHS
     elif solver_type_str == "CANDIDATE_PATHS":
         return SolverType.GREEDY_CANDIDATE_PATHS
+    elif solver_type_str == "FLOW_MIP":
+        return SolverType.FLOW_MIP
+    elif solver_type_str == "MIP":
+        return SolverType.FLOW_MIP
     else:
-        raise ValueError(f"Unknown solver type: {solver_type_str}. Expected one of: {[str(solver) for solver in SolverType]}")
+        raise ValueError(
+            f"Unknown solver type: {solver_type_str}. Expected one of: {[str(solver) for solver in SolverType]}")

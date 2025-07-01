@@ -2,8 +2,11 @@ import networkx as nx
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
+from maheu_group_project.heuristics.flow.mip.translation import translate_flow_network_to_mip
+from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip_and_extract_flow
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group
+from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
@@ -213,3 +216,14 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         vehicle_assignments.append(
             VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed,
                               delayed_by=delayed_by))
+
+
+def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph, commodity_groups: set[str], locations: list[Location]) -> None:
+    # Ensure the correct type for flow_network
+    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    visualize_flow_network(flow_network, locations, commodity_groups)
+
+    model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, commodity_groups)
+    flow_solution = solve_mip_and_extract_flow(model, flow_vars, commodity_groups)
+    print(flow_solution)
