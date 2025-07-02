@@ -222,7 +222,7 @@ def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph, commodity_gr
     # Ensure the correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
-    visualize_flow_network(flow_network, locations, commodity_groups)
+    # visualize_flow_network(flow_network, locations, commodity_groups)
 
     model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, commodity_groups)
     flow_solution = solve_mip_and_extract_flow(model, flow_vars, commodity_groups)

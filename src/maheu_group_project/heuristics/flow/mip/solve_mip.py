@@ -1,18 +1,25 @@
 import gurobipy as gp
 from gurobipy import GRB
+from typing import Dict, Tuple
+
+from maheu_group_project.heuristics.flow.types import NodeIdentifier
 
 
-def solve_mip_and_extract_flow(model: gp.Model, flow_vars: dict, commodity_groups: set[str]) -> dict:
+def solve_mip_and_extract_flow(
+    model: gp.Model,
+    flow_vars: Dict[Tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var],
+    commodity_groups: set[str]
+) -> Dict[NodeIdentifier, Dict[NodeIdentifier, Dict[int, Dict[str, int]]]]:
     """
     Solves the MIP model and extracts the flow solution.
 
     Args:
         model (gp.Model): The Gurobi model to solve
-        flow_vars (dict): Flow variables from the MIP formulation
+        flow_vars (dict[tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var]): Flow variables from the MIP formulation
         commodity_groups (set[str]): Set of commodity group names
 
     Returns:
-        dict: Flow solution in the same format as NetworkX min_cost_flow
+        Dict[NodeIdentifier, dict[NodeIdentifier, Dict[int, Dict[str, int]]]]: Flow solution in the same format as NetworkX min_cost_flow
     """
     # Solve the model
     model.optimize()
@@ -27,7 +34,7 @@ def solve_mip_and_extract_flow(model: gp.Model, flow_vars: dict, commodity_group
             raise Exception(f"MIP solver failed with status {model.status}")
 
     # Extract flow solution
-    flow_solution = {}
+    flow_solution: Dict[NodeIdentifier, Dict[NodeIdentifier, Dict[int, Dict[str, int]]]] = {}
 
     for (u, v, key, commodity), var in flow_vars.items():
         flow_value = var.X
