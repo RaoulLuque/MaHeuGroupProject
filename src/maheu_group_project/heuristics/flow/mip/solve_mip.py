@@ -1,25 +1,23 @@
 import gurobipy as gp
 from gurobipy import GRB
-from typing import Dict, Tuple
 
 from maheu_group_project.heuristics.flow.types import NodeIdentifier
 
 
 def solve_mip_and_extract_flow(
     model: gp.Model,
-    flow_vars: Dict[Tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var],
-    commodity_groups: set[str]
-) -> Dict[NodeIdentifier, Dict[NodeIdentifier, Dict[int, Dict[str, int]]]]:
+    flow_vars: dict[tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var],
+) -> dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]]:
     """
     Solves the MIP model and extracts the flow solution.
 
     Args:
         model (gp.Model): The Gurobi model to solve
         flow_vars (dict[tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var]): Flow variables from the MIP formulation
-        commodity_groups (set[str]): Set of commodity group names
 
     Returns:
-        Dict[NodeIdentifier, dict[NodeIdentifier, Dict[int, Dict[str, int]]]]: Flow solution in the same format as NetworkX min_cost_flow
+        dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]]: Flow solution in the same format as NetworkX min_cost_flow,
+        for each individual commodity.
     """
     # Solve the model
     model.optimize()
@@ -33,20 +31,21 @@ def solve_mip_and_extract_flow(
         else:
             raise Exception(f"MIP solver failed with status {model.status}")
 
-    # Extract flow solution
-    flow_solution: Dict[NodeIdentifier, Dict[NodeIdentifier, Dict[int, Dict[str, int]]]] = {}
+    # Extract flow solution. The flow_solution contains the individual flows for each commodity
+    flow_solution: dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]] = {}
 
     for (u, v, key, commodity), var in flow_vars.items():
         flow_value = var.X
-        if flow_value > 1e-6:  # Only include positive flows
+        if flow_value > 1e-6:
+            if commodity not in flow_solution:
+                flow_solution[commodity] = {}
             if u not in flow_solution:
-                flow_solution[u] = {}
-            if v not in flow_solution[u]:
-                flow_solution[u][v] = {}
-            if key not in flow_solution[u][v]:
-                flow_solution[u][v][key] = {}
-
-            flow_solution[u][v][key][commodity] = int(round(flow_value))
+                flow_solution[commodity][u] = {}
+            if v not in flow_solution[commodity][u]:
+                flow_solution[commodity][u][v] = {}
+            if key not in flow_solution[commodity][u][v]:
+                print("Flow Value: {flow_value}")
+                flow_solution[commodity][u][v][key] = int(flow_value)
 
     return flow_solution
 
