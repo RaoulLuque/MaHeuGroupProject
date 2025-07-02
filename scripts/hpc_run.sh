@@ -14,10 +14,15 @@ module purge
 module load GCCcore/14.2.0
 module load Python/3.13.1
 
+# Gurobi
+module load GCCcore/13.3.0
+module load Gurobi/12.0.0
+
 ### Update pip and install dependencies
 pip install --upgrade pip
 pip install networkx==3.5
 pip install matplotlib==3.10.3
+pip install gurobipy
 
 ### Run the script (once for deterministic and once for real-time)
 python3 scripts/run_all.py --deterministic --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW LOWER_BOUND --dataset_indices 1 2 3 4
