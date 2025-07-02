@@ -168,6 +168,7 @@ def add_commodity_demand_to_node(flow_network: MultiDiGraph, vehicle: Vehicle):
     commodity_group = vehicle_to_commodity_group(vehicle)
     # We check if the respective nodes already have a demand for this commodity group and adjust it accordingly to avoid
     # key errors.
+    # Demand > 0 means that the node is a sink, while demand < 0 means that the node is a source.
     if flow_network.nodes[start_node].get(commodity_group) is None:
         flow_network.nodes[start_node][commodity_group] = -1
     else:
