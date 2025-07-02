@@ -105,14 +105,14 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                     # Extract the solution from the flow and update the flow network. This updates the capacities
                     # in the flow network as well as add the next planned vehicle assignments for the current day
                     # to the current_day_planned_vehicle_assignments.
-                    current_day_planned_vehicle_assignments = extract_flow_and_update_network(flow_network=flow_network,
-                                                                                              flow=filtered_flow,
-                                                                                              vehicles_from_current_commodity=commodity_groups[commodity_group],
-                                                                                              vehicles=vehicles,
-                                                                                              current_day=current_day,
-                                                                                              planned_vehicle_assignments=current_day_planned_vehicle_assignments,
-                                                                                              vehicle_assignments=vehicle_assignments,
-                                                                                              trucks_realised_by_day_known=trucks_realised_by_day_known)
+                    current_day_planned_vehicle_assignments = extract_flow_update_network_and_obtain_planned_assignment(flow_network=flow_network,
+                                                                                                                        flow=filtered_flow,
+                                                                                                                        vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                                                                                        vehicles=vehicles,
+                                                                                                                        current_day=current_day,
+                                                                                                                        planned_vehicle_assignments=current_day_planned_vehicle_assignments,
+                                                                                                                        vehicle_assignments=vehicle_assignments,
+                                                                                                                        trucks_realised_by_day_known=trucks_realised_by_day_known)
                 except nx.NetworkXUnfeasible:
                     # If the flow is unfeasible, this means that in the planned setting, the vehicles would not be able
                     # to reach their destination. However, we note this in the planned_vehicle_assignments and hope
@@ -415,13 +415,13 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     truck_assignments[truck_identifier].load.append(vehicle_id)
 
 
-def extract_flow_and_update_network(flow_network: MultiDiGraph,
-                                    flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
-                                    current_day: date,
-                                    planned_vehicle_assignments: dict[int, PlannedVehicleAssignment],
-                                    vehicle_assignments: dict[int, VehicleAssignment],
-                                    trucks_realised_by_day_known: dict[date, dict[TruckIdentifier, Truck]]) -> dict[int, PlannedVehicleAssignment]:
+def extract_flow_update_network_and_obtain_planned_assignment(flow_network: MultiDiGraph,
+                                                              flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
+                                                              vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
+                                                              current_day: date,
+                                                              planned_vehicle_assignments: dict[int, PlannedVehicleAssignment],
+                                                              vehicle_assignments: dict[int, VehicleAssignment],
+                                                              trucks_realised_by_day_known: dict[date, dict[TruckIdentifier, Truck]]) -> dict[int, PlannedVehicleAssignment]:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
 

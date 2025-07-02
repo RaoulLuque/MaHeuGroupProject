@@ -69,10 +69,10 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow, only_show_flow_nodes=commodity_group)
 
                     # Extract the solution from the flow and update the flow network
-                    extract_flow_and_update_network(flow_network=flow_network, flow=flow,
-                                                    vehicles_from_current_commodity=commodity_groups[commodity_group],
-                                                    vehicles=vehicles, current_day=current_day,
-                                                    vehicle_assignments=vehicle_assignments)
+                    extract_flow_update_network_and_obtain_final_assignment(flow_network=flow_network, flow=flow,
+                                                                            vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                                            vehicles=vehicles, current_day=current_day,
+                                                                            vehicle_assignments=vehicle_assignments)
 
                     # visualize_flow_network(flow_network, locations)
 
@@ -85,11 +85,11 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     return vehicle_assignments, truck_assignments
 
 
-def extract_flow_and_update_network(flow_network: MultiDiGraph,
-                                    flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
-                                    current_day: date,
-                                    vehicle_assignments: list[VehicleAssignment]) -> None:
+def extract_flow_update_network_and_obtain_final_assignment(flow_network: MultiDiGraph,
+                                                            flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
+                                                            vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
+                                                            current_day: date,
+                                                            vehicle_assignments: list[VehicleAssignment]) -> None:
     """
     Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
 
@@ -111,8 +111,9 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
         tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
         to contain their respective plans.
     """
-    # Ensure the correct type for flow_network
-    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+    if flow_network is not None:
+        # Ensure the correct type for flow_network
+        flow_network: MultiDiGraph[NodeIdentifier] = flow_network
 
     # Filter out edges which have flow of 0, i.e. no flow was assigned to them.
     filtered_flow = {}
@@ -168,7 +169,9 @@ def extract_flow_and_update_network(flow_network: MultiDiGraph,
 
                         # We subtract one from the flow of this edge to make it unavailable for the next vehicles
                         flow[current_node][next_node][edge_index] -= 1
-                        flow_network[current_node][next_node][edge_index]['capacity'] -= 1
+                        # We also update the capacity of the edge in the flow network, if it exists
+                        if flow_network is not None:
+                            flow_network[current_node][next_node][edge_index]['capacity'] -= 1
 
                         # If the flow of this edge is now 0, we remove it from the flow dict
                         if flow[current_node][next_node][edge_index] == 0:
