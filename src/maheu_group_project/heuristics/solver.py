@@ -113,9 +113,12 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
         case SolverType.FLOW_MIP:
             flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
                                                                  locations=locations)
-            solve_flow_as_mip_deterministically(flow_network=flow_network,
-                                                commodity_groups=set(commodity_groups.keys()), locations=locations)
-            return [], {}, locations, vehicles, trucks_realised, trucks_planned
+            vehicle_assignments, truck_assignments = solve_flow_as_mip_deterministically(flow_network=flow_network,
+                                                                                         commodity_groups=commodity_groups,
+                                                                                         vehicles=vehicles,
+                                                                                         trucks=trucks_realised,
+                                                                                         locations=locations)
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")
 

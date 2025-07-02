@@ -3,7 +3,8 @@ from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
 from maheu_group_project.heuristics.flow.mip.translation import translate_flow_network_to_mip
-from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip_and_extract_flow
+from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip_and_extract_flow, \
+    extract_complete_assignment_from_multi_commodity_flow
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group
 from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
@@ -85,7 +86,7 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     return vehicle_assignments, truck_assignments
 
 
-def extract_flow_update_network_and_obtain_final_assignment(flow_network: MultiDiGraph,
+def extract_flow_update_network_and_obtain_final_assignment(flow_network: MultiDiGraph | None,
                                                             flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
                                                             vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
                                                             current_day: date,
@@ -221,12 +222,21 @@ def extract_flow_update_network_and_obtain_final_assignment(flow_network: MultiD
                               delayed_by=delayed_by))
 
 
-def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph, commodity_groups: set[str], locations: list[Location]) -> None:
-    # Ensure the correct type for flow_network
-    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
+                                        commodity_groups: dict[str, set[int]],
+                                        vehicles: list[Vehicle],
+                                        trucks: dict[TruckIdentifier, Truck],
+                                        locations: list[Location]) -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+    first_day, _, _ = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
 
-    # visualize_flow_network(flow_network, locations, commodity_groups)
+    if False:
+        visualize_flow_network(flow_network, locations, commodity_groups)
 
-    model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, commodity_groups)
-    flow_solution = solve_mip_and_extract_flow(model, flow_vars, commodity_groups)
-    print(flow_solution)
+    model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(commodity_groups.keys()))
+    flow_solution = solve_mip_and_extract_flow(model, flow_vars)
+    vehicle_assignments, truck_assignments = extract_complete_assignment_from_multi_commodity_flow(flow=flow_solution,
+                                                                                                   commodity_groups=commodity_groups,
+                                                                                                   vehicles=vehicles,
+                                                                                                   trucks=trucks,
+                                                                                                   current_day=first_day)
+    return vehicle_assignments, truck_assignments

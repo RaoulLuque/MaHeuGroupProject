@@ -1,7 +1,13 @@
+from datetime import date
+
 import gurobipy as gp
 from gurobipy import GRB
 
+from maheu_group_project.heuristics.flow.solve_deterministically import \
+    extract_flow_update_network_and_obtain_final_assignment
 from maheu_group_project.heuristics.flow.types import NodeIdentifier
+from maheu_group_project.solution.encoding import VehicleAssignment, Vehicle, \
+    convert_vehicle_assignments_to_truck_assignments, TruckIdentifier, Truck
 
 
 def solve_mip_and_extract_flow(
@@ -48,6 +54,33 @@ def solve_mip_and_extract_flow(
                 flow_solution[commodity][u][v][key] = int(flow_value)
 
     return flow_solution
+
+
+def extract_complete_assignment_from_multi_commodity_flow(flow: dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]],
+                                                          commodity_groups: dict[str, set[int]],
+                                                          vehicles: list[Vehicle],
+                                                          trucks: dict[TruckIdentifier, Truck],
+                                                          current_day: date):
+    # Create a list to store the vehicle assignments
+    vehicle_assignments: list[VehicleAssignment] = []
+
+    # Iterate over each commodity and extract its flow
+    for commodity, commodity_flow in flow.items():
+        vehicles_in_current_commodity = commodity_groups[commodity]
+        extract_flow_update_network_and_obtain_final_assignment(flow_network=None,
+                                                                flow=commodity_flow,
+                                                                vehicles_from_current_commodity=vehicles_in_current_commodity,
+                                                                vehicles=vehicles,
+                                                                current_day=current_day,
+                                                                vehicle_assignments=vehicle_assignments)
+
+    # Return the list of vehicle assignments indexed by their id
+    vehicle_assignments.sort(key=lambda va: va.id)
+
+    truck_assignments = convert_vehicle_assignments_to_truck_assignments(vehicle_assignments=vehicle_assignments,
+                                                                         trucks=trucks)
+
+    return vehicle_assignments, truck_assignments
 
 
 def get_mip_solution_info(model: gp.Model) -> dict:
