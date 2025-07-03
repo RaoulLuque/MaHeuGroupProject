@@ -11,12 +11,30 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                  candidate_paths: dict[tuple[Location, Location], list[dict]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
-    :param location_list:
-    :param requested_vehicles: List of Vehicle objects representing the vehicles to be assigned.
-    :param trucks_planned: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
-    :param trucks_realised: Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
-    :param candidate_paths: Dictionary mapping pairs of Location and DEALER to the list of candidate paths between them.
-    :return: A tuple containing the updated vehicle and truck assignments.
+    Solves the vehicle assignment problem using a greedy approach based on candidate paths. At every day and location, it sorts the vehicles
+    currently at that location by their urgency (as determined by an urgency function) and then iterates over them, deciding for each one
+    which truck leaving on that day it should be assigned to, or to keep the vehicle at the current location for another day. For every
+    vehicle, the only trucks considered are those which are part of the candidate paths between the current location and the vehicle's
+    destination. Based on a location urgency factor n, the n cheapest options from that candidate list are always taken, provided the
+    corresponding trucks have capacity left. If the urgency of a vehicle exceeds the difference in total cost between taking one of these
+    paths and another candidate path, that other candidate path is also always taken. If all paths that would be taken have no capacity
+    left, the vehicle remains at its location.
+        The solver goes through the entire process twice, once with only the planned trucks to preview delays that will occur even with all
+    trucks driving, and then again with the realized trucks to determine the final assignments.
+
+    Args:
+        requested_vehicles (list[Vehicle]): List of vehicles to be assigned.
+        trucks_planned (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to planned Truck objects.
+        location_list (list[Location]): List of locations between which vehicles can be transported.
+        trucks_realised (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to realized Truck objects.
+        candidate_paths (dict[tuple[Location, Location], list[dict]]): Dictionary mapping any combination of start and end location
+            to the list of candidate paths between them. Each entry of that list is a dictionary with keys such as 'next_location'
+            (representing the next location on that particular path) and 'total_cost' (of the path on average). See candidate_paths_calculator.py for details.
+
+    Returns:
+        tuple: A tuple containing:
+            - list[VehicleAssignment]: List of vehicle assignments.
+            - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
     """
     first_day, last_day, days = get_first_last_and_days(vehicles=requested_vehicles, trucks=trucks_planned)
     day_of_planning = first_day  # today (is relevant for planned delay calculation)
