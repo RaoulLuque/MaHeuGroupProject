@@ -12,6 +12,7 @@ from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, 
     PlannedVehicleAssignment, AssignmentToday, NoAssignmentToday, \
     get_day_and_location_for_commodity_group, vehicle_to_commodity_group, InfeasibleAssignment, \
     get_current_location_of_vehicle_as_node, get_start_and_end_nodes_for_truck
+from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, \
     TruckAssignment, VehicleAssignment
 from datetime import timedelta, date
@@ -136,6 +137,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                 current_day_planned_vehicle_assignments[vehicle_id] = InfeasibleAssignment()
 
         else:
+            # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
+
             # We solve the multicommodity min-cost flow problem using a MIP formulation.
             model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(commodity_groups.keys()))
             solve_mip(model)
@@ -210,29 +213,31 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                                             trucks_realised_by_day_known)
 
                             case NoAssignmentToday(next_planned_assignment):
-                                # We first need to check, if the vehicle is currently enjoying its rest day.
-                                earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle,
-                                                                                                            vehicle_assignments,
-                                                                                                            trucks_realised_by_day_known).day
-                                if current_day < earliest_day_vehicle_is_available:
-                                    continue
+                                # If there are no trucks which have unexpected additional capacity, we cannot explore this option.
+                                if len(trucks_realised_additional_capacity) != 0:
+                                    # We first need to check, if the vehicle is currently enjoying its rest day.
+                                    earliest_day_vehicle_is_available = get_current_location_of_vehicle_as_node(vehicle,
+                                                                                                                vehicle_assignments,
+                                                                                                                trucks_realised_by_day_known).day
+                                    if current_day < earliest_day_vehicle_is_available:
+                                        continue
 
-                                # If the vehicle is not planned to be assigned to a truck today, we check if coincidentally
-                                # there is a truck on that route today that has more capacity than planned.
-                                next_planned_assignment_is_not_free = trucks_planned[next_planned_assignment].price > 0
-                                truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(
-                                    next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today,
-                                    trucks_realised_additional_capacity)
+                                    # If the vehicle is not planned to be assigned to a truck today, we check if coincidentally
+                                    # there is a truck on that route today that has more capacity than planned.
+                                    next_planned_assignment_is_not_free = trucks_planned[next_planned_assignment].price > 0
+                                    truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(
+                                        next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today,
+                                        trucks_realised_additional_capacity)
 
-                                if truck_identifier is not None:
-                                    # We subtract one from the additional capacity of the truck, since we are assigning a
-                                    # vehicle to it.
-                                    trucks_realised_additional_capacity[truck_identifier] -= 1
-                                    assign_vehicle_to_truck(flow_network, vehicle,
-                                                            realised_trucks_today[truck_identifier],
-                                                            vehicle_assignments,
-                                                            truck_assignments,
-                                                            trucks_realised_by_day_known)
+                                    if truck_identifier is not None:
+                                        # We subtract one from the additional capacity of the truck, since we are assigning a
+                                        # vehicle to it.
+                                        trucks_realised_additional_capacity[truck_identifier] -= 1
+                                        assign_vehicle_to_truck(flow_network, vehicle,
+                                                                realised_trucks_today[truck_identifier],
+                                                                vehicle_assignments,
+                                                                truck_assignments,
+                                                                trucks_realised_by_day_known)
 
                             case InfeasibleAssignment():
                                 # This can only happen, if the flow of the respective commodity group was infeasible.
@@ -257,6 +262,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                     if capacity > 0:
                                         if truck_identifier.start_location == current_location_of_vehicle and \
                                                 truck_identifier.end_location == vehicle.destination:
+                                            if solve_as_mip:
+                                                raise (ValueError, "InfeasibleAssignment should not occur in the solve_as_mip case")
                                             # We found a truck that can take the vehicle directly to its destination
                                             trucks_realised_additional_capacity[truck_identifier] -= 1
                                             assign_vehicle_to_truck(flow_network, vehicle,
@@ -403,6 +410,16 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Get the vehicle id from the vehicle object
     vehicle_id = vehicle.id
 
+    # If the truck is not already assigned, we create a new TruckAssignment
+    if truck_identifier not in truck_assignments:
+        truck_assignments[truck_identifier] = TruckAssignment(load=[])
+
+    # Check capacity before assignment to prevent race conditions
+    if truck_assignments[truck_identifier].get_capacity_left(truck) <= 0:
+        raise RuntimeError(f"Cannot assign vehicle {vehicle_id} to truck {truck_identifier}: "
+                          f"truck has no capacity left (current load: {len(truck_assignments[truck_identifier].load)}, "
+                          f"truck capacity: {truck.capacity})")
+
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)
     edge_start_node = get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments,
@@ -443,10 +460,5 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
         vehicle_assignments[vehicle_id] = VehicleAssignment(id=vehicle_id)
     vehicle_assignments[vehicle_id].paths_taken.append(truck_identifier)
 
-    # If the truck is not already assigned, we create a new TruckAssignment
-    if truck_identifier not in truck_assignments:
-        truck_assignments[truck_identifier] = TruckAssignment(load=[])
     # Add the vehicle to the truck's load
     truck_assignments[truck_identifier].load.append(vehicle_id)
-
-

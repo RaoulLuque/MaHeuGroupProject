@@ -25,6 +25,11 @@ def solve_mip(
         dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]]: Flow solution in the same format as NetworkX min_cost_flow,
         for each individual commodity.
     """
+    # For debugging
+    # model.setParam('Threads', 1)
+    # model.setParam('Seed', 42)
+    # model.setParam('Method', 1)
+
     # Solve the model
     model.optimize()
 

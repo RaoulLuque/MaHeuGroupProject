@@ -179,7 +179,7 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              trucks_realised=trucks_realised, solve_as_mip=False)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case SolverType.FLOW_MIP:
-            flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
+            flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_planned,
                                                                  locations=locations)
             vehicle_assignments, truck_assignments = solve_flow_in_real_time(flow_network=flow_network,
                                                                              commodity_groups=commodity_groups,
