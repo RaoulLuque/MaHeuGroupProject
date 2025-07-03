@@ -3,8 +3,9 @@ from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
 from maheu_group_project.heuristics.flow.handle_flows import extract_flow_update_network_and_obtain_final_assignment
-from maheu_group_project.heuristics.flow.mip.translation import translate_flow_network_to_mip
-from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip_and_extract_flow, \
+from maheu_group_project.heuristics.flow.mip.translation import translate_flow_network_to_mip, \
+    translate_mip_solution_to_flow
+from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip, \
     extract_complete_assignment_from_multi_commodity_flow
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group
@@ -93,7 +94,8 @@ def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
         visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(commodity_groups.keys()))
-    flow_solution = solve_mip_and_extract_flow(model, flow_vars)
+    solve_mip(model)
+    flow_solution = translate_mip_solution_to_flow(model, flow_vars)
     vehicle_assignments, truck_assignments = extract_complete_assignment_from_multi_commodity_flow(flow=flow_solution,
                                                                                                    commodity_groups=commodity_groups,
                                                                                                    vehicles=vehicles,

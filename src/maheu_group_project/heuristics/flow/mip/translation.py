@@ -112,6 +112,28 @@ def translate_flow_network_to_mip(flow_network: MultiDiGraph, commodity_groups: 
     return model, flow_vars, node_mapping
 
 
+def translate_mip_solution_to_flow(
+        model: gp.Model,
+        flow_vars: dict[tuple[NodeIdentifier, NodeIdentifier, int, str], gp.Var]) -> dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]]:
+
+    # Extract flow solution. The flow_solution contains the individual flows for each commodity
+    flow_solution: dict[str, dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]]] = {}
+
+    for (u, v, key, commodity), var in flow_vars.items():
+        flow_value = var.X
+        if flow_value > 1e-6:
+            if commodity not in flow_solution:
+                flow_solution[commodity] = {}
+            if u not in flow_solution[commodity]:
+                flow_solution[commodity][u] = {}
+            if v not in flow_solution[commodity][u]:
+                flow_solution[commodity][u][v] = {}
+            if key not in flow_solution[commodity][u][v]:
+                flow_solution[commodity][u][v][key] = int(round(flow_value))
+
+    return flow_solution
+
+
 def node_to_str(node: NodeIdentifier) -> str:
     """
     Converts a NodeIdentifier to a useful string representation.
