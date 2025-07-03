@@ -51,7 +51,8 @@ def extract_complete_assignment_from_multi_commodity_flow(flow: dict[str, dict[N
     for commodity, commodity_flow in flow.items():
         vehicles_in_current_commodity = commodity_groups[commodity]
 
-        visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=commodity_flow, only_show_flow_nodes=commodity)
+        if False:
+            visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=commodity_flow, only_show_flow_nodes=commodity)
 
         extract_flow_update_network_and_obtain_final_assignment(flow_network=None,
                                                                 flow=commodity_flow,
