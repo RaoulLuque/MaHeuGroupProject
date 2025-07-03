@@ -1,7 +1,8 @@
 #!/usr/bin/zsh
 
 ### Job Parameters
-#SBATCH --ntasks=8                          # MPI tasks
+#SBATCH --ntasks=1                          # MPI tasks
+#SBATCH --cpus-per-task=1                   # Number of CPU cores per task
 #SBATCH --time=00:90:00                     # Running time until timeout
 #SBATCH --job-name=maheu_deterministic_job  # Job name
 #SBATCH --output=stdout.txt                 # redirects stdout and stderr to stdout.txt
