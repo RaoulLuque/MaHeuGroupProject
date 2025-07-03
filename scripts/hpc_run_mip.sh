@@ -3,7 +3,7 @@
 ### Job Parameters
 #SBATCH --ntasks=1                          # MPI tasks
 #SBATCH --cpus-per-task=16                  # Number of CPU cores per task
-#SBATCH --time=02:00:00                     # Running time until timeout
+#SBATCH --time=14:00:00                     # Running time until timeout
 #SBATCH --job-name=maheu_mip_job            # Job name
 #SBATCH --output=stdout_mip.txt             # redirects stdout and stderr to stdout.txt
 
@@ -26,4 +26,4 @@ pip install matplotlib==3.10.3
 
 ### Run the script (once for deterministic and once for real-time)
 python3 scripts/run_all.py --deterministic TRUE --solvers FLOW_MIP --dataset_indices 1 2 3 4
-### python3 scripts/run_all.py --deterministic FALSE --solvers FLOW_MIP --dataset_indices 1 2 3 4
+python3 scripts/run_all.py --deterministic FALSE --solvers FLOW_MIP --dataset_indices 1 2 3 4
