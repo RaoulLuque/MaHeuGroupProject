@@ -4,8 +4,8 @@
 #SBATCH --ntasks=1                          # MPI tasks
 #SBATCH --cpus-per-task=16                  # Number of CPU cores per task
 #SBATCH --time=02:00:00                     # Running time until timeout
-#SBATCH --job-name=maheu_deterministic_job  # Job name
-#SBATCH --output=stdout.txt                 # redirects stdout and stderr to stdout.txt
+#SBATCH --job-name=maheu_mip_job            # Job name
+#SBATCH --output=stdout_mip.txt             # redirects stdout and stderr to stdout.txt
 
 ### Navigate to working directory
 cd /hpcwork/xh700552/MaHeuGroupProject
