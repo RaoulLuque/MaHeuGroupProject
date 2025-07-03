@@ -72,7 +72,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     if only_show_flow_nodes is not None:
         # Adjust the plot size
         plot_size = (16, 16)
-        dpi = 75
+        dpi = 100
 
     plt.figure(figsize=plot_size, dpi=dpi)
     ax = plt.gca()
