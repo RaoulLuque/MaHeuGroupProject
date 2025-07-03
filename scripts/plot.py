@@ -9,7 +9,7 @@ import re
 # os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/02_07"
+RESULTS_BASE_DIR = "../results/notable/03_07"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
