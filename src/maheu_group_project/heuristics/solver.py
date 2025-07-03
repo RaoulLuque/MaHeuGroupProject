@@ -176,7 +176,16 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              commodity_groups=commodity_groups,
                                                                              locations=locations, vehicles=vehicles,
                                                                              trucks_planned=trucks_planned,
-                                                                             trucks_realised=trucks_realised)
+                                                                             trucks_realised=trucks_realised, solve_as_mip=False)
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+        case SolverType.FLOW_MIP:
+            flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
+                                                                 locations=locations)
+            vehicle_assignments, truck_assignments = solve_flow_in_real_time(flow_network=flow_network,
+                                                                             commodity_groups=commodity_groups,
+                                                                             locations=locations, vehicles=vehicles,
+                                                                             trucks_planned=trucks_planned,
+                                                                             trucks_realised=trucks_realised, solve_as_mip=True)
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
         case SolverType.GREEDY:
             shortest_paths = get_shortest_paths(dataset_dir_name, locations)
