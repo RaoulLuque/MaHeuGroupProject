@@ -98,7 +98,7 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(description="Run all realised capacity experiments.")
     parser.add_argument('--solvers', nargs='+', type=str, default=None, help='List of solvers (by name) to use')
-    parser.add_argument('--deterministic', action='store_true', help='Use deterministic mode')
+    parser.add_argument('--deterministic', type=str, choices=['true', 'false', 'TRUE', 'FALSE'], default=None, help='Use deterministic mode (true/false)')
     parser.add_argument('--dataset_indices', nargs='+', type=int, default=None, help='List of dataset indices to use')
     return parser.parse_args()
 
@@ -108,8 +108,8 @@ def main():
     global SOLVERS, DETERMINISTIC, DATASET_INDICES
     if args.solvers is not None:
         SOLVERS = [solver_type_from_string(string_input.upper()) for string_input in args.solvers]
-    if args.deterministic:
-        DETERMINISTIC = True
+    if args.deterministic is not None:
+        DETERMINISTIC = args.deterministic.lower() == 'true'
     if args.dataset_indices is not None:
         DATASET_INDICES = args.dataset_indices
     run_on_all_data_from_first_dataset()
