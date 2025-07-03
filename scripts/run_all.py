@@ -16,7 +16,7 @@ from maheu_group_project.solution.evaluate import objective_function
 # This is the default configuration of the script. It can be overridden by command line arguments.
 SOLVERS: list[SolverType] = [SolverType.FLOW_MIP]
 DETERMINISTIC = True
-DATASET_INDICES = [1]
+DATASET_INDICES = [1, 2, 3, 4]
 
 
 def run_on_all_data_from_first_dataset():
