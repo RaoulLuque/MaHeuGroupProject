@@ -54,7 +54,8 @@ def translate_flow_network_to_mip(flow_network: MultiDiGraph, commodity_groups: 
                 vtype=GRB.INTEGER,
                 lb=0,
                 ub=flow_network[u][v][key]['capacity'],
-                obj=flow_network[u][v][key]['weight'],
+                # Objective coefficients are set later in the model objective function
+                # obj=flow_network[u][v][key]['weight'],
                 name=var_name
             )
 

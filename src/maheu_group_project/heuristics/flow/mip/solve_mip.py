@@ -2,11 +2,13 @@ from datetime import date
 
 import gurobipy as gp
 from gurobipy import GRB
+from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.flow.handle_flows import extract_flow_update_network_and_obtain_final_assignment
 from maheu_group_project.heuristics.flow.types import NodeIdentifier
+from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import VehicleAssignment, Vehicle, \
-    convert_vehicle_assignments_to_truck_assignments, TruckIdentifier, Truck
+    convert_vehicle_assignments_to_truck_assignments, TruckIdentifier, Truck, Location
 
 
 def solve_mip_and_extract_flow(
@@ -49,7 +51,7 @@ def solve_mip_and_extract_flow(
             if v not in flow_solution[commodity][u]:
                 flow_solution[commodity][u][v] = {}
             if key not in flow_solution[commodity][u][v]:
-                flow_solution[commodity][u][v][key] = int(flow_value)
+                flow_solution[commodity][u][v][key] = int(round(flow_value))
 
     return flow_solution
 
@@ -58,13 +60,17 @@ def extract_complete_assignment_from_multi_commodity_flow(flow: dict[str, dict[N
                                                           commodity_groups: dict[str, set[int]],
                                                           vehicles: list[Vehicle],
                                                           trucks: dict[TruckIdentifier, Truck],
-                                                          current_day: date):
+                                                          current_day: date,
+                                                          flow_network: MultiDiGraph, locations: list[Location]):
     # Create a list to store the vehicle assignments
     vehicle_assignments: list[VehicleAssignment] = []
 
     # Iterate over each commodity and extract its flow
     for commodity, commodity_flow in flow.items():
         vehicles_in_current_commodity = commodity_groups[commodity]
+
+        visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=commodity_flow, only_show_flow_nodes=commodity)
+
         extract_flow_update_network_and_obtain_final_assignment(flow_network=None,
                                                                 flow=commodity_flow,
                                                                 vehicles_from_current_commodity=vehicles_in_current_commodity,

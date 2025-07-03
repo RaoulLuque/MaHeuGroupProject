@@ -98,5 +98,5 @@ def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
                                                                                                    commodity_groups=commodity_groups,
                                                                                                    vehicles=vehicles,
                                                                                                    trucks=trucks,
-                                                                                                   current_day=first_day)
+                                                                                                   current_day=first_day, flow_network=flow_network, locations=locations)
     return vehicle_assignments, truck_assignments
