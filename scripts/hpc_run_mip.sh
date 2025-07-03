@@ -26,4 +26,4 @@ pip install matplotlib==3.10.3
 
 ### Run the script (once for deterministic and once for real-time)
 python3 scripts/run_all.py --deterministic --solvers FLOW_MIP --dataset_indices 1 2 3 4
-python3 scripts/run_all.py --solvers FLOW_MIP --dataset_indices 1 2 3 4
+### python3 scripts/run_all.py --solvers FLOW_MIP --dataset_indices 1 2 3 4
