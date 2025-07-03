@@ -8,9 +8,13 @@ from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, 
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     FIXED_UNPLANNED_DELAY_COST, COST_PER_UNPLANNED_DELAY_DAY, FIXED_PLANNED_DELAY_COST, COST_PER_PLANNED_DELAY_DAY
 
-# Multiplier used to artificially increase the cost of edges that correspond to later trucks, to incentivize earlier
-# transportation.
-ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
+# Multiplier used to artificially increase the cost of trucks that are free scaling with their departure date. That is
+# the earlier the truck departs, the cheaper it is. We thus, artificially incentivize the flow network to use
+# trucks that depart earlier.
+ARTIFICIAL_FREE_EDGE_COST_AUGMENTATION_FACTOR = 1.0
+# This multiplier is used to round the price of edges to integers, to comply with the requirements of min_cost_flow from
+# NetworkX.
+ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER = 100
 
 ORDER_OF_COMMODITY_GROUPS = Order.UNORDERED
 
@@ -75,13 +79,13 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
 
         # We add a symbolic cost to the edge, to make the flow network prefer earlier edges. These costs will be
         # ignored when computing the actual objective value of the solution.
-        day_price = (truck.arrival_date - first_day).days * ARTIFICIAL_EDGE_COST_MULTIPLIER
-        price = truck.price if truck.price != 0 else day_price
+        day_price = (truck.arrival_date - first_day).days * ARTIFICIAL_FREE_EDGE_COST_AUGMENTATION_FACTOR
+        price = truck.price / truck.capacity if truck.price != 0 else day_price
 
         # Add an edge from the start node to the end node with the truck's capacity, price and truck number as a key.
         # The key of the edge is the truck_number to distinguish parallel edges. These will be the keys in the resulting
         # flow dict.
-        flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=price, key=truck.truck_number)
+        flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=int(price * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER), key=truck.truck_number)
 
     # Create the helper edges for the flow network connecting the columns
     for day in days:
@@ -91,7 +95,7 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
             if day < last_day:
                 # Create an edge to the next day node
                 next_day_node = NodeIdentifier(day + timedelta(days=1), location, NodeType.NORMAL)
-                flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED, weight=0)
+                flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED, weight=0  * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
     # Create the helper nodes for each DEALER location
     for day in days:
@@ -106,25 +110,25 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                     # Add edges to first helper node (UNPLANNED DELAY, since we are in the first 7 days)
                     current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
-                                          weight=FIXED_UNPLANNED_DELAY_COST)
-                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0)
+                                          weight=FIXED_UNPLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
+                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
                     if day != first_day:
                         # Add an edge to the HELPER_NODE_ONE above
                         previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
                                                                   NodeType.HELPER_NODE_ONE)
                         flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
-                                              weight=COST_PER_UNPLANNED_DELAY_DAY)
+                                              weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
                 else:
                     # Add edges to first helper node (PLANNED DELAY, since we are after the first 7 days)
                     current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
-                                          weight=FIXED_PLANNED_DELAY_COST)
-                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0)
+                                          weight=FIXED_PLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
+                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
                     # Add the second helper node and an edge to it
                     current_helper_node_two = NodeIdentifier(day, location, NodeType.HELPER_NODE_TWO)
                     flow_network.add_edge(current_normal_node, current_helper_node_two, capacity=UNBOUNDED,
-                                          weight=FIXED_UNPLANNED_DELAY_COST)
+                                          weight=FIXED_UNPLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
                     # Distinguish 8th day or not
                     if day != current_day + timedelta(days=7):
@@ -134,16 +138,16 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                         previous_helper_node_two = NodeIdentifier(day - timedelta(days=1), location,
                                                                   NodeType.HELPER_NODE_TWO)
                         flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
-                                              weight=COST_PER_PLANNED_DELAY_DAY)
+                                              weight=COST_PER_PLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_two, capacity=UNBOUNDED,
-                                              weight=COST_PER_UNPLANNED_DELAY_DAY)
+                                              weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
                     else:
                         # Add only an edge from the current HELPER_NODE_TWO to the HELPER_NODE_ONE from the previous day
                         previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
                                                                   NodeType.HELPER_NODE_ONE)
                         flow_network.add_edge(current_helper_node_two, previous_helper_node_one, capacity=UNBOUNDED,
-                                              weight=COST_PER_UNPLANNED_DELAY_DAY)
+                                              weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
     # Make sure the commodity groups are sorted by their names according to the specified order.
     match ORDER_OF_COMMODITY_GROUPS:
@@ -247,12 +251,12 @@ def update_delay_nodes_in_flow_network(flow_network: MultiDiGraph, current_day: 
             previous_helper_node_one = NodeIdentifier(day_to_change - timedelta(days=1), location,
                                                       NodeType.HELPER_NODE_ONE)
             flow_network.add_edge(current_helper_node_one, previous_helper_node_one, capacity=UNBOUNDED,
-                                  weight=COST_PER_UNPLANNED_DELAY_DAY)
+                                  weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
             # Add an edge from the next day helper node two to the current day helper node one
             next_day_helper_node_two = NodeIdentifier(day_to_change + timedelta(days=1), location,
                                                       NodeType.HELPER_NODE_TWO)
             if next_day_helper_node_two in flow_network:
                 flow_network.add_edge(next_day_helper_node_two, current_helper_node_one, capacity=UNBOUNDED,
-                                      weight=COST_PER_UNPLANNED_DELAY_DAY)
+                                      weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 

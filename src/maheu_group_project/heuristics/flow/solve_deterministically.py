@@ -90,7 +90,7 @@ def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
                                         locations: list[Location]) -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     first_day, _, _ = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
 
-    if False:
+    if True:
         visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(commodity_groups.keys()))

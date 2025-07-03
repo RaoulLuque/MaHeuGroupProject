@@ -14,8 +14,8 @@ from maheu_group_project.solution.verifying import verify_solution
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the default configuration of the script. It can be overridden by command line arguments.
-SOLVERS: list[SolverType] = [SolverType.FLOW_MIP]
-DETERMINISTIC = False
+SOLVERS: list[SolverType] = [SolverType.FLOW]
+DETERMINISTIC = True
 DATASET_INDICES = [1, 2, 3, 4]
 
 

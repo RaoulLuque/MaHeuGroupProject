@@ -141,8 +141,10 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             ax.add_patch(arrow)
 
             # Label each edge with its capacity and weight (cost)
+            weight = data.get('weight') / 100
+            weight_correctly_formatted = str(int(weight)) if weight.is_integer() else f"{weight:.2f}"
             if not flow_data_provided:
-                label = f"{data.get('capacity', '')}/{data.get('weight', '')}"
+                label = f"{data.get('capacity', '')}/{weight_correctly_formatted}"
             else:
                 # If flow data is provided, use it to label the edge
                 flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
