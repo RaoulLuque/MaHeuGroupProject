@@ -3,8 +3,7 @@ from datetime import date
 import gurobipy as gp
 from gurobipy import GRB
 
-from maheu_group_project.heuristics.flow.solve_deterministically import \
-    extract_flow_update_network_and_obtain_final_assignment
+from maheu_group_project.heuristics.flow.handle_flows import extract_flow_update_network_and_obtain_final_assignment
 from maheu_group_project.heuristics.flow.types import NodeIdentifier
 from maheu_group_project.solution.encoding import VehicleAssignment, Vehicle, \
     convert_vehicle_assignments_to_truck_assignments, TruckIdentifier, Truck
@@ -50,7 +49,6 @@ def solve_mip_and_extract_flow(
             if v not in flow_solution[commodity][u]:
                 flow_solution[commodity][u][v] = {}
             if key not in flow_solution[commodity][u][v]:
-                print("Flow Value: {flow_value}")
                 flow_solution[commodity][u][v][key] = int(flow_value)
 
     return flow_solution
