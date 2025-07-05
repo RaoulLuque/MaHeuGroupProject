@@ -45,6 +45,8 @@ def remove_horizon(vehicle_assignments: list[VehicleAssignment], requested_vehic
     """
     Removes vehicle and truck assignments for which the corresponding truck/vehicle departs/becomes available
     in the front or back horizon of the time period between availability of the first and last requested vehicles.
+    WARNING: The resulting vehicle and truck assignments will generally not be valid anymore! This function should
+    be used after testing validity of a solution and before evaluating it.
 
     Args:
         vehicle_assignments (list[VehicleAssignment]): List of vehicle assignments to filter.
