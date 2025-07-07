@@ -170,9 +170,9 @@ def create_combined_plots(file_ending: str):
         for idx, case in enumerate(CASES):
             row, col = divmod(idx, 2)
             if file_ending == '_result.txt':
-                plot_filename = f"plot_case_{case}_value_{subfolder}.png"
+                plot_filename = f"line_chart_case_{case}_value_{subfolder}.png"
             elif file_ending == '_running_time.txt':
-                plot_filename = f"plot_case_{case}_running_time_{subfolder}.png"
+                plot_filename = f"line_chart_case_{case}_running_time_{subfolder}.png"
             plot_path = os.path.join(PLOTS_DIR, plot_filename)
             if os.path.exists(plot_path):
                 img = imread(plot_path)
