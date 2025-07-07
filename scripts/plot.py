@@ -125,6 +125,7 @@ def plot(file_ending: str):
             elif file_ending == '_running_time.txt':
                 plot_type_folder = 'running_time'
                 ylabel = 'Running Time (s)'
+                plt.yscale('log')  # Use logarithmic scale for running time
             plt.ylabel(ylabel)
             plt.title(f'Case {case} - {subfolder}', pad=25)
             # Ensure legend order is consistent across all plots
@@ -449,6 +450,7 @@ def create_barcharts(file_ending: str):
                 elif file_ending == '_running_time.txt':
                     plot_type_folder = 'running_time'
                     ylabel = 'Average Running Time (s)'
+                    plt.yscale('log')  # Use logarithmic scale for running time
 
                 plt.ylabel(ylabel)
                 plt.title(f'Case {case} - {subfolder} (Average Values)', pad=20)
