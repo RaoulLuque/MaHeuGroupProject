@@ -117,7 +117,7 @@ def plot(file_ending: str):
                     markersize=7.5, color=COLOR_LIST[idx % len(COLOR_LIST)]
                 )
                 plotted_heuristics[heuristic] = line
-            plt.xlabel('Realisation')
+            plt.xlabel('Realization')
             # Determine subfolder for plot type
             if file_ending == '_result.txt':
                 plot_type_folder = 'objective_value'
@@ -178,8 +178,133 @@ def create_combined_plots(file_ending: str):
         plt.close()
 
 
+def create_boxplots(file_ending: str):
+    """
+    Creates boxplots for each case showing running times by heuristic.
+
+    Args:
+        file_ending (str): The file ending to work with (e.g., '_running_time.txt')
+    """
+    # Collect all heuristics globally to ensure consistent order
+    all_heuristics = set()
+
+    for subfolder in SUBFOLDERS:
+        dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
+        if not os.path.isdir(dir_path):
+            continue
+        files = [f for f in os.listdir(dir_path) if f.endswith(file_ending)]
+        for f in files:
+            if file_ending == "_result.txt":
+                heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(f)
+            elif file_ending == "_running_time.txt":
+                heuristic_match = HEURISTIC_PATTERN_RUNNING_TIME.search(f)
+            if not heuristic_match:
+                continue
+            heuristic = heuristic_match.group(1)
+            # Normalize heuristic names for consistency
+            if heuristic.startswith('time_'):
+                heuristic = heuristic[len('time_'):]
+            if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                heuristic = 'LOWER_BOUND'
+            if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                heuristic = 'GREEDY_CAN_PATHS'
+            all_heuristics.add(heuristic)
+
+    # Sort heuristics for consistent order
+    all_heuristics = sorted(all_heuristics)
+
+    for subfolder in SUBFOLDERS:
+        dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
+        if not os.path.isdir(dir_path):
+            continue
+        files = [f for f in os.listdir(dir_path) if f.endswith(file_ending)]
+        cases = {}
+        for f in files:
+            case_match = CASE_PATTERN.search(f)
+            if not case_match:
+                continue
+            case = case_match.group(1)
+            if case not in cases:
+                cases[case] = []
+            cases[case].append(f)
+
+        for case, case_files in cases.items():
+            plt.figure(figsize=(10, 6))
+
+            # Collect data for each heuristic
+            heuristic_data = {}
+            for filename in case_files:
+                if file_ending == "_result.txt":
+                    heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(filename)
+                elif file_ending == "_running_time.txt":
+                    heuristic_match = HEURISTIC_PATTERN_RUNNING_TIME.search(filename)
+                if not heuristic_match:
+                    continue
+                heuristic = heuristic_match.group(1)
+                # Normalize heuristic names for consistency
+                if heuristic.startswith('time_'):
+                    heuristic = heuristic[len('time_'):]
+                if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                    heuristic = 'LOWER_BOUND'
+                if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                    heuristic = 'GREEDY_CAN_PATHS'
+
+                realisations, values = read_data(os.path.join(dir_path, filename))
+                if heuristic not in heuristic_data:
+                    heuristic_data[heuristic] = []
+                heuristic_data[heuristic].extend(values)
+
+            # Prepare data for boxplot in the order of all_heuristics
+            boxplot_data = []
+            boxplot_labels = []
+            for heuristic in all_heuristics:
+                if heuristic in heuristic_data:
+                    boxplot_data.append(heuristic_data[heuristic])
+                    boxplot_labels.append(heuristic)
+
+            if boxplot_data:
+                # Create boxplot
+                bp = plt.boxplot(boxplot_data, tick_labels=boxplot_labels, patch_artist=True)
+
+                # Color the boxes using the same color scheme
+                for i, box in enumerate(bp['boxes']):
+                    color_idx = all_heuristics.index(boxplot_labels[i])
+                    box.set_facecolor(COLOR_LIST[color_idx % len(COLOR_LIST)])
+                    box.set_alpha(0.7)
+
+                plt.xlabel('Heuristic')
+
+                # Determine plot type and ylabel
+                if file_ending == '_result.txt':
+                    plot_type_folder = 'objective_value'
+                    ylabel = 'Cost'
+                elif file_ending == '_running_time.txt':
+                    plot_type_folder = 'running_time'
+                    ylabel = 'Running Time (s)'
+
+                plt.ylabel(ylabel)
+                plt.title(f'Case {case} - {subfolder} (Boxplot)', pad=20)
+                plt.xticks(rotation=45, ha='right')
+                plt.tight_layout()
+
+                # Create subfolder for boxplots
+                plot_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder, "boxplots")
+                os.makedirs(plot_dir, exist_ok=True)
+
+                # Save the boxplot
+                if file_ending == '_result.txt':
+                    out_name = f"boxplot_case_{case}_value_{subfolder}.png"
+                elif file_ending == '_running_time.txt':
+                    out_name = f"boxplot_case_{case}_running_time_{subfolder}.png"
+
+                plt.savefig(os.path.join(plot_dir, out_name))
+                plt.close()
+
+
 if __name__ == '__main__':
     plot('_result.txt')
     create_combined_plots('_result.txt')
     plot('_running_time.txt')
     create_combined_plots('_running_time.txt')
+    create_boxplots('_running_time.txt')
+    create_boxplots('_result.txt')
