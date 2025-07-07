@@ -5,6 +5,8 @@ import os
 import sys
 import time
 
+from maheu_group_project.serialization import serialize_truck_assignments, serialize_vehicle_assignments
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from maheu_group_project.heuristics.solver import SolverType, solve_deterministically_and_return_data, \
@@ -16,7 +18,7 @@ from maheu_group_project.solution.evaluate import objective_function
 # This is the default configuration of the script. It can be overridden by command line arguments.
 SOLVERS: list[SolverType] = [SolverType.FLOW]
 DETERMINISTIC = True
-DATASET_INDICES = [2, 3, 4]
+DATASET_INDICES = [1, 2, 3, 4]
 
 
 def run_on_all_data_from_first_dataset():
@@ -35,11 +37,15 @@ def run_on_all_data_from_first_dataset():
             result_file_path = os.path.join(results_dir, result_filename + "_result.txt")
             running_time_file_path = os.path.join(results_dir, result_filename + "_running_time.txt")
             pretty_result_file_path = os.path.join(results_dir, result_filename + "_result_pretty.txt")
+            vehicles_serialized_file_path = os.path.join(results_dir, result_filename + "_vehicles.json")
+            trucks_serialized_file_path = os.path.join(results_dir, result_filename + "_trucks.json")
 
             # Create empty files initially
             open(result_file_path, 'w').close()
             open(running_time_file_path, 'w').close()
             open(pretty_result_file_path, 'w').close()
+            open(vehicles_serialized_file_path, 'w').close()
+            open(trucks_serialized_file_path, 'w').close()
 
             data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', dataset_dir))
             pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
@@ -99,6 +105,10 @@ def run_on_all_data_from_first_dataset():
                 with open(pretty_result_file_path, 'a') as pretty_result_file:
                     pretty_result_file.write(output)
                 print(output)
+
+                # Serialize the results to JSON
+                serialize_vehicle_assignments(vehicle_assignments, vehicles_serialized_file_path)
+                serialize_truck_assignments(truck_assignments, trucks_serialized_file_path)
 
 
 def parse_args() -> argparse.Namespace:
