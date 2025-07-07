@@ -347,6 +347,128 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                 plt.close()
 
 
+def create_barcharts(file_ending: str):
+    """
+    Creates bar charts for each case showing average objective values or running times by heuristic.
+
+    Args:
+        file_ending (str): The file ending to work with (e.g., '_result.txt' or '_running_time.txt')
+    """
+    # Collect all heuristics globally to ensure consistent order
+    all_heuristics = set()
+
+    for subfolder in SUBFOLDERS:
+        dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
+        if not os.path.isdir(dir_path):
+            continue
+        files = [f for f in os.listdir(dir_path) if f.endswith(file_ending)]
+        for f in files:
+            if file_ending == "_result.txt":
+                heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(f)
+            elif file_ending == "_running_time.txt":
+                heuristic_match = HEURISTIC_PATTERN_RUNNING_TIME.search(f)
+            if not heuristic_match:
+                continue
+            heuristic = heuristic_match.group(1)
+            # Normalize heuristic names for consistency
+            if heuristic.startswith('time_'):
+                heuristic = heuristic[len('time_'):]
+            if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                heuristic = 'LOWER_BOUND'
+            if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                heuristic = 'GREEDY_CAN_PATHS'
+            all_heuristics.add(heuristic)
+
+    # Sort heuristics for consistent order
+    all_heuristics = sorted(all_heuristics)
+
+    for subfolder in SUBFOLDERS:
+        dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
+        if not os.path.isdir(dir_path):
+            continue
+        files = [f for f in os.listdir(dir_path) if f.endswith(file_ending)]
+        cases = {}
+        for f in files:
+            case_match = CASE_PATTERN.search(f)
+            if not case_match:
+                continue
+            case = case_match.group(1)
+            if case not in cases:
+                cases[case] = []
+            cases[case].append(f)
+
+        for case, case_files in cases.items():
+            plt.figure(figsize=(10, 6))
+
+            # Collect data for each heuristic and calculate averages
+            heuristic_averages = {}
+
+            for filename in case_files:
+                if file_ending == "_result.txt":
+                    heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(filename)
+                elif file_ending == "_running_time.txt":
+                    heuristic_match = HEURISTIC_PATTERN_RUNNING_TIME.search(filename)
+                if not heuristic_match:
+                    continue
+                heuristic = heuristic_match.group(1)
+                # Normalize heuristic names for consistency
+                if heuristic.startswith('time_'):
+                    heuristic = heuristic[len('time_'):]
+                if heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                    heuristic = 'LOWER_BOUND'
+                if heuristic == 'GREEDY_CANDIDATE_PATHS':
+                    heuristic = 'GREEDY_CAN_PATHS'
+
+                realisations, values = read_data(os.path.join(dir_path, filename))
+
+                if values:  # Only calculate average if we have data
+                    heuristic_averages[heuristic] = sum(values) / len(values)
+
+            # Prepare data for bar chart in the order of all_heuristics
+            bar_heuristics = []
+            bar_averages = []
+            bar_colors = []
+
+            for heuristic in all_heuristics:
+                if heuristic in heuristic_averages:
+                    bar_heuristics.append(heuristic)
+                    bar_averages.append(heuristic_averages[heuristic])
+                    color_idx = all_heuristics.index(heuristic)
+                    bar_colors.append(COLOR_LIST[color_idx % len(COLOR_LIST)])
+
+            if bar_heuristics:
+                # Create bar chart
+                bars = plt.bar(bar_heuristics, bar_averages, color=bar_colors, alpha=0.7)
+
+                plt.xlabel('Heuristic')
+
+                # Determine plot type and ylabel
+                if file_ending == '_result.txt':
+                    plot_type_folder = 'objective_value'
+                    ylabel = 'Average Cost'
+                elif file_ending == '_running_time.txt':
+                    plot_type_folder = 'running_time'
+                    ylabel = 'Average Running Time (s)'
+
+                plt.ylabel(ylabel)
+                plt.title(f'Case {case} - {subfolder} (Average Values)', pad=20)
+                plt.xticks(rotation=45, ha='right')
+                plt.tight_layout()
+
+                # Create subfolder for bar charts
+                plot_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder, "barcharts")
+                os.makedirs(plot_dir, exist_ok=True)
+
+                # Save the bar chart
+                if file_ending == '_result.txt':
+                    out_name = f"barchart_case_{case}_value_{subfolder}.png"
+                elif file_ending == '_running_time.txt':
+                    out_name = f"barchart_case_{case}_running_time_{subfolder}.png"
+
+                plt.savefig(os.path.join(plot_dir, out_name))
+                plt.close()
+
+
 if __name__ == '__main__':
     plot('_result.txt')
     create_combined_plots('_result.txt')
@@ -356,3 +478,5 @@ if __name__ == '__main__':
     create_boxplots('_result.txt')
     create_boxplots('_running_time.txt', subtract_mip=True)
     create_boxplots('_result.txt', subtract_mip=True)
+    create_barcharts('_result.txt')
+    create_barcharts('_running_time.txt')
