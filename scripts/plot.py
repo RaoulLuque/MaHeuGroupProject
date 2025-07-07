@@ -132,8 +132,8 @@ def plot(file_ending: str):
             labels = [h for h in all_heuristics if h in plotted_heuristics]
             plt.legend(handles, labels, ncol=NUMBER_OF_COLUMNS_IN_LEGEND, loc='upper center', bbox_to_anchor=(0.5, Y_OFFSET_LEGEND))
             plt.tight_layout()
-            # Create subfolder for plot type
-            plot_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder)
+            # Create subfolder for plot type with line_chart subdirectory
+            plot_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder, "line_chart")
             os.makedirs(plot_dir, exist_ok=True)
             # Maintain filename differences for objective and running_time plots
             if file_ending == '_result.txt':
@@ -152,7 +152,7 @@ def create_combined_plots(file_ending: str):
     elif file_ending == '_running_time.txt':
         plot_type_folder = 'running_time'
         suffix = '_running_time.png'
-    PLOTS_DIR = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder)
+    PLOTS_DIR = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder, "line_chart")
     for subfolder in ["deterministic", "real_time"]:
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         fig.suptitle(f"{subfolder.capitalize()} Results", fontsize=18, y=0.98)
@@ -171,9 +171,10 @@ def create_combined_plots(file_ending: str):
             else:
                 axes[row, col].set_visible(False)
         plt.tight_layout(rect=[0, 0, 1, 0.96])
-        # Ensure the output directory exists before saving
-        os.makedirs(PLOTS_DIR, exist_ok=True)
-        out_path = os.path.join(PLOTS_DIR, f"all_cases_{subfolder}{suffix}")
+        # Ensure the output directory exists before saving - save combined plots at the parent level
+        combined_plots_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder)
+        os.makedirs(combined_plots_dir, exist_ok=True)
+        out_path = os.path.join(combined_plots_dir, f"all_cases_{subfolder}{suffix}")
         plt.savefig(out_path)
         plt.close()
 
