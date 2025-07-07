@@ -93,6 +93,7 @@ def plot(file_ending: str):
         for case, case_files in cases.items():
             plt.figure(figsize=(8, 5))
             plotted_heuristics = {}
+            all_costs = []  # Collect all cost values for y-axis scaling
             for filename in case_files:
                 if file_ending == "_result.txt":
                     heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(filename)
@@ -110,6 +111,7 @@ def plot(file_ending: str):
                     heuristic = 'GREEDY_CAN_PATHS'
                 idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_data(os.path.join(dir_path, filename))
+                all_costs.extend(costs)  # Collect costs for scaling
                 # Plot the costs for this heuristic
                 line, = plt.plot(
                     realisations, costs, label=heuristic,
@@ -126,6 +128,14 @@ def plot(file_ending: str):
                 plot_type_folder = 'running_time'
                 ylabel = 'Running Time (s)'
                 plt.yscale('log')  # Use logarithmic scale for running time
+
+                # Set y-axis limits to ensure there's a label above the highest data point
+                if all_costs:
+                    max_value = max(all_costs)
+                    min_value = min(all_costs)
+                    # Set upper limit to be at least one order of magnitude higher than max value
+                    upper_limit = max_value * 10
+                    plt.ylim(bottom=min_value * 0.1, top=upper_limit)
             plt.ylabel(ylabel)
             plt.title(f'Case {case} - {subfolder}', pad=25)
             # Ensure legend order is consistent across all plots
@@ -451,6 +461,12 @@ def create_barcharts(file_ending: str):
                     plot_type_folder = 'running_time'
                     ylabel = 'Average Running Time (s)'
                     plt.yscale('log')  # Use logarithmic scale for running time
+
+                    # Set y-axis limits to ensure there's a label above the highest data point
+                    max_value = max(bar_averages)
+                    # Set upper limit to be at least one order of magnitude higher than max value
+                    upper_limit = max_value * 10
+                    plt.ylim(bottom=min(bar_averages) * 0.1, top=upper_limit)
 
                 plt.ylabel(ylabel)
                 plt.title(f'Case {case} - {subfolder} (Average Values)', pad=20)
