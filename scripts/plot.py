@@ -137,9 +137,9 @@ def plot(file_ending: str):
             os.makedirs(plot_dir, exist_ok=True)
             # Maintain filename differences for objective and running_time plots
             if file_ending == '_result.txt':
-                out_name = f"plot_case_{case}_value_{subfolder}.png"
+                out_name = f"line_chart_case_{case}_value_{subfolder}.png"
             elif file_ending == '_running_time.txt':
-                out_name = f"plot_case_{case}_running_time_{subfolder}.png"
+                out_name = f"line_chart_case_{case}_running_time_{subfolder}.png"
             plt.savefig(os.path.join(plot_dir, out_name))
             plt.close()
 
@@ -179,12 +179,13 @@ def create_combined_plots(file_ending: str):
         plt.close()
 
 
-def create_boxplots(file_ending: str):
+def create_boxplots(file_ending: str, subtract_mip: bool = False):
     """
     Creates boxplots for each case showing running times by heuristic.
 
     Args:
         file_ending (str): The file ending to work with (e.g., '_running_time.txt')
+        subtract_mip (bool): If True, subtract MIP solution values from other heuristics and exclude MIP from visualization
     """
     # Collect all heuristics globally to ensure consistent order
     all_heuristics = set()
@@ -214,6 +215,9 @@ def create_boxplots(file_ending: str):
     # Sort heuristics for consistent order
     all_heuristics = sorted(all_heuristics)
 
+    # If subtract_mip is True, filter out FLOW_MIP from the display heuristics
+    display_heuristics = [h for h in all_heuristics if not (subtract_mip and h == 'FLOW_MIP')]
+
     for subfolder in SUBFOLDERS:
         dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
         if not os.path.isdir(dir_path):
@@ -234,6 +238,8 @@ def create_boxplots(file_ending: str):
 
             # Collect data for each heuristic
             heuristic_data = {}
+            mip_data = {}  # Store MIP data separately for subtraction
+
             for filename in case_files:
                 if file_ending == "_result.txt":
                     heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(filename)
@@ -251,16 +257,39 @@ def create_boxplots(file_ending: str):
                     heuristic = 'GREEDY_CAN_PATHS'
 
                 realisations, values = read_data(os.path.join(dir_path, filename))
-                if heuristic not in heuristic_data:
-                    heuristic_data[heuristic] = []
-                heuristic_data[heuristic].extend(values)
 
-            # Prepare data for boxplot in the order of all_heuristics
+                if subtract_mip and heuristic == 'FLOW_MIP':
+                    # Store MIP data indexed by realization for subtraction
+                    for real, val in zip(realisations, values):
+                        mip_data[real] = val
+                else:
+                    if heuristic not in heuristic_data:
+                        heuristic_data[heuristic] = {}
+                    # Store data indexed by realization for potential MIP subtraction
+                    for real, val in zip(realisations, values):
+                        heuristic_data[heuristic][real] = val
+
+            # If subtract_mip is True, subtract MIP values from other heuristics
+            if subtract_mip and mip_data:
+                for heuristic in heuristic_data:
+                    for real in list(heuristic_data[heuristic].keys()):
+                        if real in mip_data:
+                            heuristic_data[heuristic][real] -= mip_data[real]
+                        else:
+                            # Remove data points where MIP solution is not available
+                            del heuristic_data[heuristic][real]
+
+            # Convert to lists for boxplot
+            final_heuristic_data = {}
+            for heuristic in heuristic_data:
+                final_heuristic_data[heuristic] = list(heuristic_data[heuristic].values())
+
+            # Prepare data for boxplot in the order of display_heuristics
             boxplot_data = []
             boxplot_labels = []
-            for heuristic in all_heuristics:
-                if heuristic in heuristic_data:
-                    boxplot_data.append(heuristic_data[heuristic])
+            for heuristic in display_heuristics:
+                if heuristic in final_heuristic_data and final_heuristic_data[heuristic]:
+                    boxplot_data.append(final_heuristic_data[heuristic])
                     boxplot_labels.append(heuristic)
 
             if boxplot_data:
@@ -278,13 +307,23 @@ def create_boxplots(file_ending: str):
                 # Determine plot type and ylabel
                 if file_ending == '_result.txt':
                     plot_type_folder = 'objective_value'
-                    ylabel = 'Cost'
+                    if subtract_mip:
+                        ylabel = 'Cost Difference from MIP'
+                        title_suffix = ' (Difference from MIP)'
+                    else:
+                        ylabel = 'Cost'
+                        title_suffix = ''
                 elif file_ending == '_running_time.txt':
                     plot_type_folder = 'running_time'
-                    ylabel = 'Running Time (s)'
+                    if subtract_mip:
+                        ylabel = 'Running Time Difference from MIP (s)'
+                        title_suffix = ' (Difference from MIP)'
+                    else:
+                        ylabel = 'Running Time (s)'
+                        title_suffix = ''
 
                 plt.ylabel(ylabel)
-                plt.title(f'Case {case} - {subfolder} (Boxplot)', pad=20)
+                plt.title(f'Case {case} - {subfolder} (Boxplot){title_suffix}', pad=20)
                 plt.xticks(rotation=45, ha='right')
                 plt.tight_layout()
 
@@ -294,9 +333,15 @@ def create_boxplots(file_ending: str):
 
                 # Save the boxplot
                 if file_ending == '_result.txt':
-                    out_name = f"boxplot_case_{case}_value_{subfolder}.png"
+                    if subtract_mip:
+                        out_name = f"boxplot_case_{case}_value_{subfolder}_diff_from_mip.png"
+                    else:
+                        out_name = f"boxplot_case_{case}_value_{subfolder}.png"
                 elif file_ending == '_running_time.txt':
-                    out_name = f"boxplot_case_{case}_running_time_{subfolder}.png"
+                    if subtract_mip:
+                        out_name = f"boxplot_case_{case}_running_time_{subfolder}_diff_from_mip.png"
+                    else:
+                        out_name = f"boxplot_case_{case}_running_time_{subfolder}.png"
 
                 plt.savefig(os.path.join(plot_dir, out_name))
                 plt.close()
@@ -309,3 +354,5 @@ if __name__ == '__main__':
     create_combined_plots('_running_time.txt')
     create_boxplots('_running_time.txt')
     create_boxplots('_result.txt')
+    create_boxplots('_running_time.txt', subtract_mip=True)
+    create_boxplots('_result.txt', subtract_mip=True)
