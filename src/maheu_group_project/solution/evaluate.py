@@ -40,7 +40,7 @@ def objective_function(vehicle_assignments: list[VehicleAssignment],
 
 def remove_horizon(vehicle_assignments: list[VehicleAssignment], requested_vehicles: list[Vehicle],
                    truck_assignments: dict[TruckIdentifier, TruckAssignment],
-                   realised_trucks: dict[TruckIdentifier, Truck], expected_trucks: dict[TruckIdentifier, Truck], front_horizon: int = 0, back_horizon: int = 0) \
+                   trucks_realised: dict[TruckIdentifier, Truck], trucks_planned: dict[TruckIdentifier, Truck], front_horizon: int, back_horizon: int) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
     Removes vehicle and truck assignments for which the corresponding truck/vehicle departs/becomes available
@@ -52,10 +52,10 @@ def remove_horizon(vehicle_assignments: list[VehicleAssignment], requested_vehic
         vehicle_assignments (list[VehicleAssignment]): List of vehicle assignments to filter.
         requested_vehicles (list[Vehicle]): List of vehicles that are requested for transportation.
         truck_assignments (dict[TruckIdentifier, TruckAssignment]): Dictionary mapping truck identifiers to their assignments.
-        realised_trucks (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
-        expected_trucks (dict[TruckIdentifier, Truck]): Dictionary of expected trucks for transportation.
-        front_horizon (int): The number of days in the front horizon to consider. Defaults to 0.
-        back_horizon (int): The number of days in the back horizon to consider. Defaults to 0.
+        trucks_realised (dict[TruckIdentifier, Truck]): Dictionary of trucks available for transportation.
+        trucks_planned (dict[TruckIdentifier, Truck]): Dictionary of expected trucks for transportation.
+        front_horizon (int): The number of days to be considered as front horizon. Defaults to 0.
+        back_horizon (int): The number of days to be considered as front horizon. Defaults to 0.
 
     Returns:
         tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
@@ -64,7 +64,7 @@ def remove_horizon(vehicle_assignments: list[VehicleAssignment], requested_vehic
 
     first_day = min(vehicle.available_date for vehicle in requested_vehicles)
     last_day = max(vehicle.available_date for vehicle in requested_vehicles)
-    trucks = {**realised_trucks, **expected_trucks}  # Combine realised and expected trucks
+    trucks = {**trucks_realised, **trucks_planned}  # Combine realised and expected trucks
     # Remove vehicles that become available in front or back horizon
     vehicle_assignments = [va for va in vehicle_assignments if
                            last_day - timedelta(back_horizon) >= requested_vehicles[va.id].available_date >= first_day + timedelta(front_horizon)]
