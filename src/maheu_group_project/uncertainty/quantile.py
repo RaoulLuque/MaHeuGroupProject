@@ -26,6 +26,9 @@ def calculate_quantile_capacity(
     quantile_capacity_res: dict[tuple[Weekday, Location, Location, int], float] = {}
     for dict_key, trucks in truck_history.items():
         capacities = [truck.capacity for truck in trucks]
-        quantile_value = float(np.quantile(capacities, quantile))
+        length = len(capacities)
+        capacities_sorted = sorted(capacities)
+        index_for_quantile = int(np.floor(length * quantile)) - 1
+        quantile_value = capacities_sorted[index_for_quantile]
         quantile_capacity_res[dict_key] = quantile_value
     return quantile_capacity_res
