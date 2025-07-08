@@ -135,18 +135,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--solvers', nargs='+', type=str, default=None, help='List of solvers (by name) to use')
     parser.add_argument('--deterministic', type=str, choices=['true', 'false', 'TRUE', 'FALSE'], default=None, help='Use deterministic mode (true/false)')
     parser.add_argument('--dataset_indices', nargs='+', type=int, default=None, help='List of dataset indices to use')
+    parser.add_argument('--quantile_value', type=float, default=None, help='Quantile value to use for the solver')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    global SOLVERS, DETERMINISTIC, DATASET_INDICES
+    global SOLVERS, DETERMINISTIC, DATASET_INDICES, QUANTILE_VALUE
     if args.solvers is not None:
         SOLVERS = [solver_type_from_string(string_input.upper()) for string_input in args.solvers]
     if args.deterministic is not None:
         DETERMINISTIC = args.deterministic.lower() == 'true'
     if args.dataset_indices is not None:
         DATASET_INDICES = args.dataset_indices
+    if args.quantile_value is not None:
+        QUANTILE_VALUE = args.quantile_value
     run_on_all_data_from_first_dataset()
 
 
