@@ -209,7 +209,6 @@ def read_history_data(dataset_dir_name: str) -> dict[TruckIdentifier, Truck]:
     with open(file_path) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
-            print(row)
             path_segment = row[0]
             match = re.match(
                 r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-(TRUCK|TRAIN)-(\d+)",
