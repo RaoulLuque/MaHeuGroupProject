@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from enum import Enum
 
-from maheu_group_project.solution.encoding import Location, Vehicle, LocationType, TruckIdentifier
+from maheu_group_project.solution.encoding import Location, Vehicle, LocationType, TruckIdentifier, VehicleAssignment, \
+    Truck
 
 
 class NodeType(Enum):
@@ -131,3 +132,67 @@ class Order(Enum):
     UNORDERED = 0
     ASCENDING = 1
     DESCENDING = 2
+
+
+def get_current_location_of_vehicle_as_node(vehicle: Vehicle, vehicle_assignments: dict[int, VehicleAssignment],
+                                            trucks_realised_by_day_known: dict[
+                                                date, dict[TruckIdentifier, Truck]]) -> NodeIdentifier:
+    """
+    Returns the current location of a vehicle as a NodeIdentifier. It is determined based on the vehicle's assignment.
+    If an assignment exists, the last location in the paths taken is used to determine the current location. Otherwise,
+    the origin of the vehicle is used.
+
+    The current location is determined based on the vehicle's
+
+    Args:
+        vehicle (Vehicle): The vehicle for which to get the current location.
+        vehicle_assignments (dict[int, VehicleAssignment]): A dictionary mapping vehicle ids to their final assignments.
+        trucks_realised_by_day_known (dict[date, dict[TruckIdentifier, Truck]]): A dictionary mapping each day to the realized trucks for that day.
+            Note that this dict only contains entries for days earlier than current_day.
+
+    Returns:
+        NodeIdentifier: The current location of the vehicle.
+    """
+    if len(vehicle_assignments.get(vehicle.id, VehicleAssignment(id=vehicle.id)).paths_taken) > 0:
+        # If the vehicle has an assignment, we use the last location in the paths taken
+        current_assignment = vehicle_assignments[vehicle.id]
+        last_truck_identifier = current_assignment.paths_taken[-1]
+
+        # This is where we access trucks_realised_by_day. We use last_truck_identifier, which has to be in the past,
+        # since it was assigned in a previous loop of the solve_flow_in_real_time function.
+        # We use get_start_and_end_nodes_for_truck, since this accounts for the one rest-day of the truck if it does
+        # not arrive at a DEALER location.
+        _, end_node = get_start_and_end_nodes_for_truck(
+            trucks_realised_by_day_known[last_truck_identifier.departure_date][last_truck_identifier])
+        arrival_date = end_node.day
+
+        return NodeIdentifier(day=arrival_date,
+                              location=last_truck_identifier.end_location,
+                              type=NodeType.NORMAL)
+    else:
+        return NodeIdentifier(day=vehicle.available_date,
+                              location=vehicle.origin,
+                              type=NodeType.NORMAL)
+
+
+def get_start_and_end_nodes_for_truck(truck: Truck) -> tuple[NodeIdentifier, NodeIdentifier]:
+    """
+    Returns the start and end nodes for a truck in the flow network.
+
+    Args:
+        truck (Truck): The truck for which to get the start and end nodes.
+
+    Returns:
+        tuple[NodeIdentifier, NodeIdentifier]: A tuple containing the start and end nodes for the truck.
+    """
+    start_node = NodeIdentifier(truck.departure_date, truck.start_location, NodeType.NORMAL)
+
+    # If the truck's end location is not a DEALER, we delay the arrival date by one day to account for the
+    # one day rest.
+    truck_arrival_date = truck.arrival_date
+    if truck.end_location.type != LocationType.DEALER:
+        truck_arrival_date += timedelta(days=1)
+
+    end_node = NodeIdentifier(truck_arrival_date, truck.end_location, NodeType.NORMAL)
+
+    return start_node, end_node

@@ -12,6 +12,16 @@ c = 10  # additional cost for each edge
 
 
 def create_logistics_network(locations: list[Location], trucks: dict[TruckIdentifier, Truck]) -> MultiDiGraph:
+    """
+    Creates a logistics network in which each location is a node and each segment connecting two locations is an edge.
+
+    Args:
+        locations (list[Location]): A list of locations in the logistics network.
+        trucks (dict[TruckIdentifier, Truck]): A dictionary mapping truck identifiers to Truck objects.
+
+    Returns:
+        MultiDiGraph: A directed multi-graph representing the logistics network.
+    """
     logistics_network = MultiDiGraph()
 
     # Add nodes for each location
@@ -44,8 +54,17 @@ def create_logistics_network(locations: list[Location], trucks: dict[TruckIdenti
     return logistics_network
 
 
-def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[
-    tuple[Location, Location], list[dict]]:
+def calculate_candidate_paths(logistics_network: MultiDiGraph) -> dict[tuple[Location, Location], list[dict]]:
+    """
+    Calculates candidate paths in the logistics network from each location to each dealer.
+
+    Args:
+        logistics_network (MultiDiGraph): The logistics network represented as a MultiDiGraph.
+
+    Returns:
+        dict[tuple[Location, Location], list[dict]]: A dictionary where keys are tuples of source and target locations,
+            and values are lists of dictionaries containing candidate paths with their properties.
+    """
     candidate_paths = {}
 
     for source in logistics_network.nodes:
@@ -82,11 +101,13 @@ def shortest_paths(network: MultiDiGraph, start_location: Location, end_location
     """
     Finds the k shortest paths between two locations in a logistics network.
 
-    :param network: The logistics network represented as a MultiDiGraph.
-    :param start_location: The starting location for the paths.
-    :param end_location: The destination location for the paths.
-    :return: A list of tuples, each containing a path (list of edges), a boolean indicating if the path is free,
-             the total path weight, the path length, and the total number of days.
+    Args:
+        network (MultiDiGraph): The logistics network represented as a MultiDiGraph.
+        start_location (Location): The starting location for the paths.
+        end_location (Location): The destination location for the paths.
+    Returns:
+        A list of tuples, each containing a path (list of edges), a boolean indicating if the path is free,
+        the total path weight, the path length, and the total number of days.
     """
     k = 10  # max number of shortest paths to find
 
@@ -232,11 +253,6 @@ def visualize_logistics_network(network: MultiDiGraph):
             weight = int(data.get('weight', 0))
             truck_number = data.get('truck_number', 'N/A')
             label = f"{weight}  (#{truck_number})"
-            # Extract only the arc portion before the arrow head
-            path = arrow.get_path()
-            codes = path.codes
-            verts = path.vertices
-            trans = arrow.get_patch_transform()
 
             start = np.array(pos[u])
             end = np.array(pos[v])

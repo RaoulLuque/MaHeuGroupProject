@@ -123,7 +123,7 @@ def greedy_solver(requested_vehicles: list[Vehicle], trucks_planned: dict[TruckI
         VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle
         in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
-                                                                 (trucks_planned.keys() | trucks_realised.keys())}
+                                                                 (trucks_realised.keys())}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
                                                                        in
                                                                        (days + [(last_day + timedelta(

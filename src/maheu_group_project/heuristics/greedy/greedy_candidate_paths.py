@@ -1,4 +1,4 @@
-from maheu_group_project.solution.encoding import FIXED_PLANNED_DELAY_COST, FIXED_UNPLANNED_DELAY_COST, \
+from maheu_group_project.solution.encoding import FIXED_UNPLANNED_DELAY_COST, \
     COST_PER_PLANNED_DELAY_DAY, \
     COST_PER_UNPLANNED_DELAY_DAY, Location, Vehicle, TruckIdentifier, Truck, TruckAssignment, VehicleAssignment
 from datetime import date, timedelta
@@ -11,12 +11,30 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
                                  candidate_paths: dict[tuple[Location, Location], list[dict]]) \
         -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
-    :param location_list:
-    :param requested_vehicles: List of Vehicle objects representing the vehicles to be assigned.
-    :param trucks_planned: Dictionary mapping TruckIdentifier to Truck objects representing expected trucks.
-    :param trucks_realised: Dictionary mapping TruckIdentifier to Truck objects representing realised trucks.
-    :param candidate_paths: Dictionary mapping pairs of Location and DEALER to the list of candidate paths between them.
-    :return: A tuple containing the updated vehicle and truck assignments.
+    Solves the vehicle assignment problem using a greedy approach based on candidate paths. At every day and location, it sorts the vehicles
+    currently at that location by their urgency (as determined by an urgency function) and then iterates over them, deciding for each one
+    which truck leaving on that day it should be assigned to, or to keep the vehicle at the current location for another day. For every
+    vehicle, the only trucks considered are those which are part of the candidate paths between the current location and the vehicle's
+    destination. Based on a location urgency factor n, the n cheapest options from that candidate list are always taken, provided the
+    corresponding trucks have capacity left. If the urgency of a vehicle exceeds the difference in total cost between taking one of these
+    paths and another candidate path, that other candidate path is also always taken. If all paths that would be taken have no capacity
+    left, the vehicle remains at its location.
+        The solver goes through the entire process twice, once with only the planned trucks to preview delays that will occur even with all
+    trucks driving, and then again with the realized trucks to determine the final assignments.
+
+    Args:
+        requested_vehicles (list[Vehicle]): List of vehicles to be assigned.
+        trucks_planned (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to planned Truck objects.
+        location_list (list[Location]): List of locations between which vehicles can be transported.
+        trucks_realised (dict[TruckIdentifier, Truck]): Dictionary mapping truck identifiers to realized Truck objects.
+        candidate_paths (dict[tuple[Location, Location], list[dict]]): Dictionary mapping any combination of start and end location
+            to the list of candidate paths between them. Each entry of that list is a dictionary with keys such as 'next_location'
+            (representing the next location on that particular path) and 'total_cost' (of the path on average). See candidate_paths_calculator.py for details.
+
+    Returns:
+        tuple: A tuple containing:
+            - list[VehicleAssignment]: List of vehicle assignments.
+            - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
     """
     first_day, last_day, days = get_first_last_and_days(vehicles=requested_vehicles, trucks=trucks_planned)
     day_of_planning = first_day  # today (is relevant for planned delay calculation)
@@ -46,7 +64,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
     # Run first with only expected trucks to preview delays
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day in (days + [(last_day + timedelta(1))])}
     planned_vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle in requested_vehicles]
-    planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in (trucks_planned.keys() | trucks_realised.keys())}
+    planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in (trucks_planned.keys())}
     deterministic_expected_delayed_vehicles: list[bool] = [False for _ in
                                                            requested_vehicles]  # indicates whether a vehicle is guaranteed expected to be delayed based on the planned vehicle assignments
     deterministic_location_urgency_factor: dict[Location, int] = {loc: 0 for loc in
@@ -138,7 +156,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
     expected_delayed_vehicles: list[bool] = [False for _ in requested_vehicles]
     vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
-                                                                 (trucks_planned.keys() | trucks_realised.keys())}
+                                                                 (trucks_realised.keys())}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
                                                                        in (days + [(last_day + timedelta(1))])}
     location_urgency_factor: dict[Location, int] = {loc: 0 for loc in location_list}

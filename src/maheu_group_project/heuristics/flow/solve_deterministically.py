@@ -2,17 +2,18 @@ import networkx as nx
 from networkx import MultiDiGraph
 
 from maheu_group_project.heuristics.common import get_first_last_and_days
+from maheu_group_project.heuristics.flow.handle_flows import extract_flow_update_network_and_obtain_final_assignment
+from maheu_group_project.heuristics.flow.mip.translation import translate_flow_network_to_mip, \
+    translate_mip_solution_to_flow
+from maheu_group_project.heuristics.flow.mip.solve_mip import solve_mip, \
+    extract_complete_assignment_from_multi_commodity_flow
 from maheu_group_project.heuristics.flow.types import NodeIdentifier, NodeType, \
     dealership_to_commodity_group
+from maheu_group_project.heuristics.flow.visualize import visualize_flow_network
 from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truck, Location, LocationType, \
     TruckAssignment, \
     VehicleAssignment, \
     convert_vehicle_assignments_to_truck_assignments
-from datetime import timedelta, date
-
-# Multiplier used to artificially increase the cost of edges that correspond to later trucks, to incentivize earlier
-# transportation.
-ARTIFICIAL_EDGE_COST_MULTIPLIER = 1
 
 
 def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
@@ -66,10 +67,10 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow, only_show_flow_nodes=commodity_group)
 
                     # Extract the solution from the flow and update the flow network
-                    extract_flow_and_update_network(flow_network=flow_network, flow=flow,
-                                                    vehicles_from_current_commodity=commodity_groups[commodity_group],
-                                                    vehicles=vehicles, current_day=current_day,
-                                                    vehicle_assignments=vehicle_assignments)
+                    extract_flow_update_network_and_obtain_final_assignment(flow_network=flow_network, flow=flow,
+                                                                            vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                                            vehicles=vehicles, current_day=current_day,
+                                                                            vehicle_assignments=vehicle_assignments)
 
                     # visualize_flow_network(flow_network, locations)
 
@@ -82,134 +83,24 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     return vehicle_assignments, truck_assignments
 
 
-def extract_flow_and_update_network(flow_network: MultiDiGraph,
-                                    flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]],
-                                    vehicles_from_current_commodity: set[int], vehicles: list[Vehicle],
-                                    current_day: date,
-                                    vehicle_assignments: list[VehicleAssignment]) -> None:
-    """
-    Extracts the solution in terms of vehicle and truck assignments from a provided flow in a flow network.
+def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
+                                        commodity_groups: dict[str, set[int]],
+                                        vehicles: list[Vehicle],
+                                        trucks: dict[TruckIdentifier, Truck],
+                                        locations: list[Location]) -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+    first_day, _, _ = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
 
-    This function adjusts the flow such that it should be empty at the end.
-    Furthermore, it adjusts the capacities of the edges used by the flow in the flow network,
-    to make them unavailable for the next flows.
+    if False:
+        visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
-    Args:
-        flow_network (MultiDiGraph[NodeIdentifier]): The flow network on which the flow is based. The capacities of the
-        edges of the flow are adjusted to reflect extracting the solution.
-        flow (dict[NodeIdentifier, dict[NodeIdentifier, float]]): The flow from which to extract the solution for the
-        vehicles from the current commodity group.
-        vehicles_from_current_commodity (set[int]): The set of vehicle ids that belong to the current commodity group.
-        vehicles (list[Vehicle]): List of vehicles to be transported to look up their properties using the ids.
-        current_day (date): The current day in the flow network, used to determine delays.
-        vehicle_assignments (list[VehicleAssignment]): The list of current vehicle assignments.
-
-    Returns:
-        tuple: A tuple containing the list of locations, vehicles, and trucks. The trucks and vehicles are adjusted
-        to contain their respective plans.
-    """
-    # Ensure the correct type for flow_network
-    flow_network: MultiDiGraph[NodeIdentifier] = flow_network
-
-    # Filter out edges which have flow of 0, i.e. no flow was assigned to them.
-    filtered_flow = {}
-    for src, targets in flow.items():
-        filtered_targets = {}
-        for dst, keys in targets.items():
-            filtered_keys = {k: v for k, v in keys.items() if v > 0}
-            if filtered_keys:
-                filtered_targets[dst] = filtered_keys
-        if filtered_targets:
-            filtered_flow[src] = filtered_targets
-    flow = filtered_flow
-
-    # Loop over the vehicles and extract the assignments
-    # For each vehicle, heuristically find the fastest path from its origin to its destination
-    for vehicle_id in vehicles_from_current_commodity:
-        # Get the actual vehicle from the list of vehicles
-        vehicle = vehicles[vehicle_id]
-
-        current_node = NodeIdentifier(day=vehicle.available_date, location=vehicle.origin, type=NodeType.NORMAL)
-        destination = NodeIdentifier(day=vehicle.due_date, location=vehicle.destination, type=NodeType.NORMAL)
-
-        # Create a vehicle assignment
-        paths_taken = []
-        planned_delayed = False
-        delayed_by: timedelta = timedelta(0)
-        arrived = False
-
-        while current_node != destination and not arrived:
-            # Greedily find the next edge from the current node in the flow that has a positive flow value
-            next_node = None
-
-            # In the following loop, we skip letting the vehicle stay at the same location. Thus, if the vehicle is already
-            # at its destination location (possibly not correct date), we will skip this loop.
-            if current_node.location != vehicle.destination:
-                # Get the possible next nodes from the current node in the flow (these will all have non-zero flow)
-                possible_next_nodes = list(flow[current_node].items())
-
-                # Sort the possible next nodes by the day of the node to ensure we always take the earliest possible next node
-                possible_next_nodes.sort(key=lambda x: x[0].day)
-                for identifier, flows in possible_next_nodes:
-                    if identifier.location == current_node.location:
-                        # We want to skip letting the vehicle stay at the same location for now and only consider moving
-                        # it forward
-                        continue
-                    else:
-                        # If the next node is a different location, we can take it
-                        # This also means, that we are currently 'looking' at an edge that corresponds to a truck
-                        next_node = identifier
-
-                        # Find the edge index for this edge
-                        edge_index = next(iter(flows.keys()))
-
-                        # We subtract one from the flow of this edge to make it unavailable for the next vehicles
-                        flow[current_node][next_node][edge_index] -= 1
-                        flow_network[current_node][next_node][edge_index]['capacity'] -= 1
-
-                        # If the flow of this edge is now 0, we remove it from the flow dict
-                        if flow[current_node][next_node][edge_index] == 0:
-                            del flow[current_node][next_node][edge_index]
-                            if not flow[current_node][next_node]:
-                                del flow[current_node][next_node]
-
-                        # Update the paths taken, if the edge_number is not 0
-                        # Explanation: edge_index starts at 0 by default and increments for parallel edges or are set with
-                        # `key` when adding an edge. For trucks, this is set as the truck id which starts at 1, and other
-                        # edges cannot have parallel edges (which would result in edge_numbers bigger than 0).
-                        if edge_index != 0:
-                            paths_taken.append(
-                                TruckIdentifier(start_location=current_node.location, end_location=next_node.location,
-                                                truck_number=edge_index, departure_date=current_node.day))
-
-                        # Set the current node to the next node
-                        current_node = next_node
-
-                        break
-                if next_node is None:
-                    # If we have not found a next node, that means we should wait at the current location
-                    current_node = NodeIdentifier(day=current_node.day + timedelta(days=1),
-                                                  location=current_node.location,
-                                                  type=current_node.type)
-
-            else:
-                # We have reached the destination location. Either we have arrived early or we have delay to take care of.
-                # Check if we have a delay
-                if current_node.day > vehicle.due_date:
-                    # Check if we have a planned delay
-                    delay_notification_period = vehicle.due_date - current_day
-                    delay_length = current_node.day - vehicle.due_date
-                    if delay_notification_period <= timedelta(days=7):
-                        # We have an unplanned delay
-                        planned_delayed = False
-                        delayed_by = delay_length
-                    else:
-                        # We have a planned delay
-                        planned_delayed = True
-                        delayed_by = delay_length
-                break
-
-        # Insert the vehicle assignment into the list
-        vehicle_assignments.append(
-            VehicleAssignment(id=vehicle_id, paths_taken=paths_taken, planned_delayed=planned_delayed,
-                              delayed_by=delayed_by))
+    model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(commodity_groups.keys()))
+    solve_mip(model)
+    flow_solution = translate_mip_solution_to_flow(model, flow_vars)
+    vehicle_assignments, truck_assignments = extract_complete_assignment_from_multi_commodity_flow(flow=flow_solution,
+                                                                                                   commodity_groups=commodity_groups,
+                                                                                                   vehicles=vehicles,
+                                                                                                   trucks=trucks,
+                                                                                                   current_day=first_day,
+                                                                                                   flow_network=flow_network,
+                                                                                                   locations=locations)
+    return vehicle_assignments, truck_assignments
