@@ -205,7 +205,6 @@ def read_history_data(dataset_dir_name: str) -> dict[TruckIdentifier, Truck]:
     """
     trucks: dict[TruckIdentifier, Truck] = {}
     file_path = os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, "capacity_history.csv")
-    print("Reading truck history data from:", file_path)
     with open(file_path) as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
