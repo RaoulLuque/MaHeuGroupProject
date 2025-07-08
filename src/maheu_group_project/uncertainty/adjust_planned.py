@@ -61,3 +61,29 @@ def assign_mean_minus_standard_deviation_to_planned_capacities(trucks_planned: d
         new_trucks[truck_identifier].capacity = min(int(mean_std_dev_capacity[key]), new_trucks[truck_identifier].capacity)
 
     return new_trucks
+
+
+def assign_quantile_based_planned_capacities(trucks_planned: dict[TruckIdentifier, Truck], dataset_dir_name: str, quantile: float) -> dict[TruckIdentifier, Truck]:
+    """
+    Assigns the quantile-based truck capacities to the planned truck capacities.
+
+    Args:
+        trucks_planned (dict[TruckIdentifier, Truck]): Dictionary of planned trucks.
+        dataset_dir_name (str): Directory name of the dataset to read history data from.
+        quantile (float): Quantile to use for capacity assignment (e.g., 0.95 for the 95th percentile).
+
+    Returns:
+        dict[TruckIdentifier, Truck]: Updated dictionary of planned trucks with adjusted capacities.
+    """
+    new_trucks: dict[TruckIdentifier, Truck] = {}
+
+    truck_history = read_history_data(dataset_dir_name)
+    truck_history = history_data_by_id_segment_and_weekday(truck_history)
+    quantile_capacity = calculate_mean_capacity(truck_history)
+
+    for truck_identifier, truck in trucks_planned.items():
+        key = truck_to_history_dict_key(truck)
+        new_trucks[truck_identifier] = truck
+        new_trucks[truck_identifier].capacity = min(int(quantile_capacity[key]), new_trucks[truck_identifier].capacity)
+
+    return new_trucks
