@@ -64,7 +64,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
     # Run first with only expected trucks to preview delays
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day in (days + [(last_day + timedelta(1))])}
     planned_vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], False, timedelta(0)) for vehicle in requested_vehicles]
-    planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in (trucks_planned.keys() | trucks_realised.keys())}
+    planned_truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in (trucks_planned.keys())}
     deterministic_expected_delayed_vehicles: list[bool] = [False for _ in
                                                            requested_vehicles]  # indicates whether a vehicle is guaranteed expected to be delayed based on the planned vehicle assignments
     deterministic_location_urgency_factor: dict[Location, int] = {loc: 0 for loc in
@@ -156,7 +156,7 @@ def greedy_candidate_path_solver(requested_vehicles: list[Vehicle], trucks_plann
     expected_delayed_vehicles: list[bool] = [False for _ in requested_vehicles]
     vehicle_assignments: list[VehicleAssignment] = [VehicleAssignment(vehicle.id, [], planned_delayed_vehicles[vehicle.id], timedelta(0)) for vehicle in requested_vehicles]
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {truck_id: TruckAssignment() for truck_id in
-                                                                 (trucks_planned.keys() | trucks_realised.keys())}
+                                                                 (trucks_realised.keys())}
     vehicles_at_loc_at_time: dict[tuple[Location, date], list[int]] = {(loc, day): [] for loc in location_list for day
                                                                        in (days + [(last_day + timedelta(1))])}
     location_urgency_factor: dict[Location, int] = {loc: 0 for loc in location_list}
