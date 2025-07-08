@@ -29,6 +29,15 @@ HEURISTIC_PATTERN_RUNNING_TIME = re.compile(r"Case_\d+_[^_]+_(.+)_running_time\.
 CASE_PATTERN = re.compile(r"Case_(\d+)_")
 
 
+# Fixed mapping from heuristic names to colors for consistency
+HEURISTIC_COLOR_MAP = {
+    'FLOW': 'mediumseagreen',
+    'FLOW_MIP': 'goldenrod',
+    'GREEDY': 'dodgerblue',
+    'GREEDY_CAN_PATHS': 'crimson',
+    'LOWER_BOUND': 'darkorchid',
+}
+
 def read_data(filepath: str) -> tuple[list[int], list[float]]:
     """
     Reads the result file and extracts realisation indices and their corresponding costs / running times.
@@ -118,10 +127,12 @@ def plot(file_ending: str):
                 realisations, costs = read_data(os.path.join(dir_path, filename))
                 all_costs.extend(costs)  # Collect costs for scaling
                 # Plot the costs for this heuristic
+                # Use fixed color mapping for heuristics
+                color = HEURISTIC_COLOR_MAP.get(heuristic, COLOR_LIST[idx % len(COLOR_LIST)])
                 line, = plt.plot(
                     realisations, costs, label=heuristic,
                     marker=LINE_MARKER[idx % len(LINE_MARKER)],
-                    markersize=7.5, color=COLOR_LIST[idx % len(COLOR_LIST)]
+                    markersize=7.5, color=color
                 )
                 plotted_heuristics[heuristic] = line
             plt.xlabel('Realization')
