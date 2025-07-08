@@ -16,10 +16,10 @@ from maheu_group_project.solution.verifying import verify_solution
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the default configuration of the script. It can be overridden by command line arguments.
-SOLVERS: list[SolverType] = [SolverType.GREEDY]
+SOLVERS: list[SolverType] = [SolverType.GREEDY, SolverType.GREEDY_CANDIDATE_PATHS, SolverType.FLOW]
 DETERMINISTIC = False
 DATASET_INDICES = [1, 2, 3, 4]
-QUANTILE_VALUE = 1.0
+QUANTILE_VALUE = 0.75
 
 
 def run_on_all_data_from_first_dataset():
@@ -61,22 +61,20 @@ def run_on_all_data_from_first_dataset():
             pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
             files = sorted(glob.glob(pattern))
             for file in files:
-                start_time = time.time()
                 # Get solutions from the solver
                 if DETERMINISTIC:
-                    vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _ = solve_deterministically_and_return_data(
+                    vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _, end_time = solve_deterministically_and_return_data(
                         solver,
                         dataset_dir,
                         os.path.basename(file)
                     )
                 else:
-                    vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _ = solve_real_time_and_return_data(
+                    vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _, end_time = solve_real_time_and_return_data(
                         solver_type=solver,
                         dataset_dir_name=dataset_dir,
                         realised_capacity_file_name=os.path.basename(file),
                         quantile=QUANTILE_VALUE,
                     )
-                end_time = time.time() - start_time
 
                 # Verify the solution
                 is_valid = verify_solution(vehicles, vehicle_assignments, trucks_realised, truck_assignments)

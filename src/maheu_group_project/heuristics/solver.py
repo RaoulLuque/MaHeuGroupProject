@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 
 from maheu_group_project.heuristics.flow.solve_deterministically import solve_flow_deterministically, \
@@ -62,7 +63,7 @@ def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, real
 def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir_name: str,
                                             realised_capacity_file_name: str) -> \
         tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
-            TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
+            TruckIdentifier, Truck], dict[TruckIdentifier, Truck], float]:
     """
     Solves the vehicle assignment problem deterministically (directly using the realized data) using the specified
     solver type and dataset, and returns additional data.
@@ -80,8 +81,12 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
             - list[Vehicle]: List of vehicles with their details.
             - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with realised capacity data.
             - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with planned capacity data.
+            - float: The time taken to solve the problem in seconds.
     """
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
+
+    # Start timer
+    start_time = time.time()
 
     match solver_type:
         case SolverType.FLOW:
@@ -92,25 +97,30 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
                                                                                   locations=locations,
                                                                                   vehicles=vehicles,
                                                                                   trucks=trucks_realised)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.GREEDY:
             shortest_paths = get_shortest_paths(dataset_dir_name, locations)
             vehicle_assignments, truck_assignments = greedy_solver(vehicles, trucks_realised, trucks_realised,
                                                                    shortest_paths)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.OLD_FLOW:
             vehicle_assignments, truck_assignments = old_solve_as_flow(vehicles, trucks_realised, locations)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.LOWER_BOUND_UNCAPACITATED_FLOW:
             vehicle_assignments, truck_assignments, trucks_realised = lower_bound_uncapacitated_flow(dataset_dir_name,
                                                                                                      realised_capacity_file_name)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.GREEDY_CANDIDATE_PATHS:
             logistics_network = create_logistics_network(locations, trucks_realised)
             candidate_paths = calculate_candidate_paths(logistics_network)
             vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_realised, locations,
                                                                                   trucks_realised, candidate_paths)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.FLOW_MIP:
             flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_realised,
                                                                  locations=locations)
@@ -119,7 +129,8 @@ def solve_deterministically_and_return_data(solver_type: SolverType, dataset_dir
                                                                                          vehicles=vehicles,
                                                                                          trucks=trucks_realised,
                                                                                          locations=locations)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case _:
             raise ValueError(f"Unknown solver type: {solver_type}")
 
@@ -148,7 +159,7 @@ def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_cap
 def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str, quantile: float = 1.0) -> \
         tuple[
             list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
-                TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
+                TruckIdentifier, Truck], dict[TruckIdentifier, Truck], float]:
     """
     Solves the vehicle assignment problem in real-time (only using the realized data as available) using the specified
     solver type and dataset, and returns additional data.
@@ -167,11 +178,15 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
             - list[Vehicle]: List of vehicles with their details.
             - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with realised capacity data.
             - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with planned capacity data.
+            - float: The time taken to solve the problem in seconds.
     """
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
 
     if quantile != 1.0:
         trucks_planned = assign_quantile_based_planned_capacities(trucks_planned, dataset_dir_name, quantile)
+
+    # Start timer
+    start_time = time.time()
 
     match solver_type:
         case SolverType.FLOW:
@@ -182,7 +197,8 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              locations=locations, vehicles=vehicles,
                                                                              trucks_planned=trucks_planned,
                                                                              trucks_realised=trucks_realised, solve_as_mip=False)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.FLOW_MIP:
             flow_network, commodity_groups = create_flow_network(vehicles=vehicles, trucks=trucks_planned,
                                                                  locations=locations)
@@ -191,20 +207,23 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              locations=locations, vehicles=vehicles,
                                                                              trucks_planned=trucks_planned,
                                                                              trucks_realised=trucks_realised, solve_as_mip=True)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.GREEDY:
             shortest_paths = get_shortest_paths(dataset_dir_name, locations)
             vehicle_assignments, truck_assignments = greedy_solver(requested_vehicles=vehicles,
                                                                    trucks_planned=trucks_planned,
                                                                    trucks_realised=trucks_realised,
                                                                    shortest_paths=shortest_paths)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.GREEDY_CANDIDATE_PATHS:
             logistics_network = create_logistics_network(locations, trucks_realised)
             candidate_paths = calculate_candidate_paths(logistics_network)
             vehicle_assignments, truck_assignments = greedy_candidate_path_solver(vehicles, trucks_planned, locations,
                                                                                   trucks_realised, candidate_paths)
-            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned
+            end_time = time.time() - start_time
+            return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case _:
             raise ValueError(f"This solver type is not supported: {solver_type}")
 
