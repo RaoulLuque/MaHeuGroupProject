@@ -5,7 +5,9 @@ from maheu_group_project.parsing import read_history_data
 from maheu_group_project.uncertainty.history_data_handling import truck_to_history_dict_key, \
     history_data_by_id_segment_and_weekday
 from maheu_group_project.uncertainty.mean import calculate_mean_capacity
-from maheu_group_project.uncertainty.standard_deviation import mean_minus_standard_deviation_capacity
+from maheu_group_project.uncertainty.quantile import calculate_quantile_capacity
+from maheu_group_project.uncertainty.standard_deviation import mean_minus_standard_deviation_capacity, \
+    standard_deviation_capacity
 
 
 def subtract_standard_deviation_from_planned_capacities(trucks_planned: dict[TruckIdentifier, Truck], dataset_dir_name: str, times_standard_deviation: float) -> dict[TruckIdentifier, Truck]:
@@ -24,7 +26,7 @@ def subtract_standard_deviation_from_planned_capacities(trucks_planned: dict[Tru
 
     truck_history = read_history_data(dataset_dir_name)
     truck_history = history_data_by_id_segment_and_weekday(truck_history)
-    std_dev_capacity = mean_minus_standard_deviation_capacity(truck_history)
+    std_dev_capacity = standard_deviation_capacity(truck_history)
 
     for truck_identifier, truck in trucks_planned.items():
         key = truck_to_history_dict_key(truck)
@@ -79,7 +81,7 @@ def assign_quantile_based_planned_capacities(trucks_planned: dict[TruckIdentifie
 
     truck_history = read_history_data(dataset_dir_name)
     truck_history = history_data_by_id_segment_and_weekday(truck_history)
-    quantile_capacity = calculate_mean_capacity(truck_history)
+    quantile_capacity = calculate_quantile_capacity(truck_history, quantile)
 
     for truck_identifier, truck in trucks_planned.items():
         key = truck_to_history_dict_key(truck)
