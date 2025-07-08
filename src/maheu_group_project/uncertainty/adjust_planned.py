@@ -84,8 +84,9 @@ def assign_quantile_based_planned_capacities(trucks_planned: dict[TruckIdentifie
     quantile_capacity = calculate_quantile_capacity(truck_history, quantile)
 
     for truck_identifier, truck in trucks_planned.items():
-        key = truck_to_history_dict_key(truck)
         new_trucks[truck_identifier] = truck
-        new_trucks[truck_identifier].capacity = min(int(quantile_capacity[key]), new_trucks[truck_identifier].capacity)
+        key = truck_to_history_dict_key(truck)
+        if key in quantile_capacity:
+            new_trucks[truck_identifier].capacity = min(int(quantile_capacity[key]), new_trucks[truck_identifier].capacity)
 
     return new_trucks
