@@ -196,3 +196,52 @@ def get_shortest_paths(dataset_dir_name: str, locations: list[Location]) -> dict
                             shortest_paths[(plant, dealer)] = path
 
     return shortest_paths
+
+
+def read_history_data(dataset_dir_name: str) -> dict[TruckIdentifier, Truck]:
+    """
+    Reads the truck history data from capacity_history.csv for the given dataset directory.
+    Returns a dictionary mapping TruckIdentifier to Truck.
+    """
+    trucks: dict[TruckIdentifier, Truck] = {}
+    file_path = os.path.join(PATH_TO_DATA_FOLDER, dataset_dir_name, "capacity_history.csv")
+    print("Reading truck history data from:", file_path)
+    with open(file_path) as csvfile:
+        reader = csv.reader(csvfile, delimiter=';')
+        for row in reader:
+            print(row)
+            path_segment = row[0]
+            match = re.match(
+                r"([A-Z]{3}\d{2}(?:PLANT|TERM|DEALER))([A-Z]{3}\d{2}(?:PLANT|TERM|DEAL))-(TRUCK|TRAIN)-(\d+)",
+                path_segment)
+            if match:
+                start_code = match.group(1)
+                end_code = match.group(2)
+                truck_number = int(match.group(4))
+                if match.group(3) == "TRAIN":
+                    truck_number += 10
+            else:
+                print("No match found for path segment:", path_segment)
+                continue
+            start_location = location_from_string(start_code)
+            end_location = location_from_string(end_code)
+            departure_date = datetime.datetime.strptime(row[2], "%d/%m/%Y-%H:%M:%S").date()
+            capacity = int(float(row[3]))
+            price = int(float(row[4]))
+            truck_id = TruckIdentifier(
+                start_location=start_location,
+                end_location=end_location,
+                truck_number=truck_number,
+                departure_date=departure_date,
+            )
+            truck = Truck(
+                start_location=start_location,
+                end_location=end_location,
+                departure_date=departure_date,
+                arrival_date=None,
+                truck_number=truck_number,
+                capacity=capacity,
+                price=price,
+            )
+            trucks[truck_id] = truck
+    return trucks
