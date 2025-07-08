@@ -14,33 +14,24 @@ from typing import Dict, List, Tuple
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from maheu_group_project.serialization import (
-    deserialize_vehicle_assignments,
-    deserialize_truck_assignments
-)
-from maheu_group_project.solution.evaluate import (
-    remove_horizon,
-    objective_function
-)
-from maheu_group_project.solution.encoding import (
-    TruckIdentifier,
-    TruckAssignment,
-    VehicleAssignment,
-    Vehicle,
-    Truck
-)
+from maheu_group_project.serialization import deserialize_vehicle_assignments, deserialize_truck_assignments
+from maheu_group_project.solution.evaluate import remove_horizon, objective_function
+from maheu_group_project.parsing import read_data
 
 # Configuration
-TARGET_DIR = "06_07"
+TARGET_DIR = "08_07"
 
 # Number of days to consider for the horizon effect
 NUM_DAYS_FOR_HORIZON = 7
+
+# Number of realizations to process
+NUM_REALIZATIONS = 10
 
 
 def process_case_data(case_num: str, heuristic_name: str, data_type: str,
                      source_dir: Path, output_dir: Path) -> None:
     """
-    Process a single case's vehicle and truck assignment data.
+    Process a single case's vehicle and truck assignment data for multiple realizations.
 
     Args:
         case_num: Case number (e.g., "01", "02", etc.)
@@ -49,118 +40,93 @@ def process_case_data(case_num: str, heuristic_name: str, data_type: str,
         source_dir: Source directory containing the data files
         output_dir: Output directory for processed results
     """
-    # Define file paths
-    vehicles_file = source_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_vehicles.json"
-    trucks_file = source_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_trucks.json"
+    # Define result file path to check if the case exists
     result_file = source_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_result.txt"
 
-    # Check if input files exist
-    if not vehicles_file.exists():
-        print(f"Warning: Vehicles file not found: {vehicles_file}")
-        return
-
-    if not trucks_file.exists():
-        print(f"Warning: Trucks file not found: {trucks_file}")
-        return
-
+    # Check if result file exists
     if not result_file.exists():
         print(f"Warning: Result file not found: {result_file}")
         return
 
-    try:
-        # Deserialize vehicle and truck assignments
-        print(f"Processing Case {case_num} - {heuristic_name} ({data_type})")
-        vehicle_assignments = deserialize_vehicle_assignments(str(vehicles_file))
-        truck_assignments = deserialize_truck_assignments(str(trucks_file))
+    # Check if the realization directory exists
+    realization_dir = source_dir / f"Case_{case_num}_{data_type}_{heuristic_name}"
+    if not realization_dir.exists():
+        print(f"Warning: Realization directory not found: {realization_dir}")
+        return
 
-        # For now, we'll create placeholder data for the required parameters
-        # In a real implementation, you would load this data from your data files
-        requested_vehicles = create_placeholder_vehicles(vehicle_assignments)
-        trucks_realised = create_placeholder_trucks(truck_assignments)
-        trucks_planned = {}  # Empty for now
+    print(f"Processing Case {case_num} - {heuristic_name} ({data_type})")
 
-        # Apply horizon removal
-        filtered_vehicles, filtered_trucks = remove_horizon(
-            vehicle_assignments=vehicle_assignments,
-            requested_vehicles=requested_vehicles,
-            truck_assignments=truck_assignments,
-            trucks_realised=trucks_realised,
-            trucks_planned=trucks_planned,
-            front_horizon=0,
-            back_horizon=0
-        )
+    # Create output directory if it doesn't exist
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_horizon_result.txt"
 
-        # Calculate objective function
-        all_trucks = {**trucks_realised, **trucks_planned}
-        objective_value = objective_function(
-            vehicle_assignments=filtered_vehicles,
-            truck_assignments=filtered_trucks,
-            trucks=all_trucks
-        )
+    # Open the output file to store all realization results
+    with open(output_file, 'w') as f:
+        f.write(f"Case {case_num} - {heuristic_name} ({data_type})\n")
+        f.write(f"Horizon removal with front_horizon={NUM_DAYS_FOR_HORIZON} days\n\n")
 
-        # Create output directory if it doesn't exist
-        output_dir.mkdir(parents=True, exist_ok=True)
+        # Process each realization
+        for realization in range(1, NUM_REALIZATIONS + 1):
+            realization_num = f"{realization:03d}"
 
-        # Save results
-        output_file = output_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_horizon_result.txt"
-        with open(output_file, 'w') as f:
-            f.write(f"Case {case_num} - {heuristic_name} ({data_type})\n")
-            f.write(f"Original vehicles: {len(vehicle_assignments)}\n")
-            f.write(f"Filtered vehicles: {len(filtered_vehicles)}\n")
-            f.write(f"Original trucks: {len(truck_assignments)}\n")
-            f.write(f"Filtered trucks: {len(filtered_trucks)}\n")
-            f.write(f"Objective value after horizon removal: {objective_value}\n")
+            # Define the vehicles and trucks file paths for this realization
+            vehicles_file = realization_dir / f"realised_capacity_data_{realization_num}_vehicles.json"
+            trucks_file = realization_dir / f"realised_capacity_data_{realization_num}_trucks.json"
 
-        print(f"  -> Saved results to: {output_file}")
+            if not vehicles_file.exists() or not trucks_file.exists():
+                print(f"  -> Skipping realization {realization_num}: Files not found")
+                f.write(f"Realization {realization_num}: Files not found\n")
+                continue
 
-    except Exception as e:
-        print(f"Error processing Case {case_num} - {heuristic_name} ({data_type}): {str(e)}")
+            # Deserialize vehicle and truck assignments
+            vehicle_assignments = deserialize_vehicle_assignments(str(vehicles_file))
+            truck_assignments = deserialize_truck_assignments(str(trucks_file))
 
+            # Load actual data for this realization
+            dataset_dir_name = f"CaseMaHeu25_{case_num}"
+            realised_capacity_file_name = f"realised_capacity_data_{realization_num}.csv"
 
-def create_placeholder_vehicles(vehicle_assignments: List[VehicleAssignment]) -> List[Vehicle]:
-    """
-    Create placeholder Vehicle objects based on VehicleAssignment data.
-    In a real implementation, this would load actual vehicle data.
-    """
-    from datetime import date
-    from maheu_group_project.solution.encoding import Vehicle, Location, LocationType
+            # Read the actual data
+            _, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
 
-    vehicles = []
-    for va in vehicle_assignments:
-        # Create placeholder vehicle with basic data
-        vehicle = Vehicle(
-            id=va.id,
-            available_date=date.today(),  # Placeholder
-            destination=Location("PLACEHOLDER", LocationType.DEALER),  # Placeholder
-            origin=Location("PLACEHOLDER", LocationType.PLANT)  # Placeholder
-        )
-        vehicles.append(vehicle)
+            original_objective_value = objective_function(
+                vehicle_assignments=vehicle_assignments,
+                truck_assignments=truck_assignments,
+                trucks=trucks_realised,
+            )
 
-    return vehicles
+            # Apply horizon removal
+            filtered_vehicles, filtered_trucks = remove_horizon(
+                vehicle_assignments=vehicle_assignments,
+                vehicles=vehicles,  # Using actual vehicles data
+                truck_assignments=truck_assignments,
+                trucks_realised=trucks_realised,
+                trucks_planned=trucks_planned,
+                front_horizon=NUM_DAYS_FOR_HORIZON,
+                back_horizon=NUM_DAYS_FOR_HORIZON
+            )
 
+            # Calculate objective function
+            all_trucks = {**trucks_realised, **trucks_planned}
+            objective_value = objective_function(
+                vehicle_assignments=filtered_vehicles,
+                truck_assignments=filtered_trucks,
+                trucks=all_trucks
+            )
 
-def create_placeholder_trucks(truck_assignments: Dict[TruckIdentifier, TruckAssignment]) -> Dict[TruckIdentifier, Truck]:
-    """
-    Create placeholder Truck objects based on TruckAssignment data.
-    In a real implementation, this would load actual truck data.
-    """
-    trucks = {}
-    for truck_id, assignment in truck_assignments.items():
-        # Create placeholder truck with basic data
-        truck = Truck(
-            start_location=truck_id.start_location,
-            end_location=truck_id.end_location,
-            truck_number=truck_id.truck_number,
-            departure_date=truck_id.departure_date,
-            capacity=10,  # Placeholder
-            price=100.0   # Placeholder
-        )
-        trucks[truck_id] = truck
+            # Write results for this realization
+            f.write(f"Realization {realization_num}:\n")
+            f.write(f"  Original vehicles: {len(vehicle_assignments)}\n")
+            f.write(f"  Filtered vehicles: {len(filtered_vehicles)}\n")
+            f.write(f"  Original trucks: {len(truck_assignments)}\n")
+            f.write(f"  Filtered trucks: {len(filtered_trucks)}\n")
+            f.write(f"  Original objective value: {original_objective_value:.2f}\n")
+            f.write(f"  Objective value after horizon removal: {objective_value:.2f}\n\n")
 
-    return trucks
+    print(f"  -> Saved all realization results to: {output_file}")
 
 
-def extract_heuristic_names(directory: Path) -> List[str]:
+def extract_heuristic_names(directory: Path) -> list[str]:
     """
     Extract unique heuristic names from the files in a directory.
     """
@@ -170,10 +136,28 @@ def extract_heuristic_names(directory: Path) -> List[str]:
         # Parse filename to extract heuristic name
         parts = file.stem.split('_')
         if len(parts) >= 4:
-            # Remove "Case", case number, data type, and "result"
-            heuristic_parts = parts[3:-1]  # Everything between data_type and "result"
-            heuristic_name = '_'.join(heuristic_parts)
-            heuristics.add(heuristic_name)
+            # Expected format: Case_DD_deterministic_HEURISTIC_NAME_result.txt
+            # or Case_DD_real_time_HEURISTIC_NAME_result.txt
+
+            # Find the position where the heuristic name starts
+            if "deterministic" in parts:
+                deterministic_idx = parts.index("deterministic")
+                heuristic_start = deterministic_idx + 1
+            elif "real" in parts and "time" in parts:
+                # Handle real_time case
+                real_idx = parts.index("real")
+                if real_idx + 1 < len(parts) and parts[real_idx + 1] == "time":
+                    heuristic_start = real_idx + 2
+                else:
+                    continue  # Skip if format is unexpected
+            else:
+                continue  # Skip if format is unexpected
+
+            # Extract heuristic name parts (everything between data_type and "result")
+            heuristic_parts = parts[heuristic_start:-1]  # Exclude "result"
+            if heuristic_parts:  # Only add if we have a heuristic name
+                heuristic_name = '_'.join(heuristic_parts)
+                heuristics.add(heuristic_name)
 
     return sorted(list(heuristics))
 

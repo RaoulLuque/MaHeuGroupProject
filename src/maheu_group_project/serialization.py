@@ -1,7 +1,8 @@
 import json
 from datetime import date, timedelta
 
-from maheu_group_project.solution.encoding import TruckAssignment, TruckIdentifier, Location, LocationType, VehicleAssignment
+from maheu_group_project.solution.encoding import TruckAssignment, TruckIdentifier, Location, LocationType, \
+    VehicleAssignment, location_type_from_string
 
 
 def _truck_identifier_to_dict(truck_id: TruckIdentifier) -> dict:
@@ -24,11 +25,11 @@ def _truck_identifier_from_dict(data: dict) -> TruckIdentifier:
     """Convert dictionary back to TruckIdentifier."""
     start_location = Location(
         name=data["start_location"]["name"],
-        type=LocationType[data["start_location"]["type"]]
+        type=location_type_from_string(data["start_location"]["type"])
     )
     end_location = Location(
         name=data["end_location"]["name"],
-        type=LocationType[data["end_location"]["type"]]
+        type=location_type_from_string(data["end_location"]["type"])
     )
     return TruckIdentifier(
         start_location=start_location,
