@@ -41,7 +41,7 @@ def truck_to_history_dict_key(truck: Truck) -> tuple[Weekday, Location, Location
         tuple[Weekday, Location, Location, int]: A tuple containing the weekday, start location,
             end location, and truck identifier.
     """
-    return get_weekday_from_date(truck.departure_date), truck.start_location, truck.end_location, id(truck)
+    return get_weekday_from_date(truck.departure_date), truck.start_location, truck.end_location, truck.truck_number
 
 
 def history_data_by_id_segment_and_weekday(trucks_history: dict[TruckIdentifier, Truck]) -> dict[tuple[Weekday, Location, Location, int], list[Truck]]:
