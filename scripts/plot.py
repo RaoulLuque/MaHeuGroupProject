@@ -1,6 +1,6 @@
 import matplotlib
-# For Latex
-matplotlib.use('Agg')
+# # For Latex
+# matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 # For Latex
@@ -10,11 +10,11 @@ from matplotlib.image import imread
 import os
 import re
 
-# Use latex
-os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
+# # Use latex
+# os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/tmp"
+RESULTS_BASE_DIR = "../results/notable/06_07_DIFF_tmp"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
@@ -62,7 +62,7 @@ def read_data(filepath: str) -> tuple[list[int], list[float]]:
     realisations = []
     with open(filepath, 'r') as f:
         for line in f:
-            match = re.search(r"realised_capacity_data_(\d+)\.csv: ([\d.]+)", line)
+            match = re.search(r"realised_capacity_data_(\d+)\.csv: (-?[\d.]+)", line)
             if match:
                 realisations.append(int(match.group(1)))
                 costs.append(float(match.group(2)))
@@ -151,6 +151,15 @@ def plot(file_ending: str):
             if file_ending == '_result.txt':
                 plot_type_folder = 'objective_value'
                 ylabel = 'Cost'
+                # Explicitly set y-axis lower limit to include negative values
+                if all_costs:
+                    min_value = min(all_costs)
+                    max_value = max(all_costs)
+                    margin = (max_value - min_value) * 0.05 if max_value > min_value else 1.0
+                    if min_value >= 0.0:
+                        min_value = 0
+                        margin = 0
+                    plt.ylim(bottom=min_value - margin)
             elif file_ending == '_running_time.txt':
                 plot_type_folder = 'running_time'
                 ylabel = 'Running Time (s)'
