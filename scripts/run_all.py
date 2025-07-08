@@ -3,7 +3,6 @@ import datetime
 import glob
 import os
 import sys
-import time
 
 from maheu_group_project.serialization import serialize_truck_assignments, serialize_vehicle_assignments
 
@@ -19,7 +18,7 @@ from maheu_group_project.solution.evaluate import objective_function
 SOLVERS: list[SolverType] = [SolverType.GREEDY, SolverType.GREEDY_CANDIDATE_PATHS, SolverType.FLOW]
 DETERMINISTIC = False
 DATASET_INDICES = [1, 2, 3, 4]
-QUANTILE_VALUE = 0.75
+QUANTILE_VALUE = 0.4
 
 
 def run_on_all_data_from_first_dataset():
