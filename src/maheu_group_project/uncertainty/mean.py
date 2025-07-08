@@ -13,7 +13,6 @@ def mean_capacity(truck_history: dict[tuple[Weekday, Location, Location, int], l
     Returns:
         dict[tuple[Weekday, Location, Location, int], float]: A dictionary where the key is a tuple of weekday,
             start and end locations, and truck identifier. The value is the mean capacity of trucks for that combination.
-
     """
     mean_capacity_res: dict[tuple[Weekday, Location, Location, int], float] = {}
     for dict_key, trucks in truck_history.items():
