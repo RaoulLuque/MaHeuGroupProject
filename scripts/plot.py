@@ -38,6 +38,16 @@ HEURISTIC_COLOR_MAP = {
     'LOWER_BOUND': 'darkorchid',
 }
 
+# Fixed mapping from heuristic names to markers for consistency
+HEURISTIC_MARKER_MAP = {
+    'FLOW': 'o',
+    'FLOW_MIP': 'v',
+    'GREEDY': 's',
+    'GREEDY_CAN_PATHS': 'x',
+    'LOWER_BOUND': 'h',
+}
+
+
 def read_data(filepath: str) -> tuple[list[int], list[float]]:
     """
     Reads the result file and extracts realisation indices and their corresponding costs / running times.
@@ -127,11 +137,12 @@ def plot(file_ending: str):
                 realisations, costs = read_data(os.path.join(dir_path, filename))
                 all_costs.extend(costs)  # Collect costs for scaling
                 # Plot the costs for this heuristic
-                # Use fixed color mapping for heuristics
+                # Use fixed color and marker mapping for heuristics
                 color = HEURISTIC_COLOR_MAP.get(heuristic, COLOR_LIST[idx % len(COLOR_LIST)])
+                marker = HEURISTIC_MARKER_MAP.get(heuristic, LINE_MARKER[idx % len(LINE_MARKER)])
                 line, = plt.plot(
                     realisations, costs, label=heuristic,
-                    marker=LINE_MARKER[idx % len(LINE_MARKER)],
+                    marker=marker,
                     markersize=7.5, color=color
                 )
                 plotted_heuristics[heuristic] = line
