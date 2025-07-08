@@ -13,6 +13,7 @@ from maheu_group_project.lower_bounds.flow.uncapacitated_flow import lower_bound
 from maheu_group_project.parsing import read_data, get_shortest_paths
 from maheu_group_project.solution.encoding import VehicleAssignment, TruckIdentifier, TruckAssignment, Vehicle, Truck, \
     Location
+from maheu_group_project.uncertainty.adjust_planned import assign_quantile_based_planned_capacities
 
 
 class SolverType(Enum):
@@ -144,7 +145,7 @@ def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_cap
     return vehicle_assignments, truck_assignments
 
 
-def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str) -> \
+def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str, quantile: float = 1.0) -> \
         tuple[
             list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
                 TruckIdentifier, Truck], dict[TruckIdentifier, Truck]]:
@@ -156,6 +157,7 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
         solver_type (SolverType): The type of solver to use.
         dataset_dir_name (str): The name of the directory containing the dataset files.
         realised_capacity_file_name (str): The name of the CSV file containing truck capacity data.
+        quantile (float): The quantile value to adjust the planned truck capacities with. Default is 1.0.
 
     Returns:
         tuple: A tuple containing:
@@ -167,6 +169,9 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
             - dict[TruckIdentifier, Truck]: Dictionary mapping truck identifiers to Truck objects with planned capacity data.
     """
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
+
+    if quantile != 1.0:
+        trucks_planned = assign_quantile_based_planned_capacities(trucks_planned, dataset_dir_name, quantile)
 
     match solver_type:
         case SolverType.FLOW:

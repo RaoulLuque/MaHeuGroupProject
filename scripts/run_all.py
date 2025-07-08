@@ -71,9 +71,10 @@ def run_on_all_data_from_first_dataset():
                     )
                 else:
                     vehicle_assignments, truck_assignments, _, vehicles, trucks_realised, _ = solve_real_time_and_return_data(
-                        solver,
-                        dataset_dir,
-                        os.path.basename(file)
+                        solver_type=solver,
+                        dataset_dir_name=dataset_dir,
+                        realised_capacity_file_name=os.path.basename(file),
+                        quantile=QUANTILE_VALUE,
                     )
                 end_time = time.time() - start_time
 
