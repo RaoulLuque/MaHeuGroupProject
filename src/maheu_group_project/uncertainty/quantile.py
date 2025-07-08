@@ -4,7 +4,7 @@ from maheu_group_project.solution.encoding import Location, Truck
 from maheu_group_project.uncertainty.history_data_handling import Weekday
 
 
-def quantile_capacity(
+def calculate_quantile_capacity(
     truck_history: dict[tuple[Weekday, Location, Location, int], list[Truck]],
     quantile: float
 ) -> dict[tuple[Weekday, Location, Location, int], float]:
