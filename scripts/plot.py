@@ -1,8 +1,11 @@
 import matplotlib
 # For Latex
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
+# For Latex
+# plt.style.use('plotstyle.mplstyle')
+
 from matplotlib.image import imread
 import os
 import re
@@ -11,7 +14,7 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/06_07"
+RESULTS_BASE_DIR = "../results/notable/tmp"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
