@@ -21,6 +21,7 @@ def calculate_quantile_capacity(
             start and end locations, and truck identifier. The value is the quantile of truck capacities for that combination.
     """
     # Convert to the right quantile for higher capacities
+    assert 0 <= quantile <= 1, "Quantile must be between 0 and 1."
     quantile = 1 - quantile
     quantile_capacity_res: dict[tuple[Weekday, Location, Location, int], float] = {}
     for dict_key, trucks in truck_history.items():
