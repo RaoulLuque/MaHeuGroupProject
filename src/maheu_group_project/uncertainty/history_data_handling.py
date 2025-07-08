@@ -30,7 +30,7 @@ def get_weekday_from_date(date_in_datetime: date) -> Weekday:
     return Weekday(date_in_datetime.isoweekday())
 
 
-def truck_to_weekday_segment_and_id_key(truck: Truck) -> tuple[Weekday, Location, Location, int]:
+def truck_to_history_dict_key(truck: Truck) -> tuple[Weekday, Location, Location, int]:
     """
     Creates a key for the truck based on its weekday, start and end locations, and identifier.
 
@@ -59,7 +59,7 @@ def history_data_by_id_segment_and_weekday(trucks_history: dict[TruckIdentifier,
     """
     history_by_day: dict[tuple[Weekday, Location, Location, int], list[Truck]] = {}
     for truck in trucks_history.values():
-        dict_key = truck_to_weekday_segment_and_id_key(truck)
+        dict_key = truck_to_history_dict_key(truck)
         if dict_key not in history_by_day:
             history_by_day[dict_key] = []
         history_by_day[dict_key].append(truck)
