@@ -1,12 +1,14 @@
-# # For Latex
-# matplotlib.use('TkAgg')
+import matplotlib
+# For Latex
+matplotlib.use('TkAgg')
+
 import matplotlib.pyplot as plt
 from matplotlib.image import imread
 import os
 import re
 
-# # Use latex
-# os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
+# Use latex
+os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
 RESULTS_BASE_DIR = "../results/notable/06_07"
