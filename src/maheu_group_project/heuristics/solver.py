@@ -55,7 +55,7 @@ def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, real
             - list[VehicleAssignment]: List of vehicle assignments.
             - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
     """
-    vehicle_assignments, truck_assignments, _, _, _, _ = solve_deterministically_and_return_data(
+    vehicle_assignments, truck_assignments, _, _, _, _, _= solve_deterministically_and_return_data(
         solver_type, dataset_dir_name, realised_capacity_file_name)
     return vehicle_assignments, truck_assignments
 
@@ -151,12 +151,12 @@ def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_cap
             - list[VehicleAssignment]: List of vehicle assignments.
             - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
     """
-    vehicle_assignments, truck_assignments, _, _, _, _ = solve_deterministically_and_return_data(
+    vehicle_assignments, truck_assignments, _, _, _, _, _ = solve_deterministically_and_return_data(
         solver_type, dataset_dir_name, realised_capacity_file_name)
     return vehicle_assignments, truck_assignments
 
 
-def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str, quantile: float = 1.0) -> \
+def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str, quantile: float) -> \
         tuple[
             list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
                 TruckIdentifier, Truck], dict[TruckIdentifier, Truck], float]:
@@ -182,7 +182,7 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
     """
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
 
-    if quantile != 1.0:
+    if quantile != 0.0:
         trucks_planned = assign_quantile_based_planned_capacities(trucks_planned, dataset_dir_name, quantile)
 
     # Start timer
