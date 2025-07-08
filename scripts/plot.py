@@ -227,7 +227,7 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
     all_heuristics = sorted(all_heuristics)
 
     # If subtract_mip is True, filter out FLOW_MIP from the display heuristics
-    display_heuristics = [h for h in all_heuristics if not (subtract_mip and h == 'FLOW_MIP')]
+    display_heuristics = [h for h in all_heuristics]
 
     for subfolder in SUBFOLDERS:
         dir_path = os.path.join(RESULTS_BASE_DIR, subfolder)
@@ -247,9 +247,24 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
         for case, case_files in cases.items():
             plt.figure(figsize=(10, 6))
 
+            # Load deterministic FLOW_MIP solution for subtraction
+            deterministic_mip_data = {}
+            if subtract_mip:
+                det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
+                det_files = [f for f in os.listdir(det_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
+                for det_file in det_files:
+                    det_case_match = CASE_PATTERN.search(det_file)
+                    if not det_case_match:
+                        continue
+                    det_case = det_case_match.group(1)
+                    realisations, values = read_data(os.path.join(det_dir, det_file))
+                    # Store as dict: case -> {realisation: value}
+                    deterministic_mip_data[det_case] = dict(zip(realisations, values))
+
             # Collect data for each heuristic
             heuristic_data = {}
             mip_data = {}  # Store MIP data separately for subtraction
+            real_time_mip_data = {}  # Store real_time FLOW_MIP for plotting
 
             for filename in case_files:
                 if file_ending == "_result.txt":
@@ -269,8 +284,18 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
 
                 realisations, values = read_data(os.path.join(dir_path, filename))
 
+                if heuristic == 'FLOW_MIP':
+                    # Always store real_time MIP data for plotting (even if not subtracting)
+                    for real, val in zip(realisations, values):
+                        real_time_mip_data[real] = val
+                    # Also add to heuristic_data as 'FLOW_MIP' for real_time plots
+                    if subfolder == 'real_time':
+                        if 'FLOW_MIP' not in heuristic_data:
+                            heuristic_data['FLOW_MIP'] = {}
+                        for real, val in zip(realisations, values):
+                            heuristic_data['FLOW_MIP'][real] = val
                 if subtract_mip and heuristic == 'FLOW_MIP':
-                    # Store MIP data indexed by realization for subtraction
+                    # Store MIP data indexed by realization for subtraction (real_time)
                     for real, val in zip(realisations, values):
                         mip_data[real] = val
                 else:
@@ -280,15 +305,25 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                     for real, val in zip(realisations, values):
                         heuristic_data[heuristic][real] = val
 
-            # If subtract_mip is True, subtract MIP values from other heuristics
-            if subtract_mip and mip_data:
+            # If subtract_mip is True, subtract deterministic MIP values from other heuristics
+            if subtract_mip and deterministic_mip_data.get(case):
+                det_mip_case_data = deterministic_mip_data[case]
                 for heuristic in heuristic_data:
                     for real in list(heuristic_data[heuristic].keys()):
-                        if real in mip_data:
-                            heuristic_data[heuristic][real] -= mip_data[real]
+                        if real in det_mip_case_data:
+                            heuristic_data[heuristic][real] -= det_mip_case_data[real]
                         else:
-                            # Remove data points where MIP solution is not available
                             del heuristic_data[heuristic][real]
+                # For real_time FLOW_MIP, store difference as well
+                if real_time_mip_data:
+                    heuristic_data['FLOW_MIP_REAL_TIME'] = {}
+                    for real, val in real_time_mip_data.items():
+                        if real in det_mip_case_data:
+                            heuristic_data['FLOW_MIP_REAL_TIME'][real] = val - det_mip_case_data[real]
+            else:
+                # If not subtracting, just add real_time FLOW_MIP as a heuristic
+                if real_time_mip_data:
+                    heuristic_data['FLOW_MIP_REAL_TIME'] = real_time_mip_data
 
             # Convert to lists for boxplot
             final_heuristic_data = {}
