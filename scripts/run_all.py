@@ -48,6 +48,15 @@ def run_on_all_data_from_first_dataset():
             # Create folder for serialized data if it does not exist
             os.makedirs(serialized_data_dir_path, exist_ok=True)
 
+            # Store configuration file
+            config_filename = f"{current_time}_config.txt"
+            config_file_path = os.path.join(results_dir, config_filename)
+            with open(config_file_path, 'w') as config_file:
+                config_file.write(f"SOLVERS: {[str(s) for s in SOLVERS]}\n")
+                config_file.write(f"DETERMINISTIC: {DETERMINISTIC}\n")
+                config_file.write(f"DATASET_INDICES: {DATASET_INDICES}\n")
+                config_file.write(f"QUANTILE_VALUE: {QUANTILE_VALUE}\n")
+
             data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', dataset_dir))
             pattern = os.path.join(data_dir, 'realised_capacity_data_*.csv')
             files = sorted(glob.glob(pattern))
