@@ -14,7 +14,7 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/06_07_DIFF_tmp"
+RESULTS_BASE_DIR = "../results/notable/06_07"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
@@ -385,29 +385,24 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                     box.set_facecolor(COLOR_LIST[color_idx % len(COLOR_LIST)])
                     box.set_alpha(0.7)
 
-                plt.xlabel('Heuristic')
+                plt.xlabel('Heuristic', labelpad=10)
 
                 # Determine plot type and ylabel
                 if file_ending == '_result.txt':
                     plot_type_folder = 'objective_value'
                     if subtract_mip:
                         ylabel = 'Cost Difference from MIP'
-                        title_suffix = ' (Difference from MIP)'
                     else:
                         ylabel = 'Cost'
-                        title_suffix = ''
                 elif file_ending == '_running_time.txt':
                     plot_type_folder = 'running_time'
                     if subtract_mip:
                         ylabel = 'Running Time Difference from MIP (s)'
-                        title_suffix = ' (Difference from MIP)'
                     else:
                         ylabel = 'Running Time (s)'
-                        title_suffix = ''
 
                 plt.ylabel(ylabel)
-                plt.title(f'Case {case} - {subfolder} (Boxplot){title_suffix}', pad=20)
-                plt.xticks(rotation=45, ha='right')
+                plt.xticks()
                 plt.tight_layout()
 
                 # Create subfolder for boxplots
@@ -562,13 +557,13 @@ def create_barcharts(file_ending: str):
 
 
 if __name__ == '__main__':
-    plot('_result.txt')
-    create_combined_plots('_result.txt')
+    # plot('_result.txt')
+    # create_combined_plots('_result.txt')
     # plot('_running_time.txt')
     # create_combined_plots('_running_time.txt')
-    # create_boxplots('_running_time.txt')
-    # create_boxplots('_result.txt')
-    # create_boxplots('_running_time.txt', subtract_mip=True)
-    # create_boxplots('_result.txt', subtract_mip=True)
+    create_boxplots('_running_time.txt')
+    create_boxplots('_result.txt')
+    create_boxplots('_running_time.txt', subtract_mip=True)
+    create_boxplots('_result.txt', subtract_mip=True)
     # create_barcharts('_result.txt')
     # create_barcharts('_running_time.txt')
