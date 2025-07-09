@@ -2,9 +2,9 @@
 
 ### Job Parameters
 #SBATCH --ntasks=1                          # MPI tasks
-#SBATCH --cpus-per-task=4                  # Number of CPU cores per task
+#SBATCH --cpus-per-task=4                   # Number of CPU cores per task
 #SBATCH --time=30:00:00                     # Running time until timeout
-#SBATCH --job-name=maheu_mip_job            # Job name
+#SBATCH --job-name=maheu_mip_job_two        # Job name
 #SBATCH --output=stdout_mip.txt             # redirects stdout and stderr to stdout.txt
 
 ### Navigate to working directory
