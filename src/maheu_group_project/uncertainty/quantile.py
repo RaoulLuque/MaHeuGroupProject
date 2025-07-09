@@ -28,7 +28,7 @@ def calculate_quantile_capacity(
         capacities = [truck.capacity for truck in trucks]
         length = len(capacities)
         capacities_sorted = sorted(capacities)
-        index_for_quantile = int(np.ceil(length * quantile)) - 1
+        index_for_quantile = max(int(np.ceil(length * quantile)) - 1, 0)
         quantile_value = capacities_sorted[index_for_quantile]
         quantile_capacity_res[dict_key] = quantile_value
     return quantile_capacity_res
