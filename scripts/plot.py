@@ -519,7 +519,7 @@ def create_barcharts(file_ending: str):
                 # Create bar chart
                 bars = plt.bar(bar_heuristics, bar_averages, color=bar_colors, alpha=0.7)
 
-                plt.xlabel('Heuristic')
+                plt.xlabel('Heuristic', labelpad=10)
 
                 # Determine plot type and ylabel
                 if file_ending == '_result.txt':
@@ -537,8 +537,7 @@ def create_barcharts(file_ending: str):
                     plt.ylim(bottom=min(bar_averages) * 0.1, top=upper_limit)
 
                 plt.ylabel(ylabel)
-                plt.title(f'Case {case} - {subfolder} (Average Values)', pad=20)
-                plt.xticks(rotation=45, ha='right')
+                plt.xticks()
                 plt.tight_layout()
 
                 # Create subfolder for bar charts
@@ -561,9 +560,9 @@ if __name__ == '__main__':
     # create_combined_plots('_result.txt')
     # plot('_running_time.txt')
     # create_combined_plots('_running_time.txt')
-    create_boxplots('_running_time.txt')
-    create_boxplots('_result.txt')
-    create_boxplots('_running_time.txt', subtract_mip=True)
-    create_boxplots('_result.txt', subtract_mip=True)
+    # create_boxplots('_running_time.txt')
+    # create_boxplots('_result.txt')
+    # create_boxplots('_running_time.txt', subtract_mip=True)
+    # create_boxplots('_result.txt', subtract_mip=True)
     # create_barcharts('_result.txt')
-    # create_barcharts('_running_time.txt')
+    create_barcharts('_running_time.txt')
