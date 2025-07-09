@@ -111,12 +111,12 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 commodity_group = dealership_to_commodity_group(node)
                 demand = flow_network.nodes[node].get(commodity_group, 0)
                 color = string_to_color(commodity_group)
-                ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
 
             # Annotate nodes with the summarized demands
             else:
                 demand = get_demand_sum(flow_network, commodity_groups, node)
-                ax.text(x, y, str(demand), fontsize=7, color='black', ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=11, color='black', ha='center', va='center')
 
 
         else:
@@ -127,17 +127,17 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 if commodity_group == only_show_flow_nodes:
                     demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
                     color = string_to_color(only_show_flow_nodes)
-                    ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
+                    ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
 
             # Annotate nodes with their demans for the current commodity group
             else:
                 demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
                 color = string_to_color(only_show_flow_nodes)
-                ax.text(x, y, str(demand), fontsize=7, color=color, ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
 
         # We annotate the date to the left of PLANT nodes
         if node.location.type == LocationType.PLANT:
-            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=7, color='black', ha='right', va='center')
+            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=11, color='black', ha='right', va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():
@@ -176,7 +176,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             else:
                 # If flow data is provided, use it to label the edge
                 flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
-                label = f"{flow_value}/{capacity}/{data.get('weight', '')}"
+                label = f"{flow_value}/{capacity}/{weight_correctly_formatted}"
 
             label_x = (pos[u][0] + pos[v][0]) / 2
             label_y = (pos[u][1] + pos[v][1]) / 2
@@ -187,7 +187,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             else:
                 label_y -= abs(pos[u][0] - pos[v][0]) * rad * 2.5
 
-            ax.text(label_x, label_y, label, fontsize=7, color='blue', ha='center', va='center',
+            ax.text(label_x, label_y, label, fontsize=11, color='blue', ha='center', va='center',
                     backgroundcolor='white')
 
     # Optionally, draw node labels (commented out for clarity)
