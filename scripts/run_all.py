@@ -18,7 +18,7 @@ from maheu_group_project.solution.evaluate import objective_function
 SOLVERS: list[SolverType] = [SolverType.GREEDY, SolverType.GREEDY_CANDIDATE_PATHS, SolverType.FLOW]
 DETERMINISTIC = False
 DATASET_INDICES = [1, 2, 3, 4]
-QUANTILE_VALUE = 0.4
+QUANTILE_VALUE = 0.0
 
 
 def run_on_all_data_from_first_dataset():
