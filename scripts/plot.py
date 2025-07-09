@@ -1,17 +1,17 @@
 import matplotlib
 # # For Latex
-# matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 # For Latex
-# plt.style.use('plotstyle.mplstyle')
+plt.style.use('plotstyle.mplstyle')
 
 from matplotlib.image import imread
 import os
 import re
 
-# # Use latex
-# os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
+# Use latex
+os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
 RESULTS_BASE_DIR = "../results/notable/06_07_DIFF_tmp"
@@ -21,7 +21,7 @@ SUBFOLDERS = ["deterministic", "real_time"]
 LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
 COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue', 'crimson', 'darkorchid', 'darkorange', 'teal', 'slategray']
 NUMBER_OF_COLUMNS_IN_LEGEND = 4
-Y_OFFSET_LEGEND = 1.09
+Y_OFFSET_LEGEND = 1.095
 
 # Regex patterns to match heuristic names and case numbers
 HEURISTIC_PATTERN_OBJECTIVE = re.compile(r"Case_\d+_[^_]+_(.+)_result\.txt")
@@ -115,7 +115,7 @@ def plot(file_ending: str):
                 cases[case] = []
             cases[case].append(f)
         for case, case_files in cases.items():
-            plt.figure(figsize=(8, 5))
+            plt.figure(figsize=(11, 7))
             plotted_heuristics = {}
             all_costs = []  # Collect all cost values for y-axis scaling
             for filename in case_files:
@@ -146,7 +146,7 @@ def plot(file_ending: str):
                     markersize=7.5, color=color
                 )
                 plotted_heuristics[heuristic] = line
-            plt.xlabel('Realization')
+            plt.xlabel('Realization', fontsize=18)
             # Determine subfolder for plot type
             if file_ending == '_result.txt':
                 plot_type_folder = 'objective_value'
@@ -172,8 +172,7 @@ def plot(file_ending: str):
                     # Set upper limit to be at least one order of magnitude higher than max value
                     upper_limit = max_value * 10
                     plt.ylim(bottom=min_value * 0.1, top=upper_limit)
-            plt.ylabel(ylabel)
-            plt.title(f'Case {case} - {subfolder}', pad=25)
+            plt.ylabel(ylabel, fontsize=18)
             # Ensure legend order is consistent across all plots
             handles = [plotted_heuristics[h] for h in all_heuristics if h in plotted_heuristics]
             labels = [h for h in all_heuristics if h in plotted_heuristics]
@@ -184,10 +183,11 @@ def plot(file_ending: str):
             os.makedirs(plot_dir, exist_ok=True)
             # Maintain filename differences for objective and running_time plots
             if file_ending == '_result.txt':
-                out_name = f"line_chart_case_{case}_value_{subfolder}.png"
+                out_name = f"line_chart_case_{case}_value_{subfolder}"
             elif file_ending == '_running_time.txt':
-                out_name = f"line_chart_case_{case}_running_time_{subfolder}.png"
-            plt.savefig(os.path.join(plot_dir, out_name))
+                out_name = f"line_chart_case_{case}_running_time_{subfolder}"
+            plt.savefig(os.path.join(plot_dir, out_name) + ".png", bbox_inches='tight')
+            plt.savefig(os.path.join(plot_dir, out_name) + ".pdf", bbox_inches='tight')
             plt.close()
 
 
@@ -195,10 +195,10 @@ def create_combined_plots(file_ending: str):
     CASES = ["01", "02", "03", "04"]
     if file_ending == '_result.txt':
         plot_type_folder = 'objective_value'
-        suffix = '_objective.png'
+        suffix = '_objective'
     elif file_ending == '_running_time.txt':
         plot_type_folder = 'running_time'
-        suffix = '_running_time.png'
+        suffix = '_running_time'
     PLOTS_DIR = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder, "line_chart")
     for subfolder in ["deterministic", "real_time"]:
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
@@ -222,7 +222,8 @@ def create_combined_plots(file_ending: str):
         combined_plots_dir = os.path.join(RESULTS_BASE_DIR, "plots", plot_type_folder)
         os.makedirs(combined_plots_dir, exist_ok=True)
         out_path = os.path.join(combined_plots_dir, f"all_cases_{subfolder}{suffix}")
-        plt.savefig(out_path)
+        plt.savefig(out_path + ".png", bbox_inches='tight')
+        plt.savefig(out_path + ".pdf", bbox_inches='tight')
         plt.close()
 
 
@@ -416,16 +417,17 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                 # Save the boxplot
                 if file_ending == '_result.txt':
                     if subtract_mip:
-                        out_name = f"boxplot_case_{case}_value_{subfolder}_diff_from_mip.png"
+                        out_name = f"boxplot_case_{case}_value_{subfolder}_diff_from_mip"
                     else:
-                        out_name = f"boxplot_case_{case}_value_{subfolder}.png"
+                        out_name = f"boxplot_case_{case}_value_{subfolder}"
                 elif file_ending == '_running_time.txt':
                     if subtract_mip:
-                        out_name = f"boxplot_case_{case}_running_time_{subfolder}_diff_from_mip.png"
+                        out_name = f"boxplot_case_{case}_running_time_{subfolder}_diff_from_mip"
                     else:
-                        out_name = f"boxplot_case_{case}_running_time_{subfolder}.png"
+                        out_name = f"boxplot_case_{case}_running_time_{subfolder}"
 
-                plt.savefig(os.path.join(plot_dir, out_name))
+                plt.savefig(os.path.join(plot_dir, out_name) + ".png", bbox_inches='tight')
+                plt.savefig(os.path.join(plot_dir, out_name) + ".pdf", bbox_inches='tight')
                 plt.close()
 
 
@@ -550,22 +552,23 @@ def create_barcharts(file_ending: str):
 
                 # Save the bar chart
                 if file_ending == '_result.txt':
-                    out_name = f"barchart_case_{case}_value_{subfolder}.png"
+                    out_name = f"barchart_case_{case}_value_{subfolder}"
                 elif file_ending == '_running_time.txt':
-                    out_name = f"barchart_case_{case}_running_time_{subfolder}.png"
+                    out_name = f"barchart_case_{case}_running_time_{subfolder}"
 
-                plt.savefig(os.path.join(plot_dir, out_name))
+                plt.savefig(os.path.join(plot_dir, out_name) + ".png", bbox_inches='tight')
+                plt.savefig(os.path.join(plot_dir, out_name) + ".pdf", bbox_inches='tight')
                 plt.close()
 
 
 if __name__ == '__main__':
     plot('_result.txt')
     create_combined_plots('_result.txt')
-    plot('_running_time.txt')
-    create_combined_plots('_running_time.txt')
-    create_boxplots('_running_time.txt')
-    create_boxplots('_result.txt')
-    create_boxplots('_running_time.txt', subtract_mip=True)
-    create_boxplots('_result.txt', subtract_mip=True)
-    create_barcharts('_result.txt')
-    create_barcharts('_running_time.txt')
+    # plot('_running_time.txt')
+    # create_combined_plots('_running_time.txt')
+    # create_boxplots('_running_time.txt')
+    # create_boxplots('_result.txt')
+    # create_boxplots('_running_time.txt', subtract_mip=True)
+    # create_boxplots('_result.txt', subtract_mip=True)
+    # create_barcharts('_result.txt')
+    # create_barcharts('_running_time.txt')
