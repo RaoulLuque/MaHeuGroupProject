@@ -8,6 +8,8 @@ from networkx import MultiDiGraph
 from maheu_group_project.heuristics.flow.types import dealership_to_commodity_group, NodeType, NodeIdentifier
 from maheu_group_project.solution.encoding import Location, LocationType
 
+FOR_REPORT = True
+
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
                            commodity_groups: set[str] | None = None,
@@ -25,6 +27,14 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
+
+    # Filter out nodes with a date later than 2025-06-16 if FOR_REPORT is True
+    if FOR_REPORT:
+        cutoff_date = None
+        import datetime
+        cutoff_date = datetime.date(2025, 6, 16)
+        nodes_to_keep = [node for node in flow_network.nodes if node.day <= cutoff_date]
+        flow_network = flow_network.subgraph(nodes_to_keep).copy()
 
     # Get the first day in the flow network to align nodes vertically
     first_day = min(node.day for node in flow_network.nodes)
@@ -72,7 +82,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     if only_show_flow_nodes is not None:
         # Adjust the plot size
         plot_size = (16, 16)
-        dpi = 100
+        dpi = 150
 
     plt.figure(figsize=plot_size, dpi=dpi)
     ax = plt.gca()
@@ -132,11 +142,18 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             # Default curvature for parallel edges
             rad = 0.1 * (idx + 1)
 
+            # Determine edge color based on flow data
+            edge_color = 'gray'  # Default color
+            if flow_data_provided:
+                flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
+                if flow_value > 0:
+                    edge_color = 'red'
+
             # Draw the edge as a curved arrow
             arrow = FancyArrowPatch(
                 posA=pos[u], posB=pos[v],
                 connectionstyle=f"arc3,rad={rad}",
-                arrowstyle='-|>', color='gray', mutation_scale=14, lw=1  # Increased mutation_scale
+                arrowstyle='-|>', color=edge_color, mutation_scale=14, lw=1  # Increased mutation_scale
             )
             ax.add_patch(arrow)
 
