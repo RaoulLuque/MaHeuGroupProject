@@ -50,6 +50,8 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
     # Create a list to store the vehicle assignments
     vehicle_assignments: list[VehicleAssignment] = []
 
+    # visualize_flow_network(flow_network, locations)
+
     # We iterate over the days from first to last, then those locations which are DEALER locations
     for day in days:
         for location in locations:
@@ -65,6 +67,7 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
 
                     # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow, only_show_flow_nodes=commodity_group)
+                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow)
 
                     # Extract the solution from the flow and update the flow network
                     extract_flow_update_network_and_obtain_final_assignment(flow_network=flow_network, flow=flow,

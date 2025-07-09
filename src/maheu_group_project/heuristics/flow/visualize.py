@@ -1,6 +1,7 @@
 import hashlib
-
+import datetime
 import networkx as nx
+
 from matplotlib import pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
@@ -9,6 +10,7 @@ from maheu_group_project.heuristics.flow.types import dealership_to_commodity_gr
 from maheu_group_project.solution.encoding import Location, LocationType
 
 FOR_REPORT = True
+CUTOFF_DATE = datetime.date(2025, 6, 16)
 
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
@@ -30,11 +32,8 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     # Filter out nodes with a date later than 2025-06-16 if FOR_REPORT is True
     if FOR_REPORT:
-        cutoff_date = None
-        import datetime
-        cutoff_date = datetime.date(2025, 6, 16)
-        nodes_to_keep = [node for node in flow_network.nodes if node.day <= cutoff_date]
-        flow_network = flow_network.subgraph(nodes_to_keep).copy()
+        nodes_to_keep = [node for node in flow_network.nodes if node.day <= CUTOFF_DATE]
+        flow_network = nx.MultiDiGraph(flow_network.subgraph(nodes_to_keep))
 
     # Get the first day in the flow network to align nodes vertically
     first_day = min(node.day for node in flow_network.nodes)
@@ -78,11 +77,18 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     # Default plot size
     plot_size = (16, 64)
+    if FOR_REPORT:
+        # Adjust the plot size for report
+        plot_size = (16, 24)
     dpi = 150
     if only_show_flow_nodes is not None:
         # Adjust the plot size
         plot_size = (16, 16)
         dpi = 150
+
+    if FOR_REPORT:
+        # For report, we want a higher DPI
+        dpi = 200
 
     plt.figure(figsize=plot_size, dpi=dpi)
     ax = plt.gca()
@@ -160,12 +166,17 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             # Label each edge with its capacity and weight (cost)
             weight = data.get('weight') / 100
             weight_correctly_formatted = str(int(weight)) if weight.is_integer() else f"{weight:.2f}"
+            capacity = data.get('capacity', '')
+            if FOR_REPORT:
+                if capacity == 300:
+                    capacity = 'inf'
+
             if not flow_data_provided:
-                label = f"{data.get('capacity', '')}/{weight_correctly_formatted}"
+                label = f"{capacity}/{weight_correctly_formatted}"
             else:
                 # If flow data is provided, use it to label the edge
                 flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
-                label = f"{flow_value}/{data.get('capacity', '')}/{data.get('weight', '')}"
+                label = f"{flow_value}/{capacity}/{data.get('weight', '')}"
 
             label_x = (pos[u][0] + pos[v][0]) / 2
             label_y = (pos[u][1] + pos[v][1]) / 2
