@@ -4,10 +4,9 @@ import glob
 import os
 import sys
 
-from maheu_group_project.serialization import serialize_truck_assignments, serialize_vehicle_assignments
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
+from maheu_group_project.serialization import serialize_truck_assignments, serialize_vehicle_assignments
 from maheu_group_project.heuristics.solver import SolverType, solve_deterministically_and_return_data, \
     solve_real_time_and_return_data, solver_type_from_string
 from maheu_group_project.solution.metrics import get_pretty_metrics
@@ -15,7 +14,7 @@ from maheu_group_project.solution.verifying import verify_solution
 from maheu_group_project.solution.evaluate import objective_function
 
 # This is the default configuration of the script. It can be overridden by command line arguments.
-SOLVERS: list[SolverType] = [SolverType.GREEDY, SolverType.GREEDY_CANDIDATE_PATHS, SolverType.FLOW]
+SOLVERS: list[SolverType] = [SolverType.FLOW_MIP]
 DETERMINISTIC = False
 DATASET_INDICES = [1, 2, 3, 4]
 QUANTILE_VALUE = 0.0
