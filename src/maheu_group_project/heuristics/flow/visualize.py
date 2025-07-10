@@ -196,6 +196,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     plt.axis('off')  # Hide axes for cleaner visualization
     plt.tight_layout()
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     plt.show()
 
 
