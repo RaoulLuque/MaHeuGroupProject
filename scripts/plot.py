@@ -14,7 +14,7 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/06_07"
+RESULTS_BASE_DIR = "../results/notable/final_q_0"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
@@ -556,13 +556,13 @@ def create_barcharts(file_ending: str):
 
 
 if __name__ == '__main__':
-    # plot('_result.txt')
-    # create_combined_plots('_result.txt')
-    # plot('_running_time.txt')
-    # create_combined_plots('_running_time.txt')
-    # create_boxplots('_running_time.txt')
-    # create_boxplots('_result.txt')
-    # create_boxplots('_running_time.txt', subtract_mip=True)
-    # create_boxplots('_result.txt', subtract_mip=True)
-    # create_barcharts('_result.txt')
+    plot('_result.txt')
+    create_combined_plots('_result.txt')
+    plot('_running_time.txt')
+    create_combined_plots('_running_time.txt')
+    create_boxplots('_running_time.txt')
+    create_boxplots('_result.txt')
+    create_boxplots('_running_time.txt', subtract_mip=True)
+    create_boxplots('_result.txt', subtract_mip=True)
+    create_barcharts('_result.txt')
     create_barcharts('_running_time.txt')
