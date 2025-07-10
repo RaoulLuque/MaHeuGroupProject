@@ -1,0 +1,34 @@
+Case 03 - FLOW_MIP (deterministic)
+Horizon removal with front_horizon=7 days
+
+Realization 001:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 417
+  Filtered trucks: 124
+  Original objective value: 45782.71
+  Objective value after horizon removal: 38610.00
+
+Realization 002:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 405
+  Filtered trucks: 123
+  Original objective value: 39412.97
+  Objective value after horizon removal: 33270.00
+
+Realization 003:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 415
+  Filtered trucks: 126
+  Original objective value: 37609.97
+  Objective value after horizon removal: 25690.00
+
+Realization 004: Files not found
+Realization 005: Files not found
+Realization 006: Files not found
+Realization 007: Files not found
+Realization 008: Files not found
+Realization 009: Files not found
+Realization 010: Files not found

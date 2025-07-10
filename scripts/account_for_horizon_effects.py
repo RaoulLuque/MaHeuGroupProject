@@ -19,7 +19,7 @@ from maheu_group_project.solution.evaluate import remove_horizon, objective_func
 from maheu_group_project.parsing import read_data
 
 # Configuration
-TARGET_DIR = "08_07"
+TARGET_DIR = "final_q_0"
 
 # Number of days to consider for the horizon effect
 NUM_DAYS_FOR_HORIZON = 7
@@ -58,10 +58,12 @@ def process_case_data(case_num: str, heuristic_name: str, data_type: str,
 
     # Create output directory if it doesn't exist
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_horizon_result.txt"
+    horizon_output_file = output_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_horizon.txt"
+    output_file = output_dir / f"Case_{case_num}_{data_type}_{heuristic_name}_result.txt"
+    open(output_file, 'w').close()
 
     # Open the output file to store all realization results
-    with open(output_file, 'w') as f:
+    with open(horizon_output_file, 'w') as f:
         f.write(f"Case {case_num} - {heuristic_name} ({data_type})\n")
         f.write(f"Horizon removal with front_horizon={NUM_DAYS_FOR_HORIZON} days\n\n")
 
@@ -123,7 +125,11 @@ def process_case_data(case_num: str, heuristic_name: str, data_type: str,
             f.write(f"  Original objective value: {original_objective_value:.2f}\n")
             f.write(f"  Objective value after horizon removal: {objective_value:.2f}\n\n")
 
-    print(f"  -> Saved all realization results to: {output_file}")
+            with open(output_file, 'a') as result_file:
+                output = f"Cost of solution for {dataset_dir_name}/{realised_capacity_file_name}: {objective_value:.2f} \n"
+                result_file.write(output)
+
+    print(f"  -> Saved all realization results to: {horizon_output_file}")
 
 
 def extract_heuristic_names(directory: Path) -> list[str]:
