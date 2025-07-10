@@ -1,0 +1,2110 @@
+{
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      1,
+      3,
+      4,
+      9,
+      12,
+      15,
+      18
+    ]
+  },
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      2,
+      6,
+      7,
+      10,
+      11
+    ]
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      0,
+      37,
+      8,
+      19,
+      31,
+      5,
+      14,
+      23,
+      27,
+      29,
+      30,
+      33,
+      20,
+      24
+    ]
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      34,
+      38,
+      39,
+      22,
+      25,
+      35,
+      13
+    ]
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      32,
+      36,
+      26,
+      28
+    ]
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      41,
+      52,
+      54,
+      16,
+      17,
+      21,
+      58,
+      42,
+      49,
+      50,
+      40
+    ]
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      48,
+      55,
+      56
+    ]
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      51,
+      53,
+      59,
+      43,
+      45,
+      57
+    ]
+  },
+  "{\"departure_date\": \"2025-06-05\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      64,
+      67,
+      44,
+      63,
+      65,
+      66,
+      76,
+      79,
+      70,
+      46,
+      47,
+      68,
+      73,
+      62,
+      72
+    ]
+  },
+  "{\"departure_date\": \"2025-06-05\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      2,
+      6,
+      7,
+      10,
+      11
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      93,
+      83,
+      85,
+      88,
+      95,
+      99,
+      74,
+      78,
+      86,
+      60,
+      94,
+      92
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      1,
+      3,
+      4,
+      34,
+      38,
+      39,
+      9,
+      22
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      12,
+      15,
+      18
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      98,
+      71,
+      87,
+      89
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      32,
+      36,
+      26,
+      28
+    ]
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      69,
+      75,
+      80,
+      61,
+      96,
+      77,
+      81,
+      97,
+      91
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      0,
+      64,
+      67,
+      37,
+      8,
+      19,
+      31
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      41,
+      52,
+      54,
+      16,
+      17,
+      21,
+      58,
+      40,
+      98,
+      71,
+      25
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      49,
+      50,
+      42,
+      55,
+      56
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      100,
+      108,
+      117,
+      103,
+      112
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      102,
+      104,
+      111,
+      106
+    ]
+  },
+  "{\"departure_date\": \"2025-06-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      69,
+      75,
+      80,
+      61
+    ]
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      93,
+      83,
+      85,
+      88,
+      95,
+      99,
+      74,
+      78,
+      86,
+      60,
+      94,
+      35
+    ]
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      130,
+      129,
+      134,
+      131,
+      138,
+      126,
+      132,
+      139
+    ]
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      5,
+      14,
+      23,
+      27,
+      29,
+      30
+    ]
+  },
+  "{\"departure_date\": \"2025-06-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      48,
+      87,
+      89
+    ]
+  },
+  "{\"departure_date\": \"2025-06-12\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      146,
+      157,
+      128,
+      136,
+      105,
+      140,
+      143,
+      135,
+      137,
+      107,
+      141,
+      110,
+      113,
+      114,
+      121,
+      154,
+      161,
+      163,
+      169,
+      149,
+      147
+    ]
+  },
+  "{\"departure_date\": \"2025-06-12\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      124,
+      172,
+      120,
+      152,
+      176,
+      177,
+      133,
+      170,
+      109,
+      175,
+      82,
+      122,
+      125,
+      142,
+      173
+    ]
+  },
+  "{\"departure_date\": \"2025-06-12\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      101,
+      166,
+      160,
+      162,
+      168,
+      144,
+      150,
+      151,
+      165,
+      171
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      130,
+      100,
+      108,
+      117,
+      129,
+      103,
+      134,
+      131
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      33,
+      44,
+      63,
+      65,
+      66,
+      76,
+      79,
+      70,
+      46,
+      47,
+      68,
+      102,
+      73,
+      51,
+      43,
+      45
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      13,
+      112,
+      92,
+      138,
+      126,
+      132,
+      139
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      20,
+      53,
+      24,
+      59,
+      62,
+      96,
+      106
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      115,
+      116,
+      84,
+      118,
+      119,
+      153,
+      90,
+      123,
+      127,
+      187,
+      188,
+      191
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      194,
+      182,
+      192,
+      198,
+      181
+    ]
+  },
+  "{\"departure_date\": \"2025-06-13\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      199,
+      185,
+      155,
+      156,
+      158,
+      159,
+      164,
+      197,
+      167
+    ]
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      146,
+      157,
+      128,
+      136,
+      105,
+      140,
+      143
+    ]
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      77,
+      124,
+      81,
+      172,
+      120,
+      57,
+      152,
+      72,
+      176
+    ]
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      193,
+      200,
+      209
+    ]
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      202,
+      210,
+      184,
+      203,
+      148,
+      211,
+      190,
+      204,
+      207,
+      217,
+      206
+    ]
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      147
+    ]
+  },
+  "{\"departure_date\": \"2025-06-17\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      236,
+      221,
+      222,
+      229,
+      232,
+      234,
+      238
+    ]
+  },
+  "{\"departure_date\": \"2025-06-17\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      195,
+      196,
+      208,
+      145,
+      178,
+      224,
+      228,
+      201,
+      205,
+      174,
+      227,
+      215,
+      189,
+      230,
+      216
+    ]
+  },
+  "{\"departure_date\": \"2025-06-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      177,
+      133,
+      170,
+      109
+    ]
+  },
+  "{\"departure_date\": \"2025-06-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      115,
+      116,
+      84,
+      118,
+      119,
+      153,
+      90,
+      135,
+      137,
+      107,
+      141,
+      110,
+      113,
+      114
+    ]
+  },
+  "{\"departure_date\": \"2025-06-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      123,
+      127,
+      194,
+      182,
+      187,
+      188,
+      192,
+      121,
+      154,
+      161,
+      163,
+      169
+    ]
+  },
+  "{\"departure_date\": \"2025-06-18\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      243,
+      179,
+      180,
+      214,
+      251,
+      186,
+      255,
+      212,
+      183,
+      213,
+      218,
+      223
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      175,
+      82,
+      122,
+      125,
+      97,
+      101
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      198,
+      202,
+      181,
+      191
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      165,
+      199,
+      171,
+      173,
+      209,
+      185
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      263,
+      266,
+      271,
+      272,
+      256,
+      258,
+      262,
+      265,
+      259,
+      244,
+      279,
+      219,
+      220,
+      254,
+      235
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      261,
+      264,
+      278,
+      237,
+      239,
+      246,
+      249,
+      269,
+      270,
+      253,
+      277
+    ]
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      233,
+      250
+    ]
+  },
+  "{\"departure_date\": \"2025-06-20\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      166,
+      142,
+      91,
+      160,
+      193,
+      162,
+      104,
+      168,
+      200,
+      111,
+      144,
+      150,
+      151,
+      236,
+      221,
+      222
+    ]
+  },
+  "{\"departure_date\": \"2025-06-20\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      155,
+      156,
+      158,
+      159,
+      164,
+      197,
+      167
+    ]
+  },
+  "{\"departure_date\": \"2025-06-20\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      295,
+      283,
+      225,
+      226,
+      260,
+      231,
+      292,
+      267,
+      275,
+      284,
+      247,
+      274
+    ]
+  },
+  "{\"departure_date\": \"2025-06-20\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      291,
+      286,
+      282,
+      245,
+      252
+    ]
+  },
+  "{\"departure_date\": \"2025-06-20\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      273,
+      280,
+      299,
+      240,
+      241,
+      242
+    ]
+  },
+  "{\"departure_date\": \"2025-06-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      210,
+      149,
+      184,
+      243,
+      179,
+      180,
+      214
+    ]
+  },
+  "{\"departure_date\": \"2025-06-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      203,
+      148,
+      211,
+      212,
+      183,
+      213,
+      218
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      195,
+      196,
+      263,
+      266,
+      271,
+      208,
+      145,
+      178,
+      272
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      295,
+      251,
+      186,
+      283,
+      255,
+      225,
+      226,
+      292,
+      267,
+      275,
+      284
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      260,
+      231,
+      190,
+      223,
+      269,
+      270,
+      245,
+      252,
+      253,
+      277
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      224,
+      256,
+      258,
+      228,
+      273
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      306,
+      310,
+      308,
+      320,
+      328,
+      337,
+      297,
+      301,
+      303,
+      339,
+      281,
+      285,
+      307,
+      314,
+      319,
+      323
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      257,
+      300,
+      332,
+      276,
+      248,
+      288,
+      321,
+      290,
+      293,
+      268,
+      334,
+      304,
+      317,
+      287,
+      298
+    ]
+  },
+  "{\"departure_date\": \"2025-06-24\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      289,
+      325,
+      294,
+      326,
+      296,
+      322,
+      327,
+      329,
+      324,
+      330,
+      331,
+      333,
+      336,
+      338,
+      311
+    ]
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      262
+    ]
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      247,
+      291,
+      261,
+      264,
+      204,
+      207,
+      278,
+      286,
+      217,
+      237,
+      206
+    ]
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      340,
+      344,
+      354,
+      358,
+      356,
+      359,
+      348,
+      345,
+      353,
+      347,
+      351,
+      341
+    ]
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      352,
+      342,
+      355,
+      346
+    ]
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      201,
+      265,
+      205,
+      174,
+      259
+    ]
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      239,
+      246,
+      249
+    ]
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      367,
+      374,
+      361,
+      357,
+      366,
+      335,
+      305,
+      370,
+      350,
+      363,
+      302,
+      368,
+      309,
+      316,
+      373
+    ]
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      376,
+      377
+    ]
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      362,
+      364,
+      369
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      227,
+      244,
+      215,
+      189,
+      230,
+      279,
+      216,
+      219,
+      220,
+      254,
+      233,
+      250,
+      235,
+      280,
+      325,
+      294
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      306,
+      310,
+      282,
+      308,
+      320,
+      328,
+      337,
+      274,
+      285,
+      319,
+      323
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      299,
+      229,
+      232,
+      234,
+      238,
+      240,
+      241,
+      242,
+      289,
+      326
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      388,
+      380,
+      371,
+      389,
+      394,
+      312,
+      313,
+      378,
+      315,
+      349,
+      318,
+      398
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      297,
+      301,
+      303,
+      339,
+      281,
+      307,
+      314
+    ]
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      396,
+      384,
+      399
+    ]
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      340,
+      344,
+      354,
+      358,
+      356
+    ]
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      257,
+      300,
+      332,
+      367,
+      276,
+      374,
+      248
+    ]
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      352,
+      353,
+      347,
+      351,
+      355
+    ]
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      403,
+      381,
+      382,
+      383,
+      387,
+      392,
+      393,
+      401,
+      408,
+      412,
+      417,
+      400
+    ]
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      385,
+      419,
+      391,
+      407,
+      409,
+      410,
+      413
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      288,
+      321,
+      290,
+      293,
+      361,
+      268,
+      334,
+      304,
+      317
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      388,
+      359,
+      348,
+      345,
+      380,
+      371,
+      389,
+      394,
+      341,
+      312,
+      313,
+      378
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      433,
+      438,
+      416,
+      418,
+      431,
+      406,
+      439,
+      414,
+      415,
+      420,
+      424,
+      437,
+      434
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      324,
+      330
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      346
+    ]
+  },
+  "{\"departure_date\": \"2025-07-01\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      430
+    ]
+  },
+  "{\"departure_date\": \"2025-07-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      287,
+      296,
+      357,
+      298,
+      366,
+      335,
+      305
+    ]
+  },
+  "{\"departure_date\": \"2025-07-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      315,
+      349,
+      318,
+      396,
+      398,
+      342,
+      376,
+      377,
+      384
+    ]
+  },
+  "{\"departure_date\": \"2025-07-02\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      453,
+      454
+    ]
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      370,
+      350,
+      322,
+      327,
+      329,
+      363,
+      302,
+      368,
+      309,
+      316,
+      385,
+      419
+    ]
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      448,
+      451,
+      459,
+      428,
+      464,
+      435,
+      372,
+      404,
+      405,
+      436,
+      379,
+      411,
+      479,
+      461,
+      468,
+      478
+    ]
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      403,
+      381,
+      382,
+      383,
+      387,
+      392,
+      393,
+      401,
+      408,
+      412
+    ]
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      450,
+      386,
+      421,
+      423,
+      458,
+      395,
+      375,
+      473,
+      442,
+      422,
+      390,
+      360,
+      426,
+      365,
+      472
+    ]
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      425,
+      427,
+      460,
+      429,
+      449,
+      440,
+      457
+    ]
+  },
+  "{\"departure_date\": \"2025-07-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      433,
+      438,
+      417,
+      399,
+      400,
+      416,
+      418,
+      431,
+      406
+    ]
+  },
+  "{\"departure_date\": \"2025-07-04\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      343,
+      397,
+      494,
+      402,
+      469,
+      441,
+      474,
+      476,
+      445,
+      432,
+      443,
+      499
+    ]
+  },
+  "{\"departure_date\": \"2025-07-04\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      463,
+      471,
+      486
+    ]
+  },
+  "{\"departure_date\": \"2025-07-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      420
+    ]
+  },
+  "{\"departure_date\": \"2025-07-07\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      391,
+      331,
+      333,
+      336,
+      338,
+      362,
+      364,
+      369,
+      311,
+      386,
+      421
+    ]
+  },
+  "{\"departure_date\": \"2025-07-07\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      450
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      448,
+      451,
+      459,
+      428,
+      464,
+      435,
+      372,
+      397,
+      494,
+      402,
+      469,
+      441
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      404,
+      405,
+      436,
+      379,
+      411,
+      479,
+      343,
+      445,
+      424,
+      437,
+      434,
+      478
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      423,
+      458,
+      395,
+      373,
+      375,
+      473,
+      442
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      488,
+      493,
+      467,
+      475,
+      539,
+      509,
+      452,
+      484,
+      462,
+      497,
+      466,
+      529,
+      481,
+      518,
+      492,
+      528,
+      465,
+      520,
+      524,
+      505,
+      506,
+      537,
+      511
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      409
+    ]
+  },
+  "{\"departure_date\": \"2025-07-08\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      483,
+      519,
+      456,
+      489,
+      491,
+      504,
+      538,
+      444,
+      477,
+      480,
+      512,
+      485,
+      490,
+      523,
+      498
+    ]
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      422,
+      390,
+      360,
+      426
+    ]
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      474,
+      476,
+      432,
+      443,
+      499,
+      439,
+      414,
+      415,
+      461
+    ]
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      515,
+      487,
+      525,
+      531,
+      500,
+      502,
+      513,
+      482,
+      554,
+      495,
+      496,
+      545
+    ]
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      514,
+      517,
+      558,
+      559
+    ]
+  },
+  "{\"departure_date\": \"2025-07-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      365,
+      453,
+      454,
+      425,
+      427,
+      460,
+      429
+    ]
+  },
+  "{\"departure_date\": \"2025-07-10\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      455,
+      521,
+      522,
+      553,
+      530,
+      501,
+      565,
+      536,
+      540,
+      575,
+      507,
+      571,
+      508,
+      544,
+      547,
+      549,
+      552,
+      564,
+      566,
+      570,
+      573
+    ]
+  },
+  "{\"departure_date\": \"2025-07-10\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      533,
+      470,
+      541,
+      542,
+      447,
+      534,
+      535,
+      510,
+      576,
+      551,
+      556,
+      526,
+      560,
+      561,
+      546
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      488,
+      493,
+      467
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      449,
+      472,
+      457,
+      463,
+      440,
+      471,
+      486,
+      430,
+      407
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      452,
+      484,
+      462
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      550,
+      555,
+      591,
+      563,
+      595,
+      569,
+      446,
+      543,
+      583,
+      586,
+      594,
+      598
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      582,
+      585,
+      587,
+      589,
+      592
+    ]
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      503,
+      516,
+      588,
+      596,
+      597
+    ]
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      475,
+      515,
+      487
+    ]
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      502,
+      539,
+      509
+    ]
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      410,
+      413,
+      533,
+      470,
+      541,
+      542,
+      447
+    ]
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      456,
+      489,
+      491,
+      504,
+      538,
+      444,
+      477
+    ]
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": [
+      593,
+      599,
+      562,
+      532
+    ]
+  },
+  "{\"departure_date\": \"2025-07-15\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      525,
+      531,
+      468
+    ]
+  },
+  "{\"departure_date\": \"2025-07-15\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      466,
+      529,
+      481
+    ]
+  },
+  "{\"departure_date\": \"2025-07-15\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      483,
+      519,
+      480,
+      512,
+      485,
+      490,
+      523,
+      498,
+      534,
+      576
+    ]
+  },
+  "{\"departure_date\": \"2025-07-15\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      535,
+      510
+    ]
+  },
+  "{\"departure_date\": \"2025-07-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      500,
+      513,
+      482,
+      497,
+      518,
+      455,
+      521
+    ]
+  },
+  "{\"departure_date\": \"2025-07-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      522,
+      554,
+      495,
+      496,
+      591,
+      595,
+      543
+    ]
+  },
+  "{\"departure_date\": \"2025-07-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      582,
+      551,
+      585,
+      587
+    ]
+  },
+  "{\"departure_date\": \"2025-07-17\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      556,
+      589,
+      526,
+      560,
+      561,
+      546,
+      592,
+      593
+    ]
+  },
+  "{\"departure_date\": \"2025-07-17\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      579,
+      580,
+      557,
+      527,
+      578,
+      548,
+      584,
+      590,
+      567,
+      577,
+      572,
+      581,
+      574
+    ]
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      545,
+      550,
+      555,
+      563,
+      569,
+      446,
+      583,
+      530,
+      501,
+      565,
+      536,
+      540,
+      575,
+      503,
+      516,
+      507,
+      571
+    ]
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      553,
+      586,
+      492,
+      528,
+      465,
+      594,
+      520,
+      508,
+      544,
+      547,
+      549,
+      566,
+      597,
+      598,
+      537,
+      570,
+      573
+    ]
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      599,
+      514,
+      517,
+      558,
+      559,
+      562,
+      532
+    ]
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": [
+      568
+    ]
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      524,
+      588,
+      596,
+      552,
+      564,
+      505,
+      506
+    ]
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": [
+      511
+    ]
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      579,
+      580,
+      557,
+      527,
+      578,
+      548,
+      584,
+      590,
+      567,
+      577,
+      572
+    ]
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      568
+    ]
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": [
+      581,
+      574
+    ]
+  },
+  "{\"departure_date\": \"2025-06-05\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-11\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-27\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-10\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-15\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-16\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-17\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-25\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-14\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-23\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-25\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-30\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"start_location\": {\"name\": \"GER01\", \"type\": \"PLANT\"}, \"truck_number\": 11}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-05\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-06\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-16\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-17\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-18\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-21\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"GER02\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 1}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-04\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-10\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-11\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-19\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-06-26\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-02\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-03\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-09\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-22\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-23\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-24\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-25\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-28\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-29\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-30\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-07-31\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  },
+  "{\"departure_date\": \"2025-08-01\", \"end_location\": {\"name\": \"FRA01\", \"type\": \"DEAL\"}, \"start_location\": {\"name\": \"BEL01\", \"type\": \"TERM\"}, \"truck_number\": 2}": {
+    "load": []
+  }
+}
