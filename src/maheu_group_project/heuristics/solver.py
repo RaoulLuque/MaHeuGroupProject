@@ -55,7 +55,7 @@ def solve_deterministically(solver_type: SolverType, dataset_dir_name: str, real
             - list[VehicleAssignment]: List of vehicle assignments.
             - dict[TruckIdentifier, TruckAssignment]: Dictionary mapping truck identifiers to their assignments.
     """
-    vehicle_assignments, truck_assignments, _, _, _, _, _= solve_deterministically_and_return_data(
+    vehicle_assignments, truck_assignments, _, _, _, _, _ = solve_deterministically_and_return_data(
         solver_type, dataset_dir_name, realised_capacity_file_name)
     return vehicle_assignments, truck_assignments
 
@@ -156,7 +156,8 @@ def solve_real_time(solver_type: SolverType, dataset_dir_name: str, realised_cap
     return vehicle_assignments, truck_assignments
 
 
-def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str, quantile: float) -> \
+def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: str, realised_capacity_file_name: str,
+                                    quantile: float) -> \
         tuple[
             list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment], list[Location], list[Vehicle], dict[
                 TruckIdentifier, Truck], dict[TruckIdentifier, Truck], float]:
@@ -183,6 +184,7 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
     locations, vehicles, trucks_realised, trucks_planned = read_data(dataset_dir_name, realised_capacity_file_name)
 
     if quantile != 0.0:
+        print(f"Adjusting planned truck capacities with quantile: {quantile}")
         trucks_planned = assign_quantile_based_planned_capacities(trucks_planned, dataset_dir_name, quantile)
 
     # Start timer
@@ -196,7 +198,8 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              commodity_groups=commodity_groups,
                                                                              locations=locations, vehicles=vehicles,
                                                                              trucks_planned=trucks_planned,
-                                                                             trucks_realised=trucks_realised, solve_as_mip=False)
+                                                                             trucks_realised=trucks_realised,
+                                                                             solve_as_mip=False)
             end_time = time.time() - start_time
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.FLOW_MIP:
@@ -206,7 +209,8 @@ def solve_real_time_and_return_data(solver_type: SolverType, dataset_dir_name: s
                                                                              commodity_groups=commodity_groups,
                                                                              locations=locations, vehicles=vehicles,
                                                                              trucks_planned=trucks_planned,
-                                                                             trucks_realised=trucks_realised, solve_as_mip=True)
+                                                                             trucks_realised=trucks_realised,
+                                                                             solve_as_mip=True)
             end_time = time.time() - start_time
             return vehicle_assignments, truck_assignments, locations, vehicles, trucks_realised, trucks_planned, end_time
         case SolverType.GREEDY:
