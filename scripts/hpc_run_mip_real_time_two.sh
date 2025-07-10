@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=4                   # Number of CPU cores per task
 #SBATCH --time=30:00:00                     # Running time until timeout
 #SBATCH --job-name=maheu_mip_job_two        # Job name
-#SBATCH --output=stdout_mip.txt             # redirects stdout and stderr to stdout.txt
+#SBATCH --output=stdout_mip_one.txt         # redirects stdout and stderr to stdout.txt
 
 ### Navigate to working directory
 cd /hpcwork/xh700552/MaHeuGroupProject
