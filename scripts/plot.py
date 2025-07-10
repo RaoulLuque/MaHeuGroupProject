@@ -14,12 +14,12 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/final_q_0_horizon"
+RESULTS_BASE_DIR = "../results/notable/final_q_0"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
 LINE_MARKER = ['o', 'v', 's', 'x', 'h', 'p', '*', '+']
-COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue', 'crimson', 'darkorchid', 'darkorange', 'teal', 'slategray']
+COLOR_LIST = ['mediumseagreen', 'goldenrod', 'dodgerblue', 'crimson', 'slategray', 'darkorchid', 'darkorange', 'teal']
 NUMBER_OF_COLUMNS_IN_LEGEND = 4
 Y_OFFSET_LEGEND = 1.095
 
@@ -118,6 +118,23 @@ def plot(file_ending: str):
             plt.figure(figsize=(11, 7))
             plotted_heuristics = {}
             all_costs = []  # Collect all cost values for y-axis scaling
+
+            # Load deterministic FLOW_MIP data for real_time plots
+            deterministic_mip_data = {}
+            if subfolder == 'real_time':
+                det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
+                if os.path.isdir(det_dir):
+                    det_files = [f for f in os.listdir(det_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
+                    for det_file in det_files:
+                        det_case_match = CASE_PATTERN.search(det_file)
+                        if not det_case_match:
+                            continue
+                        det_case = det_case_match.group(1)
+                        if det_case == case:  # Only load data for the current case
+                            realisations, values = read_data(os.path.join(det_dir, det_file))
+                            deterministic_mip_data = dict(zip(realisations, values))
+                            break
+
             for filename in case_files:
                 if file_ending == "_result.txt":
                     heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(filename)
@@ -146,6 +163,23 @@ def plot(file_ending: str):
                     markersize=7.5, color=color
                 )
                 plotted_heuristics[heuristic] = line
+
+            # Add deterministic FLOW_MIP line for real_time plots
+            if subfolder == 'real_time' and deterministic_mip_data:
+                det_realisations = sorted(deterministic_mip_data.keys())
+                det_costs = [deterministic_mip_data[r] for r in det_realisations]
+                all_costs.extend(det_costs)  # Include in cost scaling
+
+                # Plot deterministic FLOW_MIP with distinctive style (but don't add to legend)
+                plt.plot(
+                    det_realisations, det_costs,
+                    marker='D',  # Diamond marker for distinction
+                    markersize=7.5,
+                    color='darkgray',
+                    linestyle='--'  # Dashed line for distinction
+                )
+                # Note: We don't store this line in plotted_heuristics to exclude it from legend
+
             plt.xlabel('Realization', fontsize=18)
             # Determine subfolder for plot type
             if file_ending == '_result.txt':
