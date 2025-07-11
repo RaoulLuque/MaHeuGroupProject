@@ -6,6 +6,7 @@
 #SBATCH --time=00:90:00                     # Running time until timeout
 #SBATCH --job-name=maheu_non_mip_job        # Job name
 #SBATCH --output=stdout_non_mip.txt         # redirects stdout and stderr to stdout.txt
+#SBATCH --mem=512G
 
 ### Navigate to working directory
 cd /hpcwork/xh700552/MaHeuGroupProject
