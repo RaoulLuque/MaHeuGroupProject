@@ -231,7 +231,6 @@ def visualize_logistics_network(network: MultiDiGraph):
     node_colors = [type_to_color.get(node.type.name, 'gray') for node in network.nodes()]
 
     nx.draw_networkx_nodes(network, pos, node_size=200, node_color=node_colors)
-    nx.draw_networkx_labels(network, pos, labels=labels, font_size=7)
 
     ax = plt.gca()
 
@@ -250,9 +249,9 @@ def visualize_logistics_network(network: MultiDiGraph):
             )
             ax.add_patch(arrow)
 
-            weight = int(data.get('weight', 0))
+            weight = int(data.get('weight', 0) - c)
             truck_number = data.get('truck_number', 'N/A')
-            label = f"{weight}  (#{truck_number})"
+            label = f"{weight}"
 
             start = np.array(pos[u])
             end = np.array(pos[v])
@@ -264,8 +263,13 @@ def visualize_logistics_network(network: MultiDiGraph):
             perp_vec = np.array([-vec[1], vec[0]])
             perp_vec = perp_vec / np.linalg.norm(perp_vec)
 
+            distance = np.linalg.norm(vec)
+            if len(network.nodes) == 3:
+                offset_magnitude = 0.02 * distance  # smaller offset for small graphs
+            else:
+                offset_magnitude = 0.08 * distance
+
             # Alternate direction for offset based on idx (up/down)
-            offset_magnitude = 0.1  # adjust to fit your graph scale
             direction = 1 if idx % 2 == 0 else -1
             offset = direction * offset_magnitude * perp_vec
 
@@ -277,5 +281,12 @@ def visualize_logistics_network(network: MultiDiGraph):
 
     plt.axis('off')
     plt.tight_layout()
-    plt.title("Logistics Network with Costs")
+
+    import matplotlib.lines as mlines
+    legend_elements = [
+        mlines.Line2D([], [], color='green', marker='o', linestyle='None', markersize=10, label='Plant'),
+        mlines.Line2D([], [], color='orange', marker='o', linestyle='None', markersize=10, label='Terminal'),
+        mlines.Line2D([], [], color='red', marker='o', linestyle='None', markersize=10, label='Dealership')
+    ]
+    plt.legend(handles=legend_elements, loc='upper left')
     plt.show()
