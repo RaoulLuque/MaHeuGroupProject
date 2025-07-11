@@ -19,7 +19,7 @@ from maheu_group_project.solution.evaluate import remove_horizon, objective_func
 from maheu_group_project.parsing import read_data
 
 # Configuration
-TARGET_DIR = "final_q_0"
+TARGET_DIR = "final_q_0_5"
 
 # Number of days to consider for the horizon effect
 NUM_DAYS_FOR_HORIZON = 7

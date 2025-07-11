@@ -1,8 +1,8 @@
 import os
 import re
 
-OLD = "final_q_0"
-NEW = "final_q_0_5"
+OLD = "final_q_0_horizon"
+NEW = "final_q_0_5_horizon"
 BASE_DIR = os.path.join("..", "results", "notable")
 SUBFOLDERS = ["deterministic", "real_time"]
 RESULT_SUFFIX = "_result.txt"
