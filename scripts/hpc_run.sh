@@ -2,11 +2,10 @@
 
 ### Job Parameters
 #SBATCH --ntasks=1                          # MPI tasks
-#SBATCH --cpus-per-task=1                   # Number of CPU cores per task
-#SBATCH --time=00:90:00                     # Running time until timeout
+#SBATCH --cpus-per-task=4                   # Number of CPU cores per task
+#SBATCH --time=02:00:00                     # Running time until timeout
 #SBATCH --job-name=maheu_non_mip_job        # Job name
 #SBATCH --output=stdout_non_mip.txt         # redirects stdout and stderr to stdout.txt
-#SBATCH --mem=512G
 
 ### Navigate to working directory
 cd /hpcwork/xh700552/MaHeuGroupProject
