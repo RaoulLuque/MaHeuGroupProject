@@ -10,7 +10,7 @@ from maheu_group_project.heuristics.flow.types import dealership_to_commodity_gr
 from maheu_group_project.solution.encoding import Location, LocationType
 
 FOR_REPORT = True
-CUTOFF_DATE = datetime.date(2025, 6, 16)
+CUTOFF_DATE = datetime.date(2025, 6, 12)
 
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
@@ -137,7 +137,8 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
         # We annotate the date to the left of PLANT nodes
         if node.location.type == LocationType.PLANT:
-            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=11, color='black', ha='right', va='center')
+            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=11, color='black', ha='right',
+                    va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
     for u, v in flow_network.edges():
