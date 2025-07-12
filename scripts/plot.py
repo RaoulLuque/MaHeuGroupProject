@@ -119,21 +119,18 @@ def plot(file_ending: str):
             plotted_heuristics = {}
             all_costs = []  # Collect all cost values for y-axis scaling
 
-            # Load deterministic FLOW_MIP data for normalization (for all plots except deterministic)
-            deterministic_mip_data = {}
+            # Load normalization data - either deterministic FLOW_MIP or real_time same heuristic from different directory
+            normalization_data = {}
+            ylabel_suffix = ""
             if subfolder == 'real_time' or subfolder == 'deterministic':
-                det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
-                if os.path.isdir(det_dir):
-                    det_files = [f for f in os.listdir(det_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
-                    for det_file in det_files:
-                        det_case_match = CASE_PATTERN.search(det_file)
-                        if not det_case_match:
-                            continue
-                        det_case = det_case_match.group(1)
-                        if det_case == case:  # Only load data for the current case
-                            realisations, values = read_data(os.path.join(det_dir, det_file))
-                            deterministic_mip_data = dict(zip(realisations, values))
-                            break
+                if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon"):
+                    # Use real_time same heuristic from the corresponding directory
+                    norm_dir = os.path.join("../results/notable/final_q_0_horizon/real_time")
+                    ylabel_suffix = "p = 0.0"
+                else:
+                    # Use deterministic FLOW_MIP from current directory structure
+                    norm_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
+                    ylabel_suffix = "Deterministic FLOW_MIP"
 
             for filename in case_files:
                 if file_ending == "_result.txt":
@@ -153,16 +150,68 @@ def plot(file_ending: str):
                 idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_data(os.path.join(dir_path, filename))
 
-                # Normalize values by dividing by deterministic FLOW_MIP (except for deterministic plots)
-                if subfolder != 'deterministic' and deterministic_mip_data:
-                    normalized_costs = []
-                    normalized_realisations = []
-                    for real, cost in zip(realisations, costs):
-                        if real in deterministic_mip_data and deterministic_mip_data[real] != 0:
-                            normalized_costs.append(cost / deterministic_mip_data[real])
-                            normalized_realisations.append(real)
-                    costs = normalized_costs
-                    realisations = normalized_realisations
+                # Normalize values by dividing by normalization data (except for deterministic plots when using deterministic normalization)
+                should_normalize = True
+                if not RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon") and subfolder == 'deterministic':
+                    should_normalize = False
+
+                if should_normalize:
+                    # Load normalization data for this specific heuristic
+                    if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon"):
+                        # For DIFF directories, use the same heuristic from real_time
+                        norm_files = []
+                        if os.path.isdir(norm_dir):
+                            norm_files = [f for f in os.listdir(norm_dir) if f.endswith(file_ending)]
+
+                        normalization_data = {}
+                        for norm_file in norm_files:
+                            if file_ending == "_result.txt":
+                                norm_heuristic_match = HEURISTIC_PATTERN_OBJECTIVE.search(norm_file)
+                            elif file_ending == "_running_time.txt":
+                                norm_heuristic_match = HEURISTIC_PATTERN_RUNNING_TIME.search(norm_file)
+                            if not norm_heuristic_match:
+                                continue
+                            norm_heuristic = norm_heuristic_match.group(1)
+                            # Normalize heuristic names for consistency
+                            if norm_heuristic.startswith('time_'):
+                                norm_heuristic = norm_heuristic[len('time_'):]
+                            if norm_heuristic == 'LOWER_BOUND_UNCAPACITATED_FLOW':
+                                norm_heuristic = 'LOWER_BOUND'
+                            if norm_heuristic == 'GREEDY_CANDIDATE_PATHS':
+                                norm_heuristic = 'GREEDY_CAN_PATHS'
+
+                            norm_case_match = CASE_PATTERN.search(norm_file)
+                            if not norm_case_match:
+                                continue
+                            norm_case = norm_case_match.group(1)
+
+                            if norm_case == case and norm_heuristic == heuristic:
+                                realisations_norm, values_norm = read_data(os.path.join(norm_dir, norm_file))
+                                normalization_data = dict(zip(realisations_norm, values_norm))
+                                break
+                    else:
+                        # For regular directories, use deterministic FLOW_MIP
+                        if not normalization_data and os.path.isdir(norm_dir):
+                            norm_files = [f for f in os.listdir(norm_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
+                            for norm_file in norm_files:
+                                norm_case_match = CASE_PATTERN.search(norm_file)
+                                if not norm_case_match:
+                                    continue
+                                norm_case = norm_case_match.group(1)
+                                if norm_case == case:
+                                    realisations_norm, values_norm = read_data(os.path.join(norm_dir, norm_file))
+                                    normalization_data = dict(zip(realisations_norm, values_norm))
+                                    break
+
+                    if normalization_data:
+                        normalized_costs = []
+                        normalized_realisations = []
+                        for real, cost in zip(realisations, costs):
+                            if real in normalization_data and normalization_data[real] != 0:
+                                normalized_costs.append(cost / normalization_data[real])
+                                normalized_realisations.append(real)
+                        costs = normalized_costs
+                        realisations = normalized_realisations
 
                 all_costs.extend(costs)  # Collect costs for scaling
                 # Plot the costs for this heuristic
@@ -176,30 +225,17 @@ def plot(file_ending: str):
                 )
                 plotted_heuristics[heuristic] = line
 
-            # Add deterministic FLOW_MIP line for real_time plots
-            if subfolder == 'real_time' and deterministic_mip_data:
-                det_realisations = sorted(deterministic_mip_data.keys())
-                det_costs = [deterministic_mip_data[r] / deterministic_mip_data[r] for r in det_realisations]  # This will be 1.0 for all
-                all_costs.extend(det_costs)  # Include in cost scaling
-
-                # Plot deterministic FLOW_MIP with distinctive style (but don't add to legend)
-                plt.plot(
-                    det_realisations, det_costs,
-                    marker='D',  # Diamond marker for distinction
-                    markersize=7.5,
-                    color='darkgray',
-                    linestyle='--'  # Dashed line for distinction
-                )
-                # Note: We don't store this line in plotted_heuristics to exclude it from legend
-
             plt.xlabel('Realization', fontsize=18)
             # Determine subfolder for plot type
             if file_ending == '_result.txt':
                 plot_type_folder = 'objective_value'
-                if subfolder == 'deterministic':
-                    ylabel = 'Cost'
+                if should_normalize:
+                    if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon"):
+                        ylabel = f'Cost / {ylabel_suffix} Cost'
+                    else:
+                        ylabel = f'Cost / {ylabel_suffix} Cost'
                 else:
-                    ylabel = 'Cost / Deterministic FLOW_MIP Cost'
+                    ylabel = 'Cost'
                 # Explicitly set y-axis lower limit to include negative values
                 if all_costs:
                     min_value = min(all_costs)
@@ -209,12 +245,25 @@ def plot(file_ending: str):
                         min_value = 0
                         margin = 0
                     plt.ylim(bottom=min_value - margin)
+
+                # Set y-axis ticks to 0.05 intervals for DIFF directories
+                if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon"):
+                    if all_costs:
+                        min_tick = (min(all_costs) // 0.05) * 0.05 - 0.05  # Add one tick below
+                        max_tick = ((max(all_costs) // 0.05) + 2) * 0.05   # Add one tick above
+                        plt.yticks([i * 0.05 for i in range(int(min_tick * 20), int(max_tick * 20) + 1)])
+                        # Set y-axis limits to provide padding beyond the tick range
+                        plt.ylim(bottom=min_tick - 0.025, top=max_tick + 0.025)
+
             elif file_ending == '_running_time.txt':
                 plot_type_folder = 'running_time'
-                if subfolder == 'deterministic':
-                    ylabel = 'Running Time (s)'
+                if should_normalize:
+                    if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon"):
+                        ylabel = f'Running Time / {ylabel_suffix} Running Time'
+                    else:
+                        ylabel = f'Running Time / {ylabel_suffix} Running Time'
                 else:
-                    ylabel = 'Running Time / Deterministic FLOW_MIP Running Time'
+                    ylabel = 'Running Time (s)'
                 plt.yscale('log')  # Use logarithmic scale for running time
 
                 # Set y-axis limits to ensure there's a label above the highest data point
@@ -224,6 +273,18 @@ def plot(file_ending: str):
                     # Set upper limit to be at least one order of magnitude higher than max value
                     upper_limit = max_value * 10
                     plt.ylim(bottom=min_value * 0.1, top=upper_limit)
+
+                # Set y-axis ticks to 0.05 intervals for DIFF directories (only if not using log scale)
+                if RESULTS_BASE_DIR.endswith("final_q_0_horizon_DIFF_final_q_0_5_horizon") and should_normalize:
+                    # For running time DIFF plots, use linear scale with 0.05 ticks instead of log scale
+                    plt.yscale('linear')
+                    if all_costs:
+                        min_tick = (min(all_costs) // 0.05) * 0.05 - 0.05  # Add one tick below
+                        max_tick = ((max(all_costs) // 0.05) + 2) * 0.05   # Add one tick above
+                        plt.yticks([i * 0.05 for i in range(int(min_tick * 20), int(max_tick * 20) + 1)])
+                        # Set y-axis limits to provide padding beyond the tick range
+                        plt.ylim(bottom=min_tick - 0.025, top=max_tick + 0.025)
+
             plt.ylabel(ylabel, fontsize=18)
             # Ensure legend order is consistent across all plots
             handles = [plotted_heuristics[h] for h in all_heuristics if h in plotted_heuristics]
