@@ -1,55 +1,110 @@
-Cost of solution for CaseMaHeu25_03/realised_capacity_data_001.csv: 113009.68 
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_001.csv: 113846.29 
 Number of vehicles that did not arrive: 0 
 Solver: FLOW_MIP 
 Metrics:
-Number of delayed cars:                                          89
-Number (actual/) planned delayed cars:                           26/32
-Number of cars transported in trucks which are not free:         535
-Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  64600.00, (6400, 3600), (31500, 23100)
-Price paid for trucks:                                           48409.68
-Running time in seconds: 3484.15
+Number of delayed cars:                                          84
+Number (actual/) planned delayed cars:                           21/28
+Number of cars transported in trucks which are not free:         540
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  64650.00, (5600, 2050), (31500, 25500)
+Price paid for trucks:                                           49196.29
+Running time in seconds: 3314.12
 
-Cost of solution for CaseMaHeu25_03/realised_capacity_data_002.csv: 126705.00 
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_002.csv: 122477.47 
 Number of vehicles that did not arrive: 0 
 Solver: FLOW_MIP 
 Metrics:
-Number of delayed cars:                                          113
-Number (actual/) planned delayed cars:                           38/40
+Number of delayed cars:                                          106
+Number (actual/) planned delayed cars:                           37/38
+Number of cars transported in trucks which are not free:         417
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  82450.00, (7600, 8350), (34500, 32000)
+Price paid for trucks:                                           40027.47
+Running time in seconds: 3340.73
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_003.csv: 99499.57 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          74
+Number (actual/) planned delayed cars:                           6/8
 Number of cars transported in trucks which are not free:         420
-Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  86300.00, (8000, 8300), (37500, 32500)
-Price paid for trucks:                                           40405.00
-Running time in seconds: 3659.78
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  60550.00, (1600, 1050), (34000, 23900)
+Price paid for trucks:                                           38949.57
+Running time in seconds: 3171.36
 
-Cost of solution for CaseMaHeu25_03/realised_capacity_data_003.csv: 97111.73 
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_004.csv: 97177.11 
 Number of vehicles that did not arrive: 0 
 Solver: FLOW_MIP 
 Metrics:
-Number of delayed cars:                                          73
-Number (actual/) planned delayed cars:                           7/8
-Number of cars transported in trucks which are not free:         413
-Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  58750.00, (1600, 650), (33000, 23500)
-Price paid for trucks:                                           38361.73
-Running time in seconds: 3631.02
+Number of delayed cars:                                          76
+Number (actual/) planned delayed cars:                           12/14
+Number of cars transported in trucks which are not free:         479
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  53150.00, (2800, 750), (32000, 17600)
+Price paid for trucks:                                           44027.11
+Running time in seconds: 3257.97
 
-Cost of solution for CaseMaHeu25_03/realised_capacity_data_004.csv: 88743.21 
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_005.csv: 48897.22 
 Number of vehicles that did not arrive: 0 
 Solver: FLOW_MIP 
 Metrics:
-Number of delayed cars:                                          66
-Number (actual/) planned delayed cars:                           10/12
-Number of cars transported in trucks which are not free:         472
-Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  45300.00, (2400, 600), (28000, 14300)
-Price paid for trucks:                                           43443.21
-Running time in seconds: 3627.92
-
-Cost of solution for CaseMaHeu25_03/realised_capacity_data_005.csv: 49662.01 
-Number of vehicles that did not arrive: 0 
-Solver: FLOW_MIP 
-Metrics:
-Number of delayed cars:                                          20
+Number of delayed cars:                                          18
 Number (actual/) planned delayed cars:                           4/4
-Number of cars transported in trucks which are not free:         414
-Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  11200.00, (800, 200), (8000, 2200)
-Price paid for trucks:                                           38462.01
-Running time in seconds: 3427.58
+Number of cars transported in trucks which are not free:         419
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  9900.00, (800, 200), (7000, 1900)
+Price paid for trucks:                                           38997.22
+Running time in seconds: 2994.38
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_006.csv: 85941.86 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          57
+Number (actual/) planned delayed cars:                           4/4
+Number of cars transported in trucks which are not free:         471
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  42150.00, (800, 250), (26500, 14600)
+Price paid for trucks:                                           43791.86
+Running time in seconds: 3376.91
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_007.csv: 71708.30 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          48
+Number (actual/) planned delayed cars:                           7/7
+Number of cars transported in trucks which are not free:         428
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  33050.00, (1400, 450), (20500, 10700)
+Price paid for trucks:                                           38658.30
+Running time in seconds: 3364.61
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_008.csv: 162430.48 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          112
+Number (actual/) planned delayed cars:                           39/50
+Number of cars transported in trucks which are not free:         433
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  119700.00, (10000, 15200), (36500, 58000)
+Price paid for trucks:                                           42730.48
+Running time in seconds: 3364.26
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_009.csv: 99241.18 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          77
+Number (actual/) planned delayed cars:                           8/8
+Number of cars transported in trucks which are not free:         451
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  57400.00, (1600, 800), (34500, 20500)
+Price paid for trucks:                                           41841.18
+Running time in seconds: 3036.39
+
+Cost of solution for CaseMaHeu25_03/realised_capacity_data_010.csv: 83208.30 
+Number of vehicles that did not arrive: 0 
+Solver: FLOW_MIP 
+Metrics:
+Number of delayed cars:                                          49
+Number (actual/) planned delayed cars:                           5/5
+Number of cars transported in trucks which are not free:         475
+Cost of delays Total, (Pl Fix, Pl Days), (Unpl Fix, Unpl Days):  37350.00, (1000, 250), (22000, 14100)
+Price paid for trucks:                                           45858.30
+Running time in seconds: 3175.30
 

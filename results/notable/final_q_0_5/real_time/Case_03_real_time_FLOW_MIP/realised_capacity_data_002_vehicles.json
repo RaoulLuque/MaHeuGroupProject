@@ -70,7 +70,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -78,7 +78,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -225,15 +225,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-02"
+        "truck_number": 11,
+        "departure_date": "2025-06-03"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -241,7 +241,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-05"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -427,7 +427,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
@@ -458,7 +458,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -600,8 +600,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-04"
+        "truck_number": 1,
+        "departure_date": "2025-06-09"
       },
       {
         "start_location": {
@@ -613,7 +613,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "departure_date": "2025-06-12"
       }
     ],
     "planned_delayed": false,
@@ -644,7 +644,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
@@ -706,7 +706,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -786,8 +786,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-06"
+        "truck_number": 11,
+        "departure_date": "2025-06-05"
       },
       {
         "start_location": {
@@ -799,7 +799,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
@@ -861,7 +861,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
@@ -879,8 +879,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-05"
+        "truck_number": 1,
+        "departure_date": "2025-06-06"
       },
       {
         "start_location": {
@@ -907,15 +907,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-06"
+        "departure_date": "2025-06-09"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -923,7 +923,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-12"
       }
     ],
     "planned_delayed": false,
@@ -954,7 +954,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -1016,7 +1016,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -1047,7 +1047,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
@@ -1093,15 +1093,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-06"
+        "departure_date": "2025-06-09"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -1109,7 +1109,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-12"
       }
     ],
     "planned_delayed": false,
@@ -1186,15 +1186,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "departure_date": "2025-06-06"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -1202,11 +1202,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 39,
@@ -1217,15 +1217,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-06"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -1252,7 +1252,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "departure_date": "2025-06-10"
       },
       {
         "start_location": {
@@ -1264,7 +1264,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-13"
       }
     ],
     "planned_delayed": false,
@@ -1279,15 +1279,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "truck_number": 11,
+        "departure_date": "2025-06-10"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -1295,7 +1295,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
@@ -1310,7 +1310,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -1318,7 +1318,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -1465,15 +1465,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "truck_number": 11,
+        "departure_date": "2025-06-10"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -1481,7 +1481,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-17"
       }
     ],
     "planned_delayed": false,
@@ -1512,7 +1512,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "departure_date": "2025-06-17"
       }
     ],
     "planned_delayed": false,
@@ -1589,15 +1589,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-10"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -1605,7 +1605,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-17"
+        "departure_date": "2025-06-13"
       }
     ],
     "planned_delayed": false,
@@ -1651,15 +1651,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-10"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -1667,7 +1667,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-13"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
@@ -1698,7 +1698,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
@@ -1915,7 +1915,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "departure_date": "2025-06-17"
       }
     ],
     "planned_delayed": false,
@@ -1961,7 +1961,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -1969,7 +1969,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -1977,169 +1977,14 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-16"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 64,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-13"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-17"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 65,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-06-12"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-17"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 66,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-13"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-18"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 67,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-06-12"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-17"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 68,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-13"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-19"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 69,
     "paths_taken": [
       {
         "start_location": {
@@ -2170,6 +2015,161 @@
     "delayed_by": 0.0
   },
   {
+    "id": 65,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-06-12"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-18"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 66,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-13"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-19"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 67,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-13"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-16"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 68,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-13"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-23"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 86400.0
+  },
+  {
+    "id": 69,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-06-12"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-17"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
     "id": 70,
     "paths_taken": [
       {
@@ -2194,7 +2194,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-16"
       }
     ],
     "planned_delayed": false,
@@ -2256,7 +2256,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-17"
       }
     ],
     "planned_delayed": false,
@@ -2287,7 +2287,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-17"
+        "departure_date": "2025-06-19"
       }
     ],
     "planned_delayed": false,
@@ -2318,7 +2318,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-16"
       }
     ],
     "planned_delayed": false,
@@ -2349,7 +2349,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
@@ -2380,7 +2380,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-19"
       }
     ],
     "planned_delayed": false,
@@ -2442,7 +2442,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
@@ -2473,7 +2473,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-19"
       }
     ],
     "planned_delayed": false,
@@ -2519,7 +2519,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -2527,7 +2527,7 @@
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -2535,7 +2535,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -2581,7 +2581,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -2589,7 +2589,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -3124,7 +3124,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-24"
       }
     ],
     "planned_delayed": false,
@@ -3155,7 +3155,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -3204,8 +3204,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-19"
+        "truck_number": 1,
+        "departure_date": "2025-06-20"
       },
       {
         "start_location": {
@@ -3236,7 +3236,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-20"
       },
       {
         "start_location": {
@@ -3248,7 +3248,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -3279,7 +3279,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-24"
       }
     ],
     "planned_delayed": false,
@@ -3298,7 +3298,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-20"
       },
       {
         "start_location": {
@@ -3387,7 +3387,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -3395,7 +3395,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -3403,7 +3403,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -3573,7 +3573,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -3581,7 +3581,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -3589,7 +3589,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -3635,7 +3635,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -3643,7 +3643,7 @@
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -3868,7 +3868,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "departure_date": "2025-06-27"
       }
     ],
     "planned_delayed": false,
@@ -3992,7 +3992,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "departure_date": "2025-06-26"
       }
     ],
     "planned_delayed": false,
@@ -4196,8 +4196,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "truck_number": 11,
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
@@ -4317,15 +4317,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -4352,7 +4352,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "departure_date": "2025-06-27"
       },
       {
         "start_location": {
@@ -4441,15 +4441,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -4472,37 +4472,6 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-26"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-30"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 145,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
           "name": "GER02",
           "type": "TERM"
         },
@@ -4526,6 +4495,37 @@
     "delayed_by": 0.0
   },
   {
+    "id": 145,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-26"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-30"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
     "id": 146,
     "paths_taken": [
       {
@@ -4534,15 +4534,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -4565,15 +4565,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -4581,7 +4581,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -4596,15 +4596,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -4612,7 +4612,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -4689,15 +4689,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -4705,7 +4705,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -4798,7 +4798,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-30"
+        "departure_date": "2025-07-01"
       }
     ],
     "planned_delayed": false,
@@ -4813,15 +4813,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -4847,7 +4847,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-27"
       },
       {
@@ -4860,7 +4860,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -4875,7 +4875,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -4883,7 +4883,7 @@
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -4906,15 +4906,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -4968,37 +4968,6 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-07-01"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-07"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 161,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
           "name": "BEL01",
           "type": "TERM"
         },
@@ -5016,6 +4985,37 @@
         },
         "truck_number": 1,
         "departure_date": "2025-07-04"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 161,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-07-02"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -5061,15 +5061,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-01"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -5077,7 +5077,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
@@ -5247,15 +5247,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-01"
+        "truck_number": 1,
+        "departure_date": "2025-07-03"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -5263,7 +5263,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -5281,8 +5281,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-02"
+        "truck_number": 1,
+        "departure_date": "2025-07-01"
       },
       {
         "start_location": {
@@ -5294,7 +5294,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
@@ -5560,8 +5560,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-02"
+        "truck_number": 1,
+        "departure_date": "2025-07-03"
       },
       {
         "start_location": {
@@ -5588,15 +5588,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-03"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -5604,7 +5604,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -5635,7 +5635,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-08"
       }
     ],
     "planned_delayed": false,
@@ -5643,68 +5643,6 @@
   },
   {
     "id": 182,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-07"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 183,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-07"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 184,
     "paths_taken": [
       {
         "start_location": {
@@ -5735,38 +5673,7 @@
     "delayed_by": 0.0
   },
   {
-    "id": 185,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-07"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 186,
+    "id": 183,
     "paths_taken": [
       {
         "start_location": {
@@ -5797,7 +5704,38 @@
     "delayed_by": 0.0
   },
   {
-    "id": 187,
+    "id": 184,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-07-03"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-08"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 185,
     "paths_taken": [
       {
         "start_location": {
@@ -5814,6 +5752,68 @@
       {
         "start_location": {
           "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-08"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 186,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-03"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-08"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 187,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-07-03"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -5929,15 +5929,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -5960,15 +5960,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-04"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -5991,15 +5991,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -6007,7 +6007,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -6056,7 +6056,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
@@ -6069,7 +6069,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -6087,7 +6087,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
@@ -6100,7 +6100,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -6108,37 +6108,6 @@
   },
   {
     "id": 197,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-07-04"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "FRA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-08"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 198,
     "paths_taken": [
       {
         "start_location": {
@@ -6169,7 +6138,7 @@
     "delayed_by": 0.0
   },
   {
-    "id": 199,
+    "id": 198,
     "paths_taken": [
       {
         "start_location": {
@@ -6194,6 +6163,37 @@
         },
         "truck_number": 1,
         "departure_date": "2025-07-08"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 199,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-04"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "FRA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -6766,15 +6766,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-09"
+        "truck_number": 1,
+        "departure_date": "2025-07-11"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -6831,8 +6831,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "truck_number": 11,
+        "departure_date": "2025-07-10"
       },
       {
         "start_location": {
@@ -6955,8 +6955,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "truck_number": 11,
+        "departure_date": "2025-07-10"
       },
       {
         "start_location": {
@@ -7048,8 +7048,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "truck_number": 11,
+        "departure_date": "2025-07-10"
       },
       {
         "start_location": {
@@ -7185,7 +7185,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-14"
+        "departure_date": "2025-07-15"
       }
     ],
     "planned_delayed": false,
@@ -7355,15 +7355,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-16"
+        "departure_date": "2025-07-15"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -7650,7 +7650,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "departure_date": "2025-06-12"
       }
     ],
     "planned_delayed": false,
@@ -8037,15 +8037,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-06"
+        "truck_number": 1,
+        "departure_date": "2025-06-10"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -8053,7 +8053,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-11"
+        "departure_date": "2025-06-13"
       }
     ],
     "planned_delayed": false,
@@ -8161,15 +8161,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-09"
+        "truck_number": 11,
+        "departure_date": "2025-06-06"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -8177,11 +8177,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-12"
+        "departure_date": "2025-06-10"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 259200.0
+    "delayed_by": 0.0
   },
   {
     "id": 264,
@@ -8208,7 +8208,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-11"
       }
     ],
     "planned_delayed": false,
@@ -8332,7 +8332,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "departure_date": "2025-06-20"
       }
     ],
     "planned_delayed": false,
@@ -8487,7 +8487,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "departure_date": "2025-06-20"
       }
     ],
     "planned_delayed": false,
@@ -8781,15 +8781,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-13"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -8797,11 +8797,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-17"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 284,
@@ -8812,7 +8812,7 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 1,
@@ -8820,7 +8820,7 @@
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -8967,15 +8967,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-17"
+        "truck_number": 1,
+        "departure_date": "2025-06-13"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -8983,11 +8983,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "departure_date": "2025-06-16"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 259200.0
+    "delayed_by": 0.0
   },
   {
     "id": 290,
@@ -9094,8 +9094,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-18"
+        "truck_number": 1,
+        "departure_date": "2025-06-17"
       },
       {
         "start_location": {
@@ -9125,8 +9125,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-18"
+        "truck_number": 1,
+        "departure_date": "2025-06-17"
       },
       {
         "start_location": {
@@ -9215,15 +9215,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-20"
+        "truck_number": 11,
+        "departure_date": "2025-06-17"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -9231,7 +9231,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-26"
       }
     ],
     "planned_delayed": false,
@@ -9311,8 +9311,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-20"
+        "truck_number": 11,
+        "departure_date": "2025-06-18"
       },
       {
         "start_location": {
@@ -9324,7 +9324,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -9374,6 +9374,37 @@
           "type": "TERM"
         },
         "truck_number": 11,
+        "departure_date": "2025-06-18"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "GER03",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-23"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 303,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 11,
         "departure_date": "2025-06-20"
       },
       {
@@ -9393,7 +9424,7 @@
     "delayed_by": 0.0
   },
   {
-    "id": 303,
+    "id": 304,
     "paths_taken": [
       {
         "start_location": {
@@ -9418,37 +9449,6 @@
         },
         "truck_number": 1,
         "departure_date": "2025-06-23"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 304,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-06-20"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "GER03",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
@@ -9587,15 +9587,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "truck_number": 11,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -9603,7 +9603,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -9649,15 +9649,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "truck_number": 11,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -9665,7 +9665,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-02"
+        "departure_date": "2025-06-30"
       }
     ],
     "planned_delayed": false,
@@ -9683,7 +9683,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-20"
       },
       {
@@ -9696,7 +9696,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
@@ -9742,15 +9742,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-20"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -9758,7 +9758,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-30"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
@@ -9804,15 +9804,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "truck_number": 11,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -9835,15 +9835,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-24"
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -9851,7 +9851,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-30"
+        "departure_date": "2025-07-02"
       }
     ],
     "planned_delayed": false,
@@ -9866,15 +9866,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-24"
+        "truck_number": 1,
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -10037,7 +10037,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -10055,8 +10055,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "truck_number": 11,
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
@@ -10086,8 +10086,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "truck_number": 11,
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
@@ -10130,7 +10130,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-02"
+        "departure_date": "2025-07-01"
       }
     ],
     "planned_delayed": false,
@@ -10161,7 +10161,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -10210,8 +10210,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "truck_number": 1,
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
@@ -10241,38 +10241,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-27"
-      },
-      {
-        "start_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "GER03",
-          "type": "DEAL"
-        },
         "truck_number": 1,
-        "departure_date": "2025-07-02"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
-  },
-  {
-    "id": 331,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "BEL01",
-          "type": "TERM"
-        },
-        "truck_number": 11,
         "departure_date": "2025-06-27"
       },
       {
@@ -10288,7 +10257,38 @@
         "departure_date": "2025-07-07"
       }
     ],
-    "planned_delayed": true,
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 331,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-27"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "GER03",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-04"
+      }
+    ],
+    "planned_delayed": false,
     "delayed_by": 0.0
   },
   {
@@ -10303,7 +10303,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-27"
       },
       {
@@ -10331,15 +10331,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-01"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -10393,15 +10393,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -10517,15 +10517,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -10533,7 +10533,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-02"
       }
     ],
     "planned_delayed": false,
@@ -10610,15 +10610,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-02"
+        "departure_date": "2025-07-01"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -10644,7 +10644,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-01"
       },
       {
@@ -10657,7 +10657,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -10750,7 +10750,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
@@ -10858,15 +10858,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-02"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -10874,7 +10874,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
@@ -10951,15 +10951,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-02"
+        "departure_date": "2025-07-03"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -10982,15 +10982,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-02"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -11002,7 +11002,7 @@
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 355,
@@ -11013,15 +11013,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-08"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -11029,11 +11029,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-14"
+        "departure_date": "2025-07-16"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 86400.0
   },
   {
     "id": 356,
@@ -11047,7 +11047,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-04"
       },
       {
@@ -11060,7 +11060,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-08"
       }
     ],
     "planned_delayed": false,
@@ -11140,7 +11140,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-04"
       },
       {
@@ -11153,7 +11153,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
@@ -11233,7 +11233,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
@@ -11246,7 +11246,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-07"
       }
     ],
     "planned_delayed": false,
@@ -11295,7 +11295,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-07-04"
       },
       {
@@ -11323,15 +11323,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-08"
+        "departure_date": "2025-07-09"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -11339,7 +11339,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-16"
+        "departure_date": "2025-07-14"
       }
     ],
     "planned_delayed": false,
@@ -12349,7 +12349,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-03"
       },
       {
@@ -12362,11 +12362,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-06"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 604800.0
+    "delayed_by": 0.0
   },
   {
     "id": 399,
@@ -12411,8 +12411,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-05"
+        "truck_number": 1,
+        "departure_date": "2025-06-04"
       },
       {
         "start_location": {
@@ -12424,11 +12424,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 950400.0
+    "delayed_by": 345600.0
   },
   {
     "id": 401,
@@ -12474,7 +12474,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-05"
+        "departure_date": "2025-06-04"
       },
       {
         "start_location": {
@@ -12536,7 +12536,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-06"
+        "departure_date": "2025-06-04"
       },
       {
         "start_location": {
@@ -12548,7 +12548,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-10"
+        "departure_date": "2025-06-09"
       }
     ],
     "planned_delayed": false,
@@ -12628,7 +12628,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-05"
       },
       {
@@ -12703,11 +12703,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 172800.0
+    "delayed_by": 777600.0
   },
   {
     "id": 410,
@@ -12753,7 +12753,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-05"
+        "departure_date": "2025-06-06"
       },
       {
         "start_location": {
@@ -12827,11 +12827,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 172800.0
+    "delayed_by": 777600.0
   },
   {
     "id": 414,
@@ -12845,8 +12845,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-05"
+        "truck_number": 1,
+        "departure_date": "2025-06-06"
       },
       {
         "start_location": {
@@ -12858,11 +12858,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 172800.0
+    "delayed_by": 777600.0
   },
   {
     "id": 415,
@@ -13155,7 +13155,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-05"
       },
       {
@@ -13186,7 +13186,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-10"
       },
       {
@@ -13248,7 +13248,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-10"
       },
       {
@@ -13292,11 +13292,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 950400.0
+    "delayed_by": 345600.0
   },
   {
     "id": 429,
@@ -13341,7 +13341,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-10"
       },
       {
@@ -13447,11 +13447,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 950400.0
+    "delayed_by": 345600.0
   },
   {
     "id": 434,
@@ -13465,7 +13465,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-10"
       },
       {
@@ -13478,11 +13478,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-27"
       }
     ],
     "planned_delayed": true,
-    "delayed_by": 259200.0
+    "delayed_by": 432000.0
   },
   {
     "id": 435,
@@ -13558,8 +13558,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-12"
+        "truck_number": 1,
+        "departure_date": "2025-06-11"
       },
       {
         "start_location": {
@@ -13620,8 +13620,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-12"
+        "truck_number": 1,
+        "departure_date": "2025-06-11"
       },
       {
         "start_location": {
@@ -13695,11 +13695,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-20"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 442,
@@ -13713,7 +13713,7 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-13"
       },
       {
@@ -13726,7 +13726,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-18"
+        "departure_date": "2025-06-16"
       }
     ],
     "planned_delayed": false,
@@ -13772,15 +13772,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-16"
+        "truck_number": 11,
+        "departure_date": "2025-06-12"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -13788,11 +13788,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-20"
+        "departure_date": "2025-06-25"
       }
     ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
+    "planned_delayed": true,
+    "delayed_by": 86400.0
   },
   {
     "id": 445,
@@ -13803,15 +13803,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-13"
+        "departure_date": "2025-06-12"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -13819,11 +13819,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-20"
+        "departure_date": "2025-06-18"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 0.0
   },
   {
     "id": 446,
@@ -13869,7 +13869,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-20"
+        "departure_date": "2025-06-18"
       },
       {
         "start_location": {
@@ -13881,7 +13881,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -14113,37 +14113,6 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-13"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "ITA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-06-25"
-      }
-    ],
-    "planned_delayed": true,
-    "delayed_by": 172800.0
-  },
-  {
-    "id": 456,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
           "name": "BEL01",
           "type": "TERM"
         },
@@ -14161,6 +14130,37 @@
         },
         "truck_number": 1,
         "departure_date": "2025-06-16"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
+    "id": 456,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-06-13"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "ITA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-20"
       }
     ],
     "planned_delayed": false,
@@ -14272,7 +14272,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-17"
+        "departure_date": "2025-06-16"
       },
       {
         "start_location": {
@@ -14365,7 +14365,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-17"
+        "departure_date": "2025-06-16"
       },
       {
         "start_location": {
@@ -14470,11 +14470,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "departure_date": "2025-06-25"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 172800.0
+    "delayed_by": 0.0
   },
   {
     "id": 467,
@@ -14489,7 +14489,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-20"
+        "departure_date": "2025-06-18"
       },
       {
         "start_location": {
@@ -14501,7 +14501,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-23"
       }
     ],
     "planned_delayed": false,
@@ -14578,15 +14578,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-18"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -14594,7 +14594,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-27"
       }
     ],
     "planned_delayed": false,
@@ -14643,8 +14643,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-19"
+        "truck_number": 1,
+        "departure_date": "2025-06-18"
       },
       {
         "start_location": {
@@ -14702,15 +14702,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-18"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -14718,11 +14718,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-23"
+        "departure_date": "2025-06-27"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 172800.0
   },
   {
     "id": 475,
@@ -14829,7 +14829,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-19"
       },
       {
@@ -14888,15 +14888,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "departure_date": "2025-06-19"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -14904,11 +14904,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-01"
+        "departure_date": "2025-07-09"
       }
     ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
+    "planned_delayed": true,
+    "delayed_by": 777600.0
   },
   {
     "id": 481,
@@ -14938,7 +14938,7 @@
         "departure_date": "2025-07-09"
       }
     ],
-    "planned_delayed": false,
+    "planned_delayed": true,
     "delayed_by": 864000.0
   },
   {
@@ -14950,15 +14950,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-19"
+        "departure_date": "2025-06-20"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -14966,11 +14966,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "departure_date": "2025-06-24"
       }
     ],
-    "planned_delayed": true,
-    "delayed_by": 86400.0
+    "planned_delayed": false,
+    "delayed_by": 0.0
   },
   {
     "id": 483,
@@ -14981,15 +14981,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-19"
+        "truck_number": 1,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -14997,11 +14997,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-01"
       }
     ],
-    "planned_delayed": true,
-    "delayed_by": 691200.0
+    "planned_delayed": false,
+    "delayed_by": 0.0
   },
   {
     "id": 484,
@@ -15015,7 +15015,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-19"
       },
       {
@@ -15059,11 +15059,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 604800.0
+    "delayed_by": 777600.0
   },
   {
     "id": 486,
@@ -15090,11 +15090,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 1036800.0
   },
   {
     "id": 487,
@@ -15198,42 +15198,11 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-06-19"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "ITA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-09"
-      }
-    ],
-    "planned_delayed": true,
-    "delayed_by": 691200.0
-  },
-  {
-    "id": 491,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "truck_number": 1,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
@@ -15252,6 +15221,37 @@
     "delayed_by": 0.0
   },
   {
+    "id": 491,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-20"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "ITA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-06-23"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
+  },
+  {
     "id": 492,
     "paths_taken": [
       {
@@ -15263,7 +15263,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-19"
       },
       {
@@ -15294,7 +15294,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-19"
       },
       {
@@ -15369,11 +15369,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-16"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 777600.0
+    "delayed_by": 1209600.0
   },
   {
     "id": 496,
@@ -15400,11 +15400,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 691200.0
+    "delayed_by": 518400.0
   },
   {
     "id": 497,
@@ -15418,8 +15418,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "truck_number": 1,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
@@ -15555,11 +15555,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-16"
       }
     ],
-    "planned_delayed": false,
-    "delayed_by": 345600.0
+    "planned_delayed": true,
+    "delayed_by": 777600.0
   },
   {
     "id": 502,
@@ -15573,8 +15573,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-24"
+        "truck_number": 11,
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
@@ -15617,11 +15617,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 518400.0
   },
   {
     "id": 504,
@@ -15635,8 +15635,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-06-25"
+        "truck_number": 1,
+        "departure_date": "2025-06-24"
       },
       {
         "start_location": {
@@ -15656,6 +15656,37 @@
   },
   {
     "id": 505,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "truck_number": 11,
+        "departure_date": "2025-06-26"
+      },
+      {
+        "start_location": {
+          "name": "GER02",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "ITA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-09"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 259200.0
+  },
+  {
+    "id": 506,
     "paths_taken": [
       {
         "start_location": {
@@ -15686,37 +15717,6 @@
     "delayed_by": 0.0
   },
   {
-    "id": 506,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 11,
-        "departure_date": "2025-06-26"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "ITA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-09"
-      }
-    ],
-    "planned_delayed": false,
-    "delayed_by": 432000.0
-  },
-  {
     "id": 507,
     "paths_taken": [
       {
@@ -15725,15 +15725,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-30"
+        "truck_number": 11,
+        "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -15741,11 +15741,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 0.0
   },
   {
     "id": 508,
@@ -15787,15 +15787,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-06-26"
+        "departure_date": "2025-06-25"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -15803,11 +15803,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 777600.0
+    "delayed_by": 86400.0
   },
   {
     "id": 510,
@@ -15818,15 +15818,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-27"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -15834,11 +15834,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 0.0
   },
   {
     "id": 511,
@@ -15896,11 +15896,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 518400.0
   },
   {
     "id": 513,
@@ -15942,15 +15942,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -15958,11 +15958,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 172800.0
   },
   {
     "id": 515,
@@ -16007,8 +16007,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "truck_number": 11,
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
@@ -16020,11 +16020,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 172800.0
   },
   {
     "id": 517,
@@ -16066,15 +16066,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -16082,11 +16082,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 86400.0
+    "delayed_by": 777600.0
   },
   {
     "id": 519,
@@ -16113,11 +16113,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 691200.0
+    "delayed_by": 518400.0
   },
   {
     "id": 520,
@@ -16128,15 +16128,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "truck_number": 11,
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -16144,11 +16144,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 172800.0
   },
   {
     "id": 521,
@@ -16224,7 +16224,7 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
+        "truck_number": 1,
         "departure_date": "2025-06-26"
       },
       {
@@ -16268,11 +16268,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 345600.0
+    "delayed_by": 518400.0
   },
   {
     "id": 525,
@@ -16314,15 +16314,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-27"
+        "truck_number": 11,
+        "departure_date": "2025-06-26"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -16330,11 +16330,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-04"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 0.0
+    "delayed_by": 172800.0
   },
   {
     "id": 527,
@@ -16361,7 +16361,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-04"
       }
     ],
     "planned_delayed": false,
@@ -16392,11 +16392,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-16"
       }
     ],
     "planned_delayed": false,
-    "delayed_by": 777600.0
+    "delayed_by": 1209600.0
   },
   {
     "id": 529,
@@ -16410,8 +16410,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-06-26"
+        "truck_number": 11,
+        "departure_date": "2025-06-27"
       },
       {
         "start_location": {
@@ -16686,37 +16686,6 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-01"
-      },
-      {
-        "start_location": {
-          "name": "GER02",
-          "type": "TERM"
-        },
-        "end_location": {
-          "name": "ITA01",
-          "type": "DEAL"
-        },
-        "truck_number": 1,
-        "departure_date": "2025-07-16"
-      }
-    ],
-    "planned_delayed": true,
-    "delayed_by": 691200.0
-  },
-  {
-    "id": 539,
-    "paths_taken": [
-      {
-        "start_location": {
-          "name": "GER01",
-          "type": "PLANT"
-        },
-        "end_location": {
           "name": "BEL01",
           "type": "TERM"
         },
@@ -16740,7 +16709,7 @@
     "delayed_by": 0.0
   },
   {
-    "id": 540,
+    "id": 539,
     "paths_taken": [
       {
         "start_location": {
@@ -16751,8 +16720,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-03"
+        "truck_number": 1,
+        "departure_date": "2025-07-01"
       },
       {
         "start_location": {
@@ -16764,11 +16733,42 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-16"
+        "departure_date": "2025-07-11"
       }
     ],
-    "planned_delayed": true,
-    "delayed_by": 345600.0
+    "planned_delayed": false,
+    "delayed_by": 518400.0
+  },
+  {
+    "id": 540,
+    "paths_taken": [
+      {
+        "start_location": {
+          "name": "GER01",
+          "type": "PLANT"
+        },
+        "end_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-03"
+      },
+      {
+        "start_location": {
+          "name": "BEL01",
+          "type": "TERM"
+        },
+        "end_location": {
+          "name": "ITA01",
+          "type": "DEAL"
+        },
+        "truck_number": 1,
+        "departure_date": "2025-07-09"
+      }
+    ],
+    "planned_delayed": false,
+    "delayed_by": 0.0
   },
   {
     "id": 541,
@@ -16844,8 +16844,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
+        "truck_number": 11,
+        "departure_date": "2025-07-02"
       },
       {
         "start_location": {
@@ -16872,15 +16872,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-03"
+        "departure_date": "2025-07-02"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -16888,11 +16888,11 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
-    "planned_delayed": false,
-    "delayed_by": 0.0
+    "planned_delayed": true,
+    "delayed_by": 86400.0
   },
   {
     "id": 545,
@@ -17000,7 +17000,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-04"
       },
       {
         "start_location": {
@@ -17012,7 +17012,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-15"
+        "departure_date": "2025-07-09"
       }
     ],
     "planned_delayed": false,
@@ -17247,8 +17247,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
+        "truck_number": 11,
+        "departure_date": "2025-07-09"
       },
       {
         "start_location": {
@@ -17278,8 +17278,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-07"
+        "truck_number": 11,
+        "departure_date": "2025-07-04"
       },
       {
         "start_location": {
@@ -17371,8 +17371,8 @@
           "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-03"
+        "truck_number": 11,
+        "departure_date": "2025-07-04"
       },
       {
         "start_location": {
@@ -17430,15 +17430,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 1,
+        "truck_number": 11,
         "departure_date": "2025-07-03"
       },
       {
         "start_location": {
-          "name": "BEL01",
+          "name": "GER02",
           "type": "TERM"
         },
         "end_location": {
@@ -17446,7 +17446,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       }
     ],
     "planned_delayed": false,
@@ -17492,15 +17492,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-03"
+        "departure_date": "2025-07-04"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -17682,7 +17682,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-09"
+        "departure_date": "2025-07-11"
       },
       {
         "start_location": {
@@ -17775,7 +17775,7 @@
           "type": "TERM"
         },
         "truck_number": 11,
-        "departure_date": "2025-07-11"
+        "departure_date": "2025-07-09"
       },
       {
         "start_location": {
@@ -17836,8 +17836,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-10"
+        "truck_number": 1,
+        "departure_date": "2025-07-09"
       },
       {
         "start_location": {
@@ -17867,8 +17867,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-10"
+        "truck_number": 1,
+        "departure_date": "2025-07-09"
       },
       {
         "start_location": {
@@ -17961,7 +17961,7 @@
           "type": "TERM"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-14"
+        "departure_date": "2025-07-15"
       },
       {
         "start_location": {
@@ -18022,8 +18022,8 @@
           "name": "GER02",
           "type": "TERM"
         },
-        "truck_number": 11,
-        "departure_date": "2025-07-10"
+        "truck_number": 1,
+        "departure_date": "2025-07-14"
       },
       {
         "start_location": {
@@ -18035,7 +18035,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-16"
+        "departure_date": "2025-07-18"
       }
     ],
     "planned_delayed": false,
@@ -18298,15 +18298,15 @@
           "type": "PLANT"
         },
         "end_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
-        "truck_number": 1,
-        "departure_date": "2025-07-14"
+        "truck_number": 11,
+        "departure_date": "2025-07-16"
       },
       {
         "start_location": {
-          "name": "GER02",
+          "name": "BEL01",
           "type": "TERM"
         },
         "end_location": {
@@ -18314,7 +18314,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-18"
+        "departure_date": "2025-07-21"
       }
     ],
     "planned_delayed": false,
@@ -18407,7 +18407,7 @@
           "type": "DEAL"
         },
         "truck_number": 1,
-        "departure_date": "2025-07-16"
+        "departure_date": "2025-07-15"
       }
     ],
     "planned_delayed": false,
