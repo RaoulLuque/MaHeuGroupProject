@@ -14,7 +14,7 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/final_q_0_horizon_DIFF_final_q_0_5_horizon"
+RESULTS_BASE_DIR = "../results/notable/final_q_0_5_horizon"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
