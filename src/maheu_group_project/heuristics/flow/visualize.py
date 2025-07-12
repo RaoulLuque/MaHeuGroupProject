@@ -143,14 +143,14 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 if commodity_group == current_commodity:
                     demand = flow_network.nodes[node].get(current_commodity, 0)
                     if demand != 0:
-                        color = 'black'
+                        color = 'white'
                         ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
             # Annotate nodes with their demans for the current commodity group
             else:
                 demand = flow_network.nodes[node].get(current_commodity, 0)
                 if demand != 0:
-                    color = 'black'
+                    color = 'white'
                     ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
         # We annotate the date to the left of PLANT nodes
