@@ -17,7 +17,8 @@ from maheu_group_project.solution.encoding import Vehicle, TruckIdentifier, Truc
 
 
 def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: dict[str, set[int]],
-                                 locations: list[Location], vehicles: list[Vehicle], trucks: dict[TruckIdentifier, Truck]) -> \
+                                 locations: list[Location], vehicles: list[Vehicle],
+                                 trucks: dict[TruckIdentifier, Truck]) -> \
         (
                 tuple)[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     """
@@ -66,12 +67,18 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     # Compute the single commodity min-cost flow for the current commodity group
                     flow = nx.min_cost_flow(flow_network, demand=commodity_group, capacity='capacity', weight='weight')
 
-                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow, only_show_flow_nodes=commodity_group)
-                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()), flow=flow)
+                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()),
+                    #                        flow=flow, current_commodity=commodity_group,
+                    #                        only_show_flow_nodes=True)
+                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()),
+                    #                        current_commodity=commodity_group)
+                    # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()),
+                    #                        flow=flow, current_commodity=commodity_group)
 
                     # Extract the solution from the flow and update the flow network
                     extract_flow_update_network_and_obtain_final_assignment(flow_network=flow_network, flow=flow,
-                                                                            vehicles_from_current_commodity=commodity_groups[commodity_group],
+                                                                            vehicles_from_current_commodity=
+                                                                            commodity_groups[commodity_group],
                                                                             vehicles=vehicles, current_day=current_day,
                                                                             vehicle_assignments=vehicle_assignments)
 
@@ -90,7 +97,8 @@ def solve_flow_as_mip_deterministically(flow_network: MultiDiGraph,
                                         commodity_groups: dict[str, set[int]],
                                         vehicles: list[Vehicle],
                                         trucks: dict[TruckIdentifier, Truck],
-                                        locations: list[Location]) -> tuple[list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
+                                        locations: list[Location]) -> tuple[
+    list[VehicleAssignment], dict[TruckIdentifier, TruckAssignment]]:
     first_day, _, _ = get_first_last_and_days(vehicles=vehicles, trucks=trucks)
 
     if False:
