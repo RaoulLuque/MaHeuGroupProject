@@ -14,7 +14,7 @@ import re
 os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2024/bin/x86_64-linux'
 
 # Directories involved
-RESULTS_BASE_DIR = "../results/notable/final_q_0_5_horizon"
+RESULTS_BASE_DIR = "../results/notable/final_q_0_horizon_DIFF_final_q_0_5_horizon"
 SUBFOLDERS = ["deterministic", "real_time"]
 
 # Plot settings
@@ -119,9 +119,9 @@ def plot(file_ending: str):
             plotted_heuristics = {}
             all_costs = []  # Collect all cost values for y-axis scaling
 
-            # Load deterministic FLOW_MIP data for real_time plots
+            # Load deterministic FLOW_MIP data for normalization (for all plots except deterministic)
             deterministic_mip_data = {}
-            if subfolder == 'real_time':
+            if subfolder == 'real_time' or subfolder == 'deterministic':
                 det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
                 if os.path.isdir(det_dir):
                     det_files = [f for f in os.listdir(det_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
@@ -152,6 +152,18 @@ def plot(file_ending: str):
                     heuristic = 'GREEDY_CAN_PATHS'
                 idx = heuristic_to_idx[heuristic]
                 realisations, costs = read_data(os.path.join(dir_path, filename))
+
+                # Normalize values by dividing by deterministic FLOW_MIP (except for deterministic plots)
+                if subfolder != 'deterministic' and deterministic_mip_data:
+                    normalized_costs = []
+                    normalized_realisations = []
+                    for real, cost in zip(realisations, costs):
+                        if real in deterministic_mip_data and deterministic_mip_data[real] != 0:
+                            normalized_costs.append(cost / deterministic_mip_data[real])
+                            normalized_realisations.append(real)
+                    costs = normalized_costs
+                    realisations = normalized_realisations
+
                 all_costs.extend(costs)  # Collect costs for scaling
                 # Plot the costs for this heuristic
                 # Use fixed color and marker mapping for heuristics
@@ -167,7 +179,7 @@ def plot(file_ending: str):
             # Add deterministic FLOW_MIP line for real_time plots
             if subfolder == 'real_time' and deterministic_mip_data:
                 det_realisations = sorted(deterministic_mip_data.keys())
-                det_costs = [deterministic_mip_data[r] for r in det_realisations]
+                det_costs = [deterministic_mip_data[r] / deterministic_mip_data[r] for r in det_realisations]  # This will be 1.0 for all
                 all_costs.extend(det_costs)  # Include in cost scaling
 
                 # Plot deterministic FLOW_MIP with distinctive style (but don't add to legend)
@@ -184,7 +196,10 @@ def plot(file_ending: str):
             # Determine subfolder for plot type
             if file_ending == '_result.txt':
                 plot_type_folder = 'objective_value'
-                ylabel = 'Cost'
+                if subfolder == 'deterministic':
+                    ylabel = 'Cost'
+                else:
+                    ylabel = 'Cost / Deterministic FLOW_MIP Cost'
                 # Explicitly set y-axis lower limit to include negative values
                 if all_costs:
                     min_value = min(all_costs)
@@ -196,7 +211,10 @@ def plot(file_ending: str):
                     plt.ylim(bottom=min_value - margin)
             elif file_ending == '_running_time.txt':
                 plot_type_folder = 'running_time'
-                ylabel = 'Running Time (s)'
+                if subfolder == 'deterministic':
+                    ylabel = 'Running Time (s)'
+                else:
+                    ylabel = 'Running Time / Deterministic FLOW_MIP Running Time'
                 plt.yscale('log')  # Use logarithmic scale for running time
 
                 # Set y-axis limits to ensure there's a label above the highest data point
@@ -318,19 +336,20 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
         for case, case_files in cases.items():
             plt.figure(figsize=(10, 6))
 
-            # Load deterministic FLOW_MIP solution for subtraction
+            # Load deterministic FLOW_MIP solution for normalization/subtraction
             deterministic_mip_data = {}
-            if subtract_mip:
-                det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
+            det_dir = os.path.join(RESULTS_BASE_DIR, 'deterministic')
+            if os.path.isdir(det_dir):
                 det_files = [f for f in os.listdir(det_dir) if f.endswith(file_ending) and 'FLOW_MIP' in f]
                 for det_file in det_files:
                     det_case_match = CASE_PATTERN.search(det_file)
                     if not det_case_match:
                         continue
                     det_case = det_case_match.group(1)
-                    realisations, values = read_data(os.path.join(det_dir, det_file))
-                    # Store as dict: case -> {realisation: value}
-                    deterministic_mip_data[det_case] = dict(zip(realisations, values))
+                    if det_case == case:  # Only load data for the current case
+                        realisations, values = read_data(os.path.join(det_dir, det_file))
+                        deterministic_mip_data = dict(zip(realisations, values))
+                        break
 
             # Collect data for each heuristic
             heuristic_data = {}
@@ -376,30 +395,35 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                     for real, val in zip(realisations, values):
                         heuristic_data[heuristic][real] = val
 
-            # If subtract_mip is True, subtract deterministic MIP values from other heuristics
-            if subtract_mip and deterministic_mip_data.get(case):
-                det_mip_case_data = deterministic_mip_data[case]
+            # Normalize values by dividing by deterministic FLOW_MIP (for all boxplots)
+            if deterministic_mip_data:
                 for heuristic in heuristic_data:
-                    for real in list(heuristic_data[heuristic].keys()):
-                        if real in det_mip_case_data:
-                            heuristic_data[heuristic][real] -= det_mip_case_data[real]
-                        else:
-                            del heuristic_data[heuristic][real]
+                    normalized_data = {}
+                    for real, val in heuristic_data[heuristic].items():
+                        if real in deterministic_mip_data and deterministic_mip_data[real] != 0:
+                            normalized_data[real] = val / deterministic_mip_data[real]
+                    heuristic_data[heuristic] = normalized_data
+
+            if subtract_mip:
                 # For real_time FLOW_MIP, store difference as well
-                if real_time_mip_data:
+                if real_time_mip_data and deterministic_mip_data:
                     heuristic_data['FLOW_MIP_REAL_TIME'] = {}
                     for real, val in real_time_mip_data.items():
-                        if real in det_mip_case_data:
-                            heuristic_data['FLOW_MIP_REAL_TIME'][real] = val - det_mip_case_data[real]
+                        if real in deterministic_mip_data and deterministic_mip_data[real] != 0:
+                            heuristic_data['FLOW_MIP_REAL_TIME'][real] = (val / deterministic_mip_data[real]) - 1.0
             else:
-                # If not subtracting, just add real_time FLOW_MIP as a heuristic
-                if real_time_mip_data:
-                    heuristic_data['FLOW_MIP_REAL_TIME'] = real_time_mip_data
+                # If not subtracting, just add normalized real_time FLOW_MIP as a heuristic
+                if real_time_mip_data and deterministic_mip_data:
+                    heuristic_data['FLOW_MIP_REAL_TIME'] = {}
+                    for real, val in real_time_mip_data.items():
+                        if real in deterministic_mip_data and deterministic_mip_data[real] != 0:
+                            heuristic_data['FLOW_MIP_REAL_TIME'][real] = val / deterministic_mip_data[real]
 
             # Convert to lists for boxplot
             final_heuristic_data = {}
             for heuristic in heuristic_data:
-                final_heuristic_data[heuristic] = list(heuristic_data[heuristic].values())
+                if heuristic_data[heuristic]:  # Only include if there's data
+                    final_heuristic_data[heuristic] = list(heuristic_data[heuristic].values())
 
             # Prepare data for boxplot in the order of display_heuristics
             boxplot_data = []
@@ -425,15 +449,15 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
                 if file_ending == '_result.txt':
                     plot_type_folder = 'objective_value'
                     if subtract_mip:
-                        ylabel = 'Cost Difference from MIP'
+                        ylabel = 'Cost Difference / Det. FLOW_MIP Cost'
                     else:
-                        ylabel = 'Cost'
+                        ylabel = 'Cost / Deterministic FLOW_MIP Cost'
                 elif file_ending == '_running_time.txt':
                     plot_type_folder = 'running_time'
                     if subtract_mip:
-                        ylabel = 'Running Time Difference from MIP (s)'
+                        ylabel = 'Running Time Ratio - 1 (relative to Deterministic FLOW_MIP)'
                     else:
-                        ylabel = 'Running Time (s)'
+                        ylabel = 'Running Time / Deterministic FLOW_MIP Running Time'
 
                 plt.ylabel(ylabel)
                 plt.xticks()

@@ -1,0 +1,83 @@
+Case 03 - FLOW (deterministic)
+Horizon removal with front_horizon=7 days
+
+Realization 001:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 417
+  Filtered trucks: 124
+  Original objective value: 47638.84
+  Objective value after horizon removal: 38810.00
+
+Realization 002:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 405
+  Filtered trucks: 123
+  Original objective value: 47741.41
+  Objective value after horizon removal: 36860.00
+
+Realization 003:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 415
+  Filtered trucks: 126
+  Original objective value: 40521.21
+  Objective value after horizon removal: 25800.00
+
+Realization 004:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 419
+  Filtered trucks: 124
+  Original objective value: 43452.30
+  Objective value after horizon removal: 32350.00
+
+Realization 005:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 422
+  Filtered trucks: 124
+  Original objective value: 36283.44
+  Objective value after horizon removal: 27290.00
+
+Realization 006:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 403
+  Filtered trucks: 121
+  Original objective value: 42207.11
+  Objective value after horizon removal: 27310.00
+
+Realization 007:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 408
+  Filtered trucks: 132
+  Original objective value: 39402.11
+  Objective value after horizon removal: 29550.00
+
+Realization 008:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 421
+  Filtered trucks: 131
+  Original objective value: 69828.70
+  Objective value after horizon removal: 55750.00
+
+Realization 009:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 399
+  Filtered trucks: 125
+  Original objective value: 44758.68
+  Objective value after horizon removal: 34310.00
+
+Realization 010:
+  Original vehicles: 600
+  Filtered vehicles: 400
+  Original trucks: 407
+  Filtered trucks: 124
+  Original objective value: 44005.75
+  Objective value after horizon removal: 32760.00
+
