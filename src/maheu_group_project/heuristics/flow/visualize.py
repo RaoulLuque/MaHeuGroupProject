@@ -3,6 +3,7 @@ import datetime
 import networkx as nx
 
 from matplotlib import pyplot as plt
+from matplotlib import lines
 from matplotlib.patches import FancyArrowPatch
 from networkx import MultiDiGraph
 
@@ -11,6 +12,14 @@ from maheu_group_project.solution.encoding import Location, LocationType
 
 FOR_REPORT = True
 CUTOFF_DATE = datetime.date(2025, 6, 12)
+NODE_TYPE_TO_COLOR = {
+    'PLANT': 'green',
+    'TERMINAL': 'orange',
+    'DEALER': 'red',
+    'HELPER': 'white'
+}
+NODE_SIZE = 750
+FONTSIZE = 18
 
 
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
@@ -93,11 +102,18 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     plt.figure(figsize=plot_size, dpi=dpi)
     ax = plt.gca()
 
-    # Draw all nodes as white circles with black borders
+    # Assign colors to nodes based on their type
+    node_colors = []
+    for node in flow_network.nodes:
+        node_type_str = "HELPER" if node.type != NodeType.NORMAL else node.location.type.name
+        color = NODE_TYPE_TO_COLOR.get(node_type_str, 'gray')
+        node_colors.append(color)
+
+    # Draw all nodes as colored circles with black borders
     nx.draw_networkx_nodes(
         flow_network, pos,
-        node_size=150,
-        node_color='white',
+        node_size=NODE_SIZE,
+        node_color=node_colors,
         edgecolors='black',
         linewidths=1.0,
         ax=ax
@@ -111,12 +127,12 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 commodity_group = dealership_to_commodity_group(node)
                 demand = flow_network.nodes[node].get(commodity_group, 0)
                 color = string_to_color(commodity_group)
-                ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
             # Annotate nodes with the summarized demands
             else:
                 demand = get_demand_sum(flow_network, commodity_groups, node)
-                ax.text(x, y, str(demand), fontsize=11, color='black', ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=FONTSIZE, color='black', ha='center', va='center')
 
 
         else:
@@ -127,17 +143,17 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 if commodity_group == only_show_flow_nodes:
                     demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
                     color = string_to_color(only_show_flow_nodes)
-                    ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
+                    ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
             # Annotate nodes with their demans for the current commodity group
             else:
                 demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
                 color = string_to_color(only_show_flow_nodes)
-                ax.text(x, y, str(demand), fontsize=11, color=color, ha='center', va='center')
+                ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
         # We annotate the date to the left of PLANT nodes
         if node.location.type == LocationType.PLANT:
-            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=11, color='black', ha='right',
+            ax.text(x - 0.25 * scale, y, node.day.strftime("%Y-%m-%d"), fontsize=FONTSIZE, color='black', ha='right',
                     va='center')
 
     # Draw all edges, using curvature to distinguish parallel edges
@@ -188,7 +204,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             else:
                 label_y -= abs(pos[u][0] - pos[v][0]) * rad * 2.5
 
-            ax.text(label_x, label_y, label, fontsize=11, color='blue', ha='center', va='center',
+            ax.text(label_x, label_y, label, fontsize=FONTSIZE, color='blue', ha='center', va='center',
                     backgroundcolor='white')
 
     # Optionally, draw node labels (commented out for clarity)
@@ -198,6 +214,14 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
     plt.axis('off')  # Hide axes for cleaner visualization
     plt.tight_layout()
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    legend_elements = [
+        lines.Line2D([], [], color='green', marker='o', linestyle='None', markersize=10, label='Plant'),
+        lines.Line2D([], [], color='orange', marker='o', linestyle='None', markersize=10, label='Terminal'),
+        lines.Line2D([], [], color='red', marker='o', linestyle='None', markersize=10, label='Dealership'),
+        lines.Line2D([], [], color='white', marker='o', linestyle='None', markersize=10, label='Helper Node',
+                     markeredgecolor='black')
+    ]
+    plt.legend(handles=legend_elements, loc='upper center', fontsize=FONTSIZE, ncol=4)
     plt.show()
 
 
