@@ -88,8 +88,6 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
     vehicle_assignments: dict[int, VehicleAssignment] = {}
     truck_assignments: dict[TruckIdentifier, TruckAssignment] = {}
 
-    # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
-
     # We iterate over the days from first to last; then those locations which are DEALER locations
     # The current day is the day for which we know the realized trucks. However, before looking
     for current_day in days:
@@ -99,10 +97,14 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # Create a copy of the flow network capacities. These will be loaded after computing all flows for the current day
         capacities_copy = {edge: data['capacity'] for edge, data in flow_network.edges.items()}
 
+        # Visualize
+        # visualize_flow_network(flow_network, locations)
+
         if not solve_as_mip:
             # Iterate over all commodity groups and solve the single commodity flow problem for each of them.
             for commodity_group in remaining_commodity_groups.keys():
-                commodity_group_day, commodity_group_location = get_day_and_location_for_commodity_group(commodity_group)
+                commodity_group_day, commodity_group_location = get_day_and_location_for_commodity_group(
+                    commodity_group)
 
                 # First, check whether there is actually any demand for this commodity group (day and location)
                 target_node = NodeIdentifier(commodity_group_day, commodity_group_location, NodeType.NORMAL)
@@ -122,14 +124,15 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                         # Extract the solution from the flow and update the flow network. This updates the capacities
                         # in the flow network as well as add the next planned vehicle assignments for the current day
                         # to the current_day_planned_vehicle_assignments.
-                        current_day_planned_vehicle_assignments = extract_flow_update_network_and_obtain_planned_assignment(flow_network=flow_network,
-                                                                                                                            flow=filtered_flow,
-                                                                                                                            vehicles_from_current_commodity=remaining_commodity_groups[commodity_group],
-                                                                                                                            vehicles=vehicles,
-                                                                                                                            current_day=current_day,
-                                                                                                                            planned_vehicle_assignments=current_day_planned_vehicle_assignments,
-                                                                                                                            vehicle_assignments=vehicle_assignments,
-                                                                                                                            trucks_realised_by_day_known=trucks_realised_by_day_known)
+                        current_day_planned_vehicle_assignments = extract_flow_update_network_and_obtain_planned_assignment(
+                            flow_network=flow_network,
+                            flow=filtered_flow,
+                            vehicles_from_current_commodity=remaining_commodity_groups[commodity_group],
+                            vehicles=vehicles,
+                            current_day=current_day,
+                            planned_vehicle_assignments=current_day_planned_vehicle_assignments,
+                            vehicle_assignments=vehicle_assignments,
+                            trucks_realised_by_day_known=trucks_realised_by_day_known)
                     except nx.NetworkXUnfeasible:
                         # If the flow is unfeasible, this means that in the planned setting, the vehicles would not be able
                         # to reach their destination. However, we note this in the planned_vehicle_assignments and hope
@@ -137,14 +140,16 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                         for vehicle_id in remaining_commodity_groups[commodity_group]:
                             vehicle = vehicles[vehicle_id]
                             # Only assign the InfeasibleAssignment if the vehicle has not already arrived at its destination
-                            if get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments, trucks_realised_by_day_known).location != vehicle.destination:
+                            if get_current_location_of_vehicle_as_node(vehicle, vehicle_assignments,
+                                                                       trucks_realised_by_day_known).location != vehicle.destination:
                                 current_day_planned_vehicle_assignments[vehicle_id] = InfeasibleAssignment()
 
         else:
             # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
             # We solve the multicommodity min-cost flow problem using a MIP formulation.
-            model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network, set(remaining_commodity_groups.keys()))
+            model, flow_vars, node_mapping = translate_flow_network_to_mip(flow_network,
+                                                                           set(remaining_commodity_groups.keys()))
             solve_mip(model)
             flow_solution = translate_mip_solution_to_flow(model, flow_vars)
 
@@ -233,9 +238,11 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
 
                                     # If the vehicle is not planned to be assigned to a truck today, we check if coincidentally
                                     # there is a truck on that route today that has more capacity than planned.
-                                    next_planned_assignment_is_not_free = trucks_planned[next_planned_assignment].price > 0
+                                    next_planned_assignment_is_not_free = trucks_planned[
+                                                                              next_planned_assignment].price > 0
                                     truck_identifier = check_if_there_is_a_suitable_truck_before_schedule(
-                                        next_planned_assignment, next_planned_assignment_is_not_free, realised_trucks_today,
+                                        next_planned_assignment, next_planned_assignment_is_not_free,
+                                        realised_trucks_today,
                                         trucks_realised_additional_capacity)
 
                                     if truck_identifier is not None:
@@ -273,7 +280,8 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
                                         if truck_identifier.start_location == current_location_of_vehicle and \
                                                 truck_identifier.end_location == vehicle.destination:
                                             if solve_as_mip:
-                                                raise (ValueError, "InfeasibleAssignment should not occur in the solve_as_mip case")
+                                                raise (ValueError,
+                                                       "InfeasibleAssignment should not occur in the solve_as_mip case")
                                             # We found a truck that can take the vehicle directly to its destination
                                             trucks_realised_additional_capacity[truck_identifier] -= 1
                                             assign_vehicle_to_truck(flow_network, vehicle,
@@ -307,12 +315,13 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         # next iteration.
         remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
 
+        # Visualize
+        # visualize_flow_network(flow_network, locations)
+
         # Depending on UPDATE_DELAY_NODES_IN_FLOW_NETWORK, we update the delay nodes in the flow network.
         if UPDATE_DELAY_NODES_IN_FLOW_NETWORK:
             if current_day + timedelta(days=7) <= last_day:
                 update_delay_nodes_in_flow_network(flow_network, current_day, locations)
-
-        # visualize_flow_network(flow_network, locations, set(commodity_groups.keys()))
 
     # Convert the vehicle_assignments to a list and sort them by their id
     vehicle_assignments: list[VehicleAssignment] = list(vehicle_assignments.values())
@@ -439,8 +448,8 @@ def assign_vehicle_to_truck(flow_network: MultiDiGraph, vehicle: Vehicle, truck:
     # Check capacity before assignment to prevent race conditions
     if truck_assignments[truck_identifier].get_capacity_left(truck) <= 0:
         raise RuntimeError(f"Cannot assign vehicle {vehicle_id} to truck {truck_identifier}: "
-                          f"truck has no capacity left (current load: {len(truck_assignments[truck_identifier].load)}, "
-                          f"truck capacity: {truck.capacity})")
+                           f"truck has no capacity left (current load: {len(truck_assignments[truck_identifier].load)}, "
+                           f"truck capacity: {truck.capacity})")
 
     # Adapt the flow network to reflect the assignment
     _, edge_end_node = get_start_and_end_nodes_for_truck(truck)

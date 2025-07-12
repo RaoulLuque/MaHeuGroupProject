@@ -85,7 +85,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
         # Add an edge from the start node to the end node with the truck's capacity, price and truck number as a key.
         # The key of the edge is the truck_number to distinguish parallel edges. These will be the keys in the resulting
         # flow dict.
-        flow_network.add_edge(start_node, end_node, capacity=truck.capacity, weight=int(price * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER), key=truck.truck_number)
+        flow_network.add_edge(start_node, end_node, capacity=truck.capacity,
+                              weight=int(price * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER), key=truck.truck_number)
 
     # Create the helper edges for the flow network connecting the columns
     for day in days:
@@ -95,7 +96,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
             if day < last_day:
                 # Create an edge to the next day node
                 next_day_node = NodeIdentifier(day + timedelta(days=1), location, NodeType.NORMAL)
-                flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED, weight=0  * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
+                flow_network.add_edge(current_node, next_day_node, capacity=UNBOUNDED,
+                                      weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
     # Create the helper nodes for each DEALER location
     for day in days:
@@ -111,7 +113,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                     current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
                                           weight=FIXED_UNPLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
-                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
+                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED,
+                                          weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
                     if day != first_day:
                         # Add an edge to the HELPER_NODE_ONE above
                         previous_helper_node_one = NodeIdentifier(day - timedelta(days=1), location,
@@ -123,7 +126,8 @@ def create_flow_network(vehicles: list[Vehicle], trucks: dict[TruckIdentifier, T
                     current_normal_node = NodeIdentifier(day, location, NodeType.NORMAL)
                     flow_network.add_edge(current_normal_node, current_helper_node_one, capacity=UNBOUNDED,
                                           weight=FIXED_PLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
-                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED, weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
+                    flow_network.add_edge(current_helper_node_one, current_normal_node, capacity=UNBOUNDED,
+                                          weight=0 * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
 
                     # Add the second helper node and an edge to it
                     current_helper_node_two = NodeIdentifier(day, location, NodeType.HELPER_NODE_TWO)
@@ -242,7 +246,8 @@ def update_delay_nodes_in_flow_network(flow_network: MultiDiGraph, current_day: 
                 flow_network.remove_edge(next_day_helper_node_one, current_helper_node_one)
 
             # Update the edge node weight from the current normal node to the first helper node
-            flow_network[current_dealer_node][current_helper_node_one][0]['weight'] = FIXED_UNPLANNED_DELAY_COST
+            flow_network[current_dealer_node][current_helper_node_one][0][
+                'weight'] = FIXED_UNPLANNED_DELAY_COST * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER
 
             # Get the UNBOUNDED capacity from the edge from current dealer node to the helper node one
             UNBOUNDED = flow_network[current_dealer_node][current_helper_node_one][0]['capacity']
@@ -259,4 +264,3 @@ def update_delay_nodes_in_flow_network(flow_network: MultiDiGraph, current_day: 
             if next_day_helper_node_two in flow_network:
                 flow_network.add_edge(next_day_helper_node_two, current_helper_node_one, capacity=UNBOUNDED,
                                       weight=COST_PER_UNPLANNED_DELAY_DAY * ARTIFICIAL_GENERAL_EDGE_COST_MULTIPLIER)
-
