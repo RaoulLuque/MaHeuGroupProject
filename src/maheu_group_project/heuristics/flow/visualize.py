@@ -25,7 +25,8 @@ FONTSIZE = 18
 def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location],
                            commodity_groups: set[str] | None = None,
                            flow: dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]] = None,
-                           only_show_flow_nodes: str | None = None):
+                           current_commodity: str | None = None,
+                           only_show_flow_nodes: bool = False):
     """
     Visualizes the flow network using matplotlib and networkx.
 
@@ -34,7 +35,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
         locations (list[Location]): List of all locations in the network.
         commodity_groups (set[str], optional): Set of commodity groups to consider for node annotations.
         flow (dict[NodeIdentifier, dict[NodeIdentifier, dict[int, int]]], optional): Flow data for each edge.
-        only_show_flow_nodes (str, optional):
+        only_show_flow_nodes (bool): If True, only nodes involved in the flow will be shown.
     """
     # Ensure correct type for flow_network
     flow_network: MultiDiGraph[NodeIdentifier] = flow_network
@@ -63,7 +64,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
                 filtered_flow[src] = filtered_targets
 
     # If a flow is provided and only_show_flow_nodes is true, we want filter the graph to only contain the nodes involved in the flow
-    if flow_data_provided and (only_show_flow_nodes is not None):
+    if flow_data_provided and only_show_flow_nodes:
         involved_nodes = set(filtered_flow.keys())
         for targets in filtered_flow.values():
             involved_nodes.update(targets.keys())
@@ -90,7 +91,7 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
         # Adjust the plot size for report
         plot_size = (16, 24)
     dpi = 150
-    if only_show_flow_nodes is not None:
+    if only_show_flow_nodes:
         # Adjust the plot size
         plot_size = (16, 16)
         dpi = 150
@@ -121,35 +122,36 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
 
     # Annotate nodes
     for node, (x, y) in pos.items():
-        if only_show_flow_nodes is None:
+        if current_commodity is None:
             # Annotate the dealership nodes with their commodity group demand in different colors
-            if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
-                commodity_group = dealership_to_commodity_group(node)
-                demand = flow_network.nodes[node].get(commodity_group, 0)
-                color = string_to_color(commodity_group)
-                ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
-
-            # Annotate nodes with the summarized demands
-            else:
-                demand = get_demand_sum(flow_network, commodity_groups, node)
-                ax.text(x, y, str(demand), fontsize=FONTSIZE, color='black', ha='center', va='center')
-
+            continue
+            # if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
+            #     commodity_group = dealership_to_commodity_group(node)
+            #     demand = flow_network.nodes[node].get(commodity_group, 0)
+            #     color = string_to_color(commodity_group)
+            #     ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
+            #
+            # # Annotate nodes with the summarized demands
+            # else:
+            #     demand = get_demand_sum(flow_network, commodity_groups, node)
+            #     ax.text(x, y, str(demand), fontsize=FONTSIZE, color='black', ha='center', va='center')
 
         else:
-            # If we only show flow nodes, we only annotate with the current commodity, which is provided in
-            # only_show_flow_nodes
+            # If a current commodity is specified, we only annotate nodes related to that commodity
             if node.type == NodeType.NORMAL and node.location.type == LocationType.DEALER:
                 commodity_group = dealership_to_commodity_group(node)
-                if commodity_group == only_show_flow_nodes:
-                    demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
-                    color = string_to_color(only_show_flow_nodes)
-                    ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
+                if commodity_group == current_commodity:
+                    demand = flow_network.nodes[node].get(current_commodity, 0)
+                    if demand != 0:
+                        color = 'black'
+                        ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
             # Annotate nodes with their demans for the current commodity group
             else:
-                demand = flow_network.nodes[node].get(only_show_flow_nodes, 0)
-                color = string_to_color(only_show_flow_nodes)
-                ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
+                demand = flow_network.nodes[node].get(current_commodity, 0)
+                if demand != 0:
+                    color = 'black'
+                    ax.text(x, y, str(demand), fontsize=FONTSIZE, color=color, ha='center', va='center')
 
         # We annotate the date to the left of PLANT nodes
         if node.location.type == LocationType.PLANT:
