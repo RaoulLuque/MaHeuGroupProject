@@ -15,7 +15,7 @@ from maheu_group_project.solution.evaluate import objective_function
 
 # This is the default configuration of the script. It can be overridden by command line arguments.
 SOLVERS: list[SolverType] = [SolverType.FLOW]
-DETERMINISTIC = True
+DETERMINISTIC = False
 DATASET_INDICES = [1, 2, 3, 4]
 QUANTILE_VALUE = 0.0
 
@@ -130,7 +130,8 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(description="Run all realised capacity experiments.")
     parser.add_argument('--solvers', nargs='+', type=str, default=None, help='List of solvers (by name) to use')
-    parser.add_argument('--deterministic', type=str, choices=['true', 'false', 'TRUE', 'FALSE'], default=None, help='Use deterministic mode (true/false)')
+    parser.add_argument('--deterministic', type=str, choices=['true', 'false', 'TRUE', 'FALSE'], default=None,
+                        help='Use deterministic mode (true/false)')
     parser.add_argument('--dataset_indices', nargs='+', type=int, default=None, help='List of dataset indices to use')
     parser.add_argument('--quantile_value', type=float, default=None, help='Quantile value to use for the solver')
     return parser.parse_args()

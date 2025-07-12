@@ -72,6 +72,7 @@ def solve_flow_deterministically(flow_network: MultiDiGraph, commodity_groups: d
                     #                        only_show_flow_nodes=True)
                     # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()),
                     #                        current_commodity=commodity_group)
+
                     # visualize_flow_network(flow_network, locations, commodity_groups=set(commodity_groups.keys()),
                     #                        flow=flow, current_commodity=commodity_group)
 

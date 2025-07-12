@@ -98,7 +98,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         capacities_copy = {edge: data['capacity'] for edge, data in flow_network.edges.items()}
 
         # Visualize
-        # visualize_flow_network(flow_network, locations)
+        # visualize_flow_network(flow_network, locations, current_commodity='2025-06-08_FRA01')
 
         if not solve_as_mip:
             # Iterate over all commodity groups and solve the single commodity flow problem for each of them.
@@ -316,7 +316,7 @@ def solve_flow_in_real_time(flow_network: MultiDiGraph, commodity_groups: dict[s
         remove_trucks_from_network(flow_network, trucks_planned_by_day.get(current_day, {}))
 
         # Visualize
-        # visualize_flow_network(flow_network, locations)
+        # visualize_flow_network(flow_network, locations, current_commodity='2025-06-08_FRA01')
 
         # Depending on UPDATE_DELAY_NODES_IN_FLOW_NETWORK, we update the delay nodes in the flow network.
         if UPDATE_DELAY_NODES_IN_FLOW_NETWORK:
