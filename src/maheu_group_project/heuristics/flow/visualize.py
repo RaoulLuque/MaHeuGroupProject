@@ -168,21 +168,23 @@ def visualize_flow_network(flow_network: MultiDiGraph, locations: list[Location]
             rad = 0.1 * (idx + 1)
 
             # Determine edge color and style based on flow data
-            edge_color = 'gray'  # Default color
+            edge_color = 'gray'
+            lw = 1
             linestyle = 'solid'
             if flow_data_provided:
                 flow_value = flow.get(u, {}).get(v, {}).get(k, 0)
                 if flow_value > 0:
                     edge_color = 'red'
+                    lw = 3
                     linestyle = (0, (5, 5))
 
             # Draw the edge as a curved arrow
             arrow = FancyArrowPatch(
                 posA=pos[u], posB=pos[v],
                 connectionstyle=f"arc3,rad={rad}",
-                arrowstyle='-|>', color=edge_color, mutation_scale=25, lw=1,
-                linestyle=linestyle,
-                shrinkA=15, shrinkB=15
+                arrowstyle='-|>', color=edge_color, mutation_scale=25, lw=lw,
+                shrinkA=15, shrinkB=15,
+                linestyle=linestyle
             )
             ax.add_patch(arrow)
 
