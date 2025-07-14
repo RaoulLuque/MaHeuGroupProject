@@ -52,7 +52,7 @@ The main script to run is [`run_all.py`](scripts/run_all.py), which
 can be configured to run different heuristics on the different datasets/
 instances. At the top of the file, one can configure the arguments.
 Otherwise, one can also provide command line arguments, in which case
-the arguments in the script will be ignored/overridden.
+the arguments in the script will be ignored/overwritten.
 
 ### Run the script from the command line
 
