@@ -70,6 +70,12 @@ def read_data(filepath: str) -> tuple[list[int], list[float]]:
 
 
 def plot(file_ending: str):
+    """
+    Creates line charts for each case showing costs or running times by heuristic. Plots are stored in the results directory.
+
+    Args:
+        file_ending (str): The file ending to work with (e.g., '_result.txt' or '_running_time.txt').
+    """
     # Collect all heuristics globally to ensure consistent color/marker/legend order
     all_heuristics = set()
     heuristic_file_map = {}
@@ -305,6 +311,13 @@ def plot(file_ending: str):
 
 
 def create_combined_plots(file_ending: str):
+    """
+    Creates combined plots for all cases in a single figure, showing either objective values or running times. Plots
+    are stored in the results directory.
+
+    Args:
+        file_ending (str): The file ending to work with (e.g., '_result.txt' or '_running_time.txt').
+    """
     CASES = ["01", "02", "03", "04"]
     if file_ending == '_result.txt':
         plot_type_folder = 'objective_value'
@@ -342,7 +355,7 @@ def create_combined_plots(file_ending: str):
 
 def create_boxplots(file_ending: str, subtract_mip: bool = False):
     """
-    Creates boxplots for each case showing running times by heuristic.
+    Creates box plots for each case showing running times by heuristic. Plots are stored in the results directory.
 
     Args:
         file_ending (str): The file ending to work with (e.g., '_running_time.txt')
@@ -548,6 +561,7 @@ def create_boxplots(file_ending: str, subtract_mip: bool = False):
 def create_barcharts(file_ending: str):
     """
     Creates bar charts for each case showing average objective values or running times by heuristic.
+    Plots are stored in the results directory.
 
     Args:
         file_ending (str): The file ending to work with (e.g., '_result.txt' or '_running_time.txt')
