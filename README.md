@@ -2,7 +2,8 @@
 
 This repository contains the code for a group project for the course
 on Mathematical Heuristic Methods (MaHeu) at the RWTH Aachen University
-in the Summer Semester 2025.
+in the Summer Semester 2025. The report with and without pictures is
+located in the [report.pdf](report.pdf) and [report_with_images.pdf](report_with_images.pdf) files.
 
 ## Problem description
 
