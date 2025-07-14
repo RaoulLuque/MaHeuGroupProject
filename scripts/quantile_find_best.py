@@ -1,5 +1,7 @@
+# Most of the code in this file is duplicated from scripts/run_all.py, but only altered slightly to fit the needs of
+# finding the best quantile value.
+
 import argparse
-import datetime
 import glob
 import os
 import sys
