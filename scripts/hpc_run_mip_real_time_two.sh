@@ -24,5 +24,5 @@ pip install --upgrade pip
 pip install networkx==3.5
 pip install matplotlib==3.10.3
 
-### Run the script (once for deterministic and once for real-time)
+### Run the script
 python3 scripts/run_all.py --deterministic FALSE --solvers FLOW_MIP --dataset_indices 2 4 --quantile_value 0.5

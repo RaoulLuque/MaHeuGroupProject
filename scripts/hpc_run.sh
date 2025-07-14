@@ -25,8 +25,7 @@ pip install networkx==3.5
 pip install matplotlib==3.10.3
 
 ### Run the script (once for deterministic and once for real-time)
-### python3 scripts/run_all.py --deterministic TRUE --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW FLOW_MIP --dataset_indices 1 2 3 4 --quantile_value 0.0
-### echo "Deterministic run completed."
-### python3 scripts/run_all.py --deterministic FALSE --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW --dataset_indices 1 2 3 4 --quantile_value 0.5
-### echo "Real time run completed."
-python3 scripts/run_all.py --deterministic TRUE --solvers FLOW_MIP --dataset_indices 3 --quantile_value 0.0
+python3 scripts/run_all.py --deterministic TRUE --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW FLOW_MIP --dataset_indices 1 2 3 4 --quantile_value 0.0
+echo "Deterministic run completed."
+python3 scripts/run_all.py --deterministic FALSE --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW --dataset_indices 1 2 3 4 --quantile_value 0.5
+echo "Real time run completed."

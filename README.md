@@ -6,10 +6,10 @@ in the Summer Semester 2025.
 
 ## Problem description
 
-The project is about solving a distribution problem for a carmanufacturer.
+The project is revolves around solving a distribution problem for a car manufacturer.
 A scenario of a logistic network is given with vehicles which need to
-be transported from a factory to several dealerships via a set of
-trucks. The goal is to find a solution which minimizes the total
+be transported from plants to several dealerships via a set of
+transports. The goal is to find a solution which minimizes the total
 transportation costs, while respecting the constraints of the problem.
 
 ## Encoding of solutions
@@ -64,10 +64,10 @@ python3 scripts/run_all.py
 
 Optionally, one can provide command line arguments to the script.
 For example, to run the script with all available heuristics on all
-datasets in the real-time setting, one can run:
+datasets in the uncertain / real_time setting, one can run:
 
 ```commandline
-python3 scripts/run_all.py --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW --dataset_indices 1 2 3 4
+python3 scripts/run_all.py --deterministic FALSE --solvers GREEDY GREEDY_CANDIDATE_PATHS FLOW FLOW_MIP --dataset_indices 1 2 3 4
 ```
 
 ### Run the script using PyCharm
@@ -98,3 +98,7 @@ These results can then be automatically edited by running the
 `scripts/remove_timestamp_from_result_files.py` script and then moving
 the files to the `notable` subdirectory of the `results` directory.
 After this, one can adjust the `scripts/plot.py` script to plot the results.
+
+All results, including the final results for the project can be found
+in the `results/notable` directory. In particular, the final results are
+stored in `results/notable/final_*`.
